@@ -1,0 +1,57 @@
+<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
+<%@ taglib uri="http://richfaces.org/a4j" prefix="a4j"%>
+<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
+<%@ taglib uri="http://richfaces.org/rich" prefix="rich" %>
+
+<%
+            HttpSession sesion = request.getSession();
+            if (!("" + sesion.getAttribute("usuario")).equals("null")) {
+                out.println("Sesion Iniciada");
+            }
+%>
+<f:view>
+    <html>
+        <head>
+            <title>.:: Sistema Academico UCH ::.</title>
+            <meta http-equiv="Expires" content="0">
+            <meta http-equiv="Last-Modified" content="0">
+            <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+            <meta http-equiv="Pragma" content="no-cache">
+            <link rel="icon" type="image/x_icon" href="/Sistema_Academico/Imagenes/actions/pinguino.gif"/>
+        </head>
+
+        <body onload="document.getElementById('formulario:j_username').focus()" >
+            <a4j:loadStyle src="resource:///css/formulario.css"  />
+            <h:form id="formulario">
+                <p style="height:150px;"  align="center">
+                <div align="center">
+                    <fieldset  style="width:350px;">
+                        <legend>Login</legend>
+                        <table border="0">
+                            <tr>
+                                <td>Usuario</td>
+                                <td>
+                                    <h:inputText id="j_username" size="27" required="true" label="Usuario" value="#{managerUsuario.usu_usu}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Password</td>
+                                <td>
+                                    <h:inputSecret id="j_password"  size="27" required="true" label="Contraseña" value="#{managerUsuario.usu_psw}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" colspan="2">
+                                    <p align="right">
+                                        <h:commandButton value="Aceptar" action="#{managerUsuario.checkUser}" styleClass="button" />
+                                    </p>
+                                </td>
+                                <td><div></div></td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                </div>
+            </h:form>
+        </body>
+    </html>
+</f:view>

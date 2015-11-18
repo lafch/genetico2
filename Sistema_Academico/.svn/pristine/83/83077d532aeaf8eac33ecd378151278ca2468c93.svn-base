@@ -1,0 +1,40 @@
+package net.uch.mapping;
+
+import java.util.Date;
+import java.util.Set;
+import net.uch.mapping.base.BaseClEstructuraPagosDetalle;
+
+/**
+ * ClEstructuraPagosDetalle entity.
+ * @author MyEclipse Persistence Tools
+ */
+public class ClEstructuraPagosDetalle extends BaseClEstructuraPagosDetalle
+        implements java.io.Serializable {
+
+    // Constructors
+    /** default constructor */
+    public ClEstructuraPagosDetalle() {
+    }
+
+    /** Constructor for primary key */
+    public ClEstructuraPagosDetalle(Integer estpagdetId) {
+        super(estpagdetId);
+    }
+
+    /** minimal constructor */
+    public ClEstructuraPagosDetalle(ClEstructuraPagos clEstructuraPagos,
+            AdConceptoPago adConceptoPago, Integer talId) {
+        super(clEstructuraPagos, adConceptoPago, talId);
+    }
+
+    /** full constructor */
+    public ClEstructuraPagosDetalle(ClEstructuraPagos clEstructuraPagos,
+            AdConceptoPago adConceptoPago, ClArbolAcademico clArbolAcadCurso,String estpagdetNombre,
+            Date estpagdetFechaPago, Float estpagdetMonto,
+            String estpagdetActivo, Integer talId, Set clAlumnoTarifas, Integer estpagdetOrden, 
+            String estpagdetVisible) {
+        super(clEstructuraPagos, adConceptoPago, clArbolAcadCurso ,estpagdetNombre,
+                estpagdetFechaPago, estpagdetMonto, estpagdetActivo, talId,
+                clAlumnoTarifas, estpagdetOrden, estpagdetVisible);
+    }
+}

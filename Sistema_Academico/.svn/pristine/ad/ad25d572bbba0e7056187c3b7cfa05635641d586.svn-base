@@ -1,0 +1,21 @@
+package net.uch.tablaSistema.hibernateSpringDao;
+
+import java.util.List;
+import net.uch.mapping.AcAula;
+import org.springframework.dao.DataAccessException;
+
+public interface HSAulaDAO {
+
+    public void insertarAula(AcAula aul) throws DataAccessException;
+
+    public List seleccionarAula(String nombre, int pabellon) throws DataAccessException, java.sql.SQLException;
+
+    public void eliminarAula(String id) throws DataAccessException;
+
+    public void actualizarAula(AcAula aul) throws DataAccessException;
+
+    public List seleccionarAula() throws Exception;
+    public List seleccionarAula(int pab_id) throws Exception;
+
+    public AcAula buscarAula(int aul_id);
+}

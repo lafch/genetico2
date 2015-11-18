@@ -1,0 +1,47 @@
+package net.uch.util;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+
+
+
+/**
+ *
+ * @author ${user}
+ */
+public class Reporte {
+    public void cargarReporte(OutputStream out, Object data, HashMap parametros , String url_reporte) throws IOException, Exception, EOFException {
+        if (data.toString().equalsIgnoreCase("ficha")) {
+            //FacesContext context = FacesContext.getCurrentInstance();
+           // String sec_id="";
+            /*HashMap parametros = new HashMap();
+            parametros.put("logo", context.getExternalContext().getResource("/Imagenes/actions/logo_p.jpg"));
+            parametros.put("sec_id", sec_id);*/
+
+            String jasper = "/WEB-INF/Reportes/cursos_libres/"+url_reporte;
+
+            Print print = new Print();
+
+            ByteArrayOutputStream buffer = print.cargar_reporte(jasper, parametros);
+            byte[] bytes = buffer.toByteArray();
+
+            InputStream input = new ByteArrayInputStream(bytes);
+
+            int size = input.available();
+            byte[] pdf = new byte[size];
+            input.read(pdf);
+            out.write(pdf);
+
+            buffer.flush();
+            buffer.close();
+            input.close();
+            out.flush();
+            out.close();
+        }
+      }
+}

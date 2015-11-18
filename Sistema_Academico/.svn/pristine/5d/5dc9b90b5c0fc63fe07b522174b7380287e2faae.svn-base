@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+  "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="net.uch.mapping">
+    <class name="ClAlumnoDesertor" table="cl_alumno_desertor">
+        <id name="id" type="java.lang.Integer">
+            <column name="id_alumno_desertor"/>
+            <generator class="native"/>
+        </id>
+        <property name="activo" type="java.lang.Integer">
+            <column name="activo"/>
+        </property>
+        <property name="descMotivos" type="java.lang.String">
+            <column name="desc_motivo"/>
+        </property>
+        <property name="motivos" type="java.lang.String">
+            <column name="lst_motivos"/>
+        </property>
+        <property name="cancelarLlamadas" type="java.lang.Integer">
+            <column name="cancelar_llamadas"/>
+        </property>
+        <property name="captado" type="java.lang.Integer">
+            <column name="captado"/>
+        </property>
+        <many-to-one class="ClAlumno" fetch="select" name="clAlumno">
+            <column name="alu_id" not-null="true">
+                <comment>relacion con la tabla cl_alumno</comment>
+            </column>
+        </many-to-one>
+        <many-to-one class="ClArbolAcademico" fetch="select" name="arbModulo">
+            <column name="arb_mod_id" not-null="true">
+                <comment>relacion con la tabla cl_arbol_academico</comment>
+            </column>
+        </many-to-one>
+        <many-to-one class="ClSeccion" fetch="select" name="clSecUlt">
+            <column name="sec_id_ult" not-null="true">
+                <comment>relacion con la tabla cl_seccion</comment>
+            </column>
+        </many-to-one>
+        <set inverse="true" name="clObsDesers" order-by="fecha_registro desc">
+            <key>
+                <column name="id_alumno_desertor" not-null="true"/>
+            </key>
+            <one-to-many class="net.uch.mapping.ClObservacionDesercion"/>
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,856 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.cursoLibre.managedBeans;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+import javax.servlet.ServletContext;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.uch.cursoLibre.hibernateSpringDao.HSHorarioDAO;
+import net.uch.commonService.ServiceFinder;
+import net.uch.cursoLibre.hibernateSpringDao.HSAlumnoCLDAO;
+import net.uch.cursoLibre.hibernateSpringDao.HSSistemaEvaluacionCLDAO;
+import net.uch.cursoLibre.managedBeans.beans.BeanClAlumno;
+import net.uch.cursoLibre.managedBeans.beans.Column;
+import net.uch.mapping.*;
+import net.uch.tablaSistema.managedBeans.bUsuario;
+import net.uch.util.CommonDAO;
+import net.uch.util.CommonWeb;
+import net.uch.util.ConstantesWeb;
+import net.uch.utilAdministrativo.MetodosAdm;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
+/**
+ *
+ * @author Alumno
+ */
+public class bConsultaAcademicaCurso {
+
+    private SelectItem[] cboSede;
+    private SelectItem[] cboAno;
+    private SelectItem[] cboArea;
+    private SelectItem[] cboModulo;
+    private SelectItem[] cboCurso;
+    private SelectItem[] cboSeccion;
+    private SelectItem[] rdoOpciones;
+    private SelectItem[] cboAsignaturas;
+    private boolean blContieneSisEva = true;
+    private int w_sed_id = 0;
+    private String w_ano_id = "0";
+    private int w_area_id = 0;
+    private int w_mod_id = 0;
+    private int w_cur_id = 0;
+    private int w_sec_id = 0;
+    private String w_rad_id;
+    private Date w_fecha_ini;
+    private Date w_fecha_fin;
+    private String w_horario;
+    private int w_contador = 0;
+    private String v_visible = "true";
+    Boolean type;
+    Boolean description;
+    Integer maxValue;
+    private String sec_horario;
+    private String sec_horario_corto;
+    private String w_curso;
+    private String w_docente;
+    private String sInstitucion;
+
+    public String getsInstitucion() {
+        return sInstitucion;
+    }
+
+    public void setsInstitucion( String sInstitucion ) {
+        this.sInstitucion = sInstitucion;
+    }
+    private int iIdAsignatura;
+
+    public int getIdAsignatura() {
+        return iIdAsignatura;
+    }
+
+    public void setIdAsignatura( int idAsignatura ) {
+        this.iIdAsignatura = idAsignatura;
+    }
+
+    public SelectItem[] getCboAsignaturas() {
+        Object[] objObj;
+        List lstSisEvaDetalles;
+        lstSisEvaDetalles = CommonDAO.getClSistemaEvaluacionDAO().listarSisEvaDetallePorSecId( w_sec_id );
+
+        cboAsignaturas = new SelectItem[ lstSisEvaDetalles.size() + 1 ];
+        cboAsignaturas[0] = new SelectItem( "0", "[Seleccione Asignatura]" );
+        for ( int i = 0; i < lstSisEvaDetalles.size(); i++ ) {
+            objObj = (Object[])lstSisEvaDetalles.get( i );
+            cboAsignaturas[i + 1] = new SelectItem( objObj[0], objObj[2].toString() );
+        }
+        return cboAsignaturas;
+    }
+
+    public void setCboAsignaturas( SelectItem[] cboAsignaturas ) {
+        this.cboAsignaturas = cboAsignaturas;
+    }
+
+    public boolean isEsProgAux() {
+        String sModular;
+        try {
+            sModular = CommonDAO.getClArbolAcademicoDAO().buscarArbolPorId( w_area_id ).getArbAreaModular();
+        } catch ( Exception ex ) {
+            sModular = "0";
+        }
+//        boolean blEsProgAux = w_area_id == ConstantesWeb.ID_AREA_PROG_AUX;
+        boolean blEsProgAux = w_area_id > 0 && "1".equals( sModular );
+        return blEsProgAux;
+    }
+    /*
+     *
+     */
+    private List<BeanClAlumno> listaAlumno = new ArrayList<BeanClAlumno>();
+    /*
+     * variables tabla
+     */
+    List<Column> c_cabeceraColumna = new ArrayList<Column>();
+    List<List<String>> c_dataColumna = new ArrayList<List<String>>();
+    Integer c_cantiFilas = 0;
+    List<List<String>> c_dataAlumno = new ArrayList<List<String>>();
+    private String oncomplete;
+
+    public void cambioSede( ActionEvent event ) {
+        this.setW_ano_id( "0" );
+        cambioAnio( null );
+    }
+
+    public void cambioAnio( ActionEvent event ) {
+        this.setW_area_id( 0 );
+        cambioArea( null );
+    }
+
+    public void cambioArea( ActionEvent event ) {
+        w_mod_id = 0;
+        w_cur_id = 0;
+        w_sec_id = 0;
+    }
+
+    public void cambioModulo( ActionEvent event ) {
+        w_cur_id = 0;
+        w_sec_id = 0;
+    }
+
+    public void cambioCurso( ActionEvent event ) {
+        w_sec_id = 0;
+    }
+
+    public String getOncomplete() {
+        return oncomplete;
+    }
+
+    public void setOncomplete( String sOncomplete ) {
+        this.oncomplete = sOncomplete;
+    }
+
+    public String getSec_horario() {
+        return sec_horario;
+    }
+
+    public void setSec_horario( String sSecHorario ) {
+        this.sec_horario = sSecHorario;
+    }
+
+    public String getSec_horario_corto() {
+        return sec_horario_corto;
+    }
+
+    public void setSec_horario_corto( String sSecHorarioCorto ) {
+        this.sec_horario_corto = sSecHorarioCorto;
+    }
+
+    public String getW_curso() {
+        return w_curso;
+    }
+
+    public void setW_curso( String sWCurso ) {
+        this.w_curso = sWCurso;
+    }
+
+    public String getW_docente() {
+        return w_docente;
+    }
+
+    public void setW_docente( String sWDocente ) {
+        this.w_docente = sWDocente;
+    }
+
+    public bConsultaAcademicaCurso() {
+        cargarData( 0 );
+    }
+
+    public Boolean getDescription() {
+        return description;
+    }
+
+    public void setDescription( Boolean bDescription ) {
+        this.description = bDescription;
+    }
+
+    public Integer getMaxValue() {
+        return maxValue;
+    }
+
+    public void setMaxValue( Integer iMaxValue ) {
+        this.maxValue = iMaxValue;
+    }
+
+    public Boolean getType() {
+        return type;
+    }
+
+    public void setType( Boolean bType ) {
+        this.type = bType;
+    }
+
+    public String getV_visible() {
+        return v_visible;
+    }
+
+    public void setV_visible( String sVVisible ) {
+        this.v_visible = sVVisible;
+    }
+
+    public int getW_contador() {
+        return w_contador;
+    }
+
+    public void setW_contador( int iWContador ) {
+        this.w_contador = iWContador;
+    }
+
+    public List<BeanClAlumno> getListaAlumno() {
+        return listaAlumno;
+    }
+
+    public void setListaAlumno( List<BeanClAlumno> lstAlumno ) {
+        this.listaAlumno = lstAlumno;
+    }
+
+    public boolean isContieneSisEva() {
+        return blContieneSisEva;
+    }
+
+    public void setContieneSisEva( boolean blContieneSisEva ) {
+        this.blContieneSisEva = blContieneSisEva;
+    }
+
+    public SelectItem[] getCboSede() throws SQLException {
+        MetodosAdm metodo = new MetodosAdm();
+        this.setCboSede( metodo.listarSedes( "[[--Seleccione--]]" ) );
+        return cboSede;
+    }
+
+    public void setCboSede( SelectItem[] cboSede ) {
+        this.cboSede = cboSede;
+    }
+
+    public SelectItem[] getCboAno() {
+        int iAnio;
+
+        iAnio = Calendar.getInstance().get( Calendar.YEAR );
+        this.cboAno = new SelectItem[ 15 ];
+        this.cboAno[0] = new SelectItem( 0, "[[--Seleccione--]]" );
+        for ( int i = 0; i < ( this.cboAno.length - 1 ); i++ ) {
+            this.cboAno[i + 1] = new SelectItem( iAnio - i, String.valueOf( iAnio - i ) );
+        }
+        return cboAno;
+    }
+
+    public void setCboAno( SelectItem[] cboAno ) {
+        this.cboAno = cboAno;
+    }
+
+    public SelectItem[] getCboArea() {
+        ClArbolAcademico arbArea;
+        List<ClArbolAcademico> lstArbAreas = new ArrayList();
+
+        try {
+
+//            if ( !"".equals( w_ano_id ) && Integer.parseInt( w_ano_id ) > 0 && w_sed_id > 0 ) {
+//                lstArbAreas = CommonDAO.getClArbolAcademicoDAO().listarAreaxAnoYSede( Integer.parseInt( w_ano_id ), w_sed_id, 0 );
+            lstArbAreas = CommonDAO.getClArbolAcademicoDAO().listarArbolPorPadre( 0 );
+//            }
+            cboArea = new SelectItem[ lstArbAreas.size() + 1 ];
+            cboArea[0] = new SelectItem( 0, "[[Seleccione Área]]" );
+            for ( int i = 0; i < ( cboArea.length - 1 ); i++ ) {
+                arbArea = lstArbAreas.get( i );
+                cboArea[i + 1] = new SelectItem( arbArea.getArbId(), arbArea.getArbDescripcion() );
+            }
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return cboArea;
+    }
+
+    public void setCboArea( SelectItem[] cboArea ) {
+        this.cboArea = cboArea;
+    }
+
+    public SelectItem[] getCboModulo() {
+        ClArbolAcademico arbMod;
+        List<ClArbolAcademico> lstArbModulos = new ArrayList();
+        try {
+//            if ( w_area_id != 0 && !"".equals( w_ano_id ) && Integer.parseInt( w_ano_id ) > 0 && w_sed_id > 0 ) {
+//                lstArbModulos = CommonDAO.getClArbolAcademicoDAO().listarModulosxAreaAnoYSede( w_area_id, Integer.parseInt( w_ano_id ), w_sed_id );
+            if ( w_area_id != 0 ) {
+                lstArbModulos = CommonDAO.getClArbolAcademicoDAO().listarArbolPorPadre( w_area_id );
+            }
+//            }
+            cboModulo = new SelectItem[ lstArbModulos.size() + 1 ];
+            cboModulo[0] = new SelectItem( 0, "[[Seleccione Modulo]]" );
+            for ( int i = 0; i < ( cboModulo.length - 1 ); i++ ) {
+                arbMod = lstArbModulos.get( i );
+                cboModulo[i + 1] = new SelectItem( arbMod.getArbId(), arbMod.getArbDescripcion() );
+            }
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return cboModulo;
+    }
+
+    public void setCboModulo( SelectItem[] cboModulo ) {
+        this.cboModulo = cboModulo;
+    }
+
+    public SelectItem[] getCboCurso() {
+        ClArbolAcademico arbCur;
+        List<ClArbolAcademico> lstArbCursos = new ArrayList<ClArbolAcademico>();
+        try {
+
+
+//            if ( w_mod_id > 0 && w_area_id > 0 && w_sed_id > 0 && !"".equals( w_ano_id ) && Integer.parseInt( w_ano_id ) > 0 ) {
+//                lstArbCursos = CommonDAO.getClArbolAcademicoDAO().listarCursosXModAnoYSede( w_mod_id, Integer.parseInt( w_ano_id ), w_sed_id );
+            if ( w_mod_id != 0 ) {
+                lstArbCursos = CommonDAO.getClArbolAcademicoDAO().listarArbolPorPadre( w_mod_id );
+            }
+//            }
+            cboCurso = new SelectItem[ lstArbCursos.size() + 1 ];
+            cboCurso[0] = new SelectItem( "0", "[[--Seleccione--]])" );
+            for ( int i = 0; i < ( cboCurso.length - 1 ); i++ ) {
+                arbCur = lstArbCursos.get( i );
+                cboCurso[i + 1] = new SelectItem( arbCur.getArbId(), arbCur.getArbDescripcion() );
+            }
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return cboCurso;
+    }
+
+    public void setCboCurso( SelectItem[] cboCurso ) {
+        this.cboCurso = cboCurso;
+    }
+
+    public SelectItem[] getCboSeccion() {
+        ClSeccion clSeccion;
+        List<ClSeccion> lstSecciones = new ArrayList();
+        try {
+            if ( w_sed_id > 0 && w_cur_id > 0 && w_mod_id > 0 && !"".equals( w_ano_id ) && Integer.parseInt( w_ano_id ) > 0 ) {
+                lstSecciones = CommonDAO.getClArbolAcademicoDAO().listarSeccionesXCursoAnoYSede( w_cur_id, Integer.parseInt( w_ano_id ), w_sed_id );
+            }
+            cboSeccion = new SelectItem[ lstSecciones.size() + 1 ];
+            cboSeccion[0] = new SelectItem( 0, "[[--Seleccione--]]" );
+            for ( int i = 0; i < ( cboSeccion.length - 1 ); i++ ) {
+                clSeccion = lstSecciones.get( i );
+                cboSeccion[i + 1] = new SelectItem( clSeccion.getSecId(), clSeccion.getSecNombre() );
+            }
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return cboSeccion;
+    }
+
+    public void setCboSeccion( SelectItem[] cboSeccion ) {
+        this.cboSeccion = cboSeccion;
+    }
+
+    public SelectItem[] getRdoOpciones() {
+        rdoOpciones = new SelectItem[ 4 ];
+        rdoOpciones[0] = new SelectItem( "1", "REGISTRO POR AULA" );
+        rdoOpciones[1] = new SelectItem( "2", "INSCRITOS POR AULA" );
+        rdoOpciones[2] = new SelectItem( "3", "REGISTRO AUXILIAR POR AULA [Inicio de curso]" );
+        rdoOpciones[3] = new SelectItem( "4", "REGISTRO AUXILIAR POR AULA [Fin    de curso]" );
+        return rdoOpciones;
+    }
+
+    public void setRdoOpciones( SelectItem[] rdoOpciones ) {
+        this.rdoOpciones = rdoOpciones;
+    }
+
+    public String getW_ano_id() {
+        return w_ano_id;
+    }
+
+    public void setW_ano_id( String w_ano_id ) {
+        this.w_ano_id = w_ano_id;
+    }
+
+    public int getW_area_id() {
+        return w_area_id;
+    }
+
+    public void setW_area_id( int w_area_id ) {
+        this.w_area_id = w_area_id;
+    }
+
+    public int getW_cur_id() {
+        return w_cur_id;
+    }
+
+    public void setW_cur_id( int w_cur_id ) {
+        this.w_cur_id = w_cur_id;
+    }
+
+    public Date getW_fecha_fin() {
+        return w_fecha_fin;
+    }
+
+    public void setW_fecha_fin( Date w_fecha_fin ) {
+        this.w_fecha_fin = w_fecha_fin;
+    }
+
+    public Date getW_fecha_ini() {
+        return w_fecha_ini;
+    }
+
+    public void setW_fecha_ini( Date w_fecha_ini ) {
+        this.w_fecha_ini = w_fecha_ini;
+    }
+
+    public String getW_horario() {
+        return w_horario;
+    }
+
+    public void setW_horario( String w_horario ) {
+        this.w_horario = w_horario;
+    }
+
+    public int getW_mod_id() {
+        return w_mod_id;
+    }
+
+    public void setW_mod_id( int w_mod_id ) {
+        this.w_mod_id = w_mod_id;
+    }
+
+    public String getW_rad_id() {
+        return w_rad_id;
+    }
+
+    public void setW_rad_id( String w_rad_id ) {
+        this.w_rad_id = w_rad_id == null || w_rad_id.trim().isEmpty() ? "0" : w_rad_id;
+    }
+
+    public int getW_sec_id() {
+        return w_sec_id;
+    }
+
+    public void setW_sec_id( int w_sec_id ) {
+        this.w_sec_id = w_sec_id;
+    }
+
+    public int getW_sed_id() {
+        return w_sed_id;
+    }
+
+    public void setW_sed_id( int w_sed_id ) {
+        this.w_sed_id = w_sed_id;
+    }
+
+    public void seleccionarSeccion( ActionEvent event ) throws Exception {
+        String sDescDia;
+        SimpleDateFormat sdfHora;
+        ClSeccion seccion;
+        HSHorarioDAO horarioDAO;
+        List<ClHoraria> lstHorario;
+        List<ClHoraria> lstHorarioAux;
+
+        listaAlumno = new ArrayList<BeanClAlumno>();
+
+        horarioDAO = CommonDAO.getClHorarioDAO();
+        lstHorario = horarioDAO.seleccionarHorario( w_sec_id );
+
+        lstHorarioAux = horarioDAO.seleccionarHorario( w_sec_id );
+        w_docente = lstHorarioAux.isEmpty() ? "No determinado" : lstHorarioAux.get( 0 ).getAcDocente().getDocNombre();
+        sec_horario = "Horario no Definido";
+        sec_horario_corto = "Horario no Definido";
+
+        if ( !lstHorario.isEmpty() ) {
+            sec_horario = "";
+            sec_horario_corto = "";
+        }
+
+        for ( int i = 0; i < lstHorario.size(); i++ ) {
+            sDescDia = CommonDAO.getTbCatalogoDAO().seleccionarDescripcion( lstHorario.get( i ).getHorDia() );
+            sdfHora = new SimpleDateFormat( "hh:mm a" );
+            sec_horario = sec_horario + " " + sDescDia + "  :  " + sdfHora.format( lstHorario.get( i ).getHorHini() ) + "  a  " + sdfHora.format( lstHorario.get( i ).getHorHfin() ) + "  <br />  ";
+        }
+        if ( !lstHorario.isEmpty() ) {
+            this.sec_horario_corto = this.sec_horario.substring( 1, 15 );
+        }
+
+        if ( w_sec_id > 0 ) {
+            seccion = CommonDAO.getClSeccionDAO().seleccionarSeccion( w_sec_id );
+            this.setW_fecha_ini( seccion.getSecFinicio() );
+            this.setW_fecha_fin( seccion.getSecFfin() );
+            this.setW_curso( seccion.getClArbolAcademico().getArbDescripcion() );
+        }
+        cargarData( w_sec_id );
+
+    }
+
+    public void generarTabla( ActionEvent event ) {
+    }
+
+    public void cargarData( int iSecId ) {
+        ClSeccion clSeccion;
+        ClArbolAperturado clArbApertTall;
+        HSAlumnoCLDAO clAlumnoDAO;
+        HSSistemaEvaluacionCLDAO sisEvaDAO;
+        Object[] obj;
+        List lstAlumnosXSeccion;
+        List lstSisEvalPerXDet;
+
+
+        c_cabeceraColumna = new ArrayList<Column>();
+        c_cabeceraColumna.add( new Column( "#" ) );
+        c_cabeceraColumna.add( new Column( "Nro" ) );
+        c_cabeceraColumna.add( new Column( "Codigo" ) );
+        c_cabeceraColumna.add( new Column( "Alumno" ) );
+        if ( iSecId == 0 ) {
+            return;
+        }
+        clAlumnoDAO = CommonDAO.getClAlumnoDAO();
+
+        sisEvaDAO = CommonDAO.getClSistemaEvaluacionDAO();
+        lstSisEvalPerXDet = new ArrayList();
+        try {
+
+            clSeccion = CommonDAO.getClSeccionDAO().seleccionarSeccion( iSecId );
+            if ( clSeccion != null ) {
+//                lstSisEvaluacionXCurso = sisEvaDAO.listarSistemaEvaluacionPorCurso( clArbApertTall.getArbapeId() );
+                if ( !isEsProgAux() ) {
+                    lstSisEvalPerXDet = sisEvaDAO.listarSistemaEvaPersonPorSeccionYDet( iSecId, -1 );
+                } else {
+                    lstSisEvalPerXDet = sisEvaDAO.listarSistemaEvaPersonPorSeccionYDet( iSecId, iIdAsignatura );
+                }
+                for ( int i = 0; i < lstSisEvalPerXDet.size(); i++ ) {
+                    obj = (Object[])lstSisEvalPerXDet.get( i );
+                    c_cabeceraColumna.add( new Column( obj[10].toString() ) );
+                }
+                if ( !lstSisEvalPerXDet.isEmpty() && isEsProgAux() ) {
+                    c_cabeceraColumna.add( new Column( "PF" ) );
+                }
+            }
+
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+
+        lstAlumnosXSeccion = clAlumnoDAO.listarAlumnosPorSeccion( iSecId );
+        c_cantiFilas = lstAlumnosXSeccion.size();
+        c_dataColumna = new ArrayList<List<String>>();
+        c_dataAlumno = new ArrayList<List<String>>();
+        if ( isEsProgAux() ) {
+            blContieneSisEva = iIdAsignatura == 0 || ( iIdAsignatura != 0 && !lstSisEvalPerXDet.isEmpty() );
+        } else {
+            blContieneSisEva = !lstSisEvalPerXDet.isEmpty();
+        }
+
+        for ( int i = 0; i < c_cantiFilas; i++ ) {
+            obj = (Object[])lstAlumnosXSeccion.get( i );
+            c_dataColumna.add( llenarFila( i + 1, obj[0].toString() + " " + obj[1].toString() + " " + obj[2].toString(), obj[4].toString(),
+                    lstSisEvalPerXDet, iSecId, Integer.parseInt( obj[3].toString() ) ) );
+        }
+    }
+
+    private List<String> llenarFila( int iContador, String sDatos, String sCodigo, List lstSisEvaluacion, int iSecId, int iAluId ) {
+        double dProm;
+        double dValorNota;
+        String sColorNota;
+        NumberFormat numFormatter;
+        DecimalFormatSymbols symbol = new DecimalFormatSymbols( Locale.US );
+        Object[] aobjNota;
+        Object[] aobjSisEva;
+        List<Integer> lstSisEvaDetIds;
+        List<String> lstAluStrings;
+        List<String> lstStrings;
+        List lstNotas;
+        List lstProm;
+
+        lstStrings = new ArrayList<String>();
+        lstAluStrings = new ArrayList<String>();
+
+        lstStrings.add( String.valueOf( iContador ) );
+        lstStrings.add( sCodigo );
+        lstStrings.add( sDatos );
+        lstAluStrings.add( String.valueOf( iContador ) );
+        lstAluStrings.add( sCodigo );
+        lstAluStrings.add( String.valueOf( iAluId ) );
+
+        symbol.setDecimalSeparator( '.' );
+        numFormatter = new DecimalFormat( "#.##", symbol );
+
+        for ( int i = 0; i < lstSisEvaluacion.size(); i++ ) {
+            aobjSisEva = (Object[])lstSisEvaluacion.get( i );
+            lstNotas = CommonDAO.getClNotasDAO().seleccionarNotaAlumnoSeccion( iAluId, iSecId, Integer.parseInt( aobjSisEva[0].toString() ) );
+            if ( !lstNotas.isEmpty() ) {
+                aobjNota = (Object[])lstNotas.get( 0 );
+                dValorNota = 0;
+                if ( aobjNota.length > 0 ) {
+                    dValorNota = Double.parseDouble( aobjNota[1].toString() );
+                }
+            } else {
+                dValorNota = 0;
+            }
+            lstStrings.add( numFormatter.format( dValorNota ) );
+            lstAluStrings.add( aobjSisEva[0].toString() );
+        }
+        if ( isEsProgAux() ) {
+            lstSisEvaDetIds = new ArrayList<Integer>();
+            lstSisEvaDetIds.add( iIdAsignatura );
+            try {
+                lstProm = CommonDAO.getClNotasDAO().listarPromSisEvaDetPorSecIdYAluId( iSecId, iAluId, lstSisEvaDetIds );
+                dProm = 0;
+                if ( !lstProm.isEmpty() ) {
+                    dProm = Double.parseDouble( ( (Object[])lstProm.get( 0 ) )[1].toString() );
+                }
+            } catch ( Exception ex ) {
+                dProm = 0;
+                ex.printStackTrace();
+            }
+            lstStrings.add( dProm + "" );
+        }
+        c_dataAlumno.add( lstAluStrings );
+        return lstStrings;
+    }
+
+    public List<Column> getC_cabeceraColumna() {
+        return c_cabeceraColumna;
+    }
+
+    public int getIndiceNotaFinal() {
+        return c_cabeceraColumna == null ? 0 : c_cabeceraColumna.size();
+    }
+
+    public Integer getC_cantiFilas() {
+        return c_cantiFilas;
+    }
+
+    public void setC_cantiFilas( Integer c_cantiFilas ) {
+        this.c_cantiFilas = c_cantiFilas;
+    }
+
+    public List<List<String>> getC_dataColumna() {
+        return c_dataColumna;
+    }
+
+    public boolean filterMethod( Object aobj ) {
+        Integer[] i = (Integer[])aobj;
+        if ( i[0] > maxValue ) {
+            return false;
+        }
+        return true;
+    }
+
+    public void guardarNotas( ActionEvent event ) {
+        boolean blValid;
+        int alu_id;
+        double dNota;
+
+        for ( int i = 0; i < c_dataColumna.size(); i++ ) {
+            alu_id = 0;
+            for ( int x = 2; x < ( c_dataColumna.get( i ).size() - 1 ); x++ ) {
+
+                if ( x == 2 ) {
+                    alu_id = Integer.parseInt( c_dataAlumno.get( i ).get( x ).toString() );
+                }
+                if ( x >= 3 ) {
+                    try {
+                        dNota = Double.parseDouble( c_dataColumna.get( i ).get( x ) );
+                        blValid = true;
+                    } catch ( Exception ex ) {
+                        dNota = 0;
+                        blValid = false;
+                    }
+                    if ( blValid ) {
+                        CommonDAO.getClNotasDAO().actualizarNota( w_sec_id, alu_id, Integer.parseInt( c_dataAlumno.get( i ).get( x ).toString() ), dNota );
+                    }
+                }
+            }
+        }
+        if ( !isEsProgAux() ) {
+            CommonDAO.getClNotasDAO().recalcularPromedio( w_sec_id );
+        }
+        try {
+            seleccionarSeccion( null );
+        } catch ( Exception ex ) {
+        }
+    }
+
+    public void ImprimirFicha( ActionEvent event ) throws Exception {
+        if ( w_sec_id != 0 && w_rad_id != null && !w_rad_id.isEmpty() && Integer.parseInt( w_rad_id ) >= 1 && Integer.parseInt( w_rad_id ) <= 4 ) {
+            oncomplete = "javascript:Richfaces.showModalPanel('mp7')";
+        } else {
+            oncomplete = "javascript:alert('Seleccione una sección y elija el reporte que desea visualizar');";
+        }
+    }
+
+    public void cargarReporte( OutputStream out, Object data ) throws IOException, Exception, EOFException {
+        cargarReporteDynamic( out );
+    }
+
+    public void cargarReporteDynamic( OutputStream out ) throws IOException, Exception, EOFException {
+        int iSize;
+        ByteArrayOutputStream buffer;
+        byte[] abytes;
+        byte[] apdf;
+
+        if ( w_rad_id == null || w_rad_id.isEmpty() || Integer.parseInt( w_rad_id ) < 1 || Integer.parseInt( w_rad_id ) > 4 ) {
+            return;
+        }
+        buffer = new ByteArrayOutputStream();
+        JasperExportManager.exportReportToPdfStream( cargar_reporteDynamic( Integer.parseInt( w_rad_id ) ), buffer );
+        abytes = buffer.toByteArray();
+        InputStream input = new ByteArrayInputStream( abytes );
+        iSize = input.available();
+        apdf = new byte[ iSize ];
+        input.read( apdf );
+        out.write( apdf );
+        buffer.flush();
+        buffer.close();
+        input.close();
+        out.flush();
+        out.close();
+
+    }
+
+    public JasperPrint cargar_reporteDynamic( int iIdReporte ) {
+        String sNombreReporte;
+        String[] sNombresReporte = { "",
+            "rep_registro_por_aula.jasper",
+            "rep_alumnos_inscritos_por_seccion.jasper",
+            "rep_registro_por_aula_auxiliar.jasper" };
+        AcDocente docente;
+        ClArbolAcademico arbCur;
+        ClSeccion seccion;
+        Connection connection;
+        DriverManagerDataSource dmds;
+        FacesContext context;
+        InputStream reportStream;
+        JasperPrint jasperPrint;
+
+        HashMap hmParams;
+
+        try {
+            hmParams = new HashMap();
+            if ( iIdReporte == 3 && ( w_area_id == 5 || w_area_id == 23 || w_area_id == 1554 || w_area_id == 1710 || w_area_id == 1762 || w_area_id == 1670 || w_area_id == 1704 ) ) {
+
+                hmParams.put( "p_campus", this.w_sed_id == 1 ? "OLIVOS" : "COLONIAL" );
+                hmParams.put( "p_programa", w_area_id == 23 ? "PORTUGUÉS" : "INGLES" );
+                hmParams.put( "p_frecuencia", "" );
+                docente = CommonDAO.getAcDocenteDAO().seleccionarDocentePorSecId( w_sec_id );
+                hmParams.put( "p_profesor", docente == null ? "" : docente.getDocNombre() );
+                seccion = CommonDAO.getClSeccionDAO().seleccionarSeccion( w_sec_id );
+                arbCur = seccion.getClArbolAcademico().getArbAcadPadre();
+                hmParams.put( "p_nivel", arbCur == null ? "" : arbCur.getArbDescripcion() );
+                int iMesPeriodo = seccion.getSecFinicio().getMonth();
+                hmParams.put( "p_periodo", CommonWeb.traerNombreMes( iMesPeriodo ) );
+                context = FacesContext.getCurrentInstance();
+                hmParams.put( "logo", context.getExternalContext().getResource( "/Imagenes/actions/logo_p.jpg" ) );
+                //sNombreReporte = "rpt_reg_aux_idiomas.jasper";
+                sNombreReporte = "rpt_reg_aux_idiomas_nuevo.jasper";
+            } else if ( iIdReporte == 4 ) {
+                if ( w_area_id == 5 || w_area_id == 23 || w_area_id == 1554 || w_area_id == 1710 || w_area_id == 1762 || w_area_id == 1670 || w_area_id == 1704 ) {
+                    hmParams.put( "p_campus", this.w_sed_id == 1 ? "OLIVOS" : "COLONIAL" );
+                    hmParams.put( "p_programa", w_area_id == 23 ? "PORTUGUÉS" : "INGLES" );
+                    hmParams.put( "p_frecuencia", "" );
+                    docente = CommonDAO.getAcDocenteDAO().seleccionarDocentePorSecId( w_sec_id );
+                    hmParams.put( "p_profesor", docente == null ? "" : docente.getDocNombre() );
+                    seccion = CommonDAO.getClSeccionDAO().seleccionarSeccion( w_sec_id );
+                    arbCur = seccion.getClArbolAcademico().getArbAcadPadre();
+                    hmParams.put( "p_nivel", arbCur == null ? "" : arbCur.getArbDescripcion() );
+                    int iMesPeriodo = seccion.getSecFinicio().getMonth();
+                    hmParams.put( "p_periodo", CommonWeb.traerNombreMes( iMesPeriodo ) );
+                    //   context = FacesContext.getCurrentInstance();
+                    // hmParams.put( "logo", context.getExternalContext().getResource( "/Imagenes/actions/logo_p.jpg" ) );
+
+                    sNombreReporte = "rpt_reg_aux_idiomas_notas.jasper";
+                    ServletContext ctx = (ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext();
+                    String filepath = ctx.getRealPath( "/WEB-INF/Reportes/cursos_libres/" );
+                    URL FileImagen = ctx.getResource("/Imagenes/actions/logo_p.jpg" );
+              
+                    hmParams.put( "SUBREPORT_DIR", filepath );
+                    hmParams.put( "logo", FileImagen );
+
+                } else if ( isEsProgAux() ) {
+                    sNombreReporte = "rep_registro_por_aula_auxiliar_cp.jasper";
+                    ServletContext ctx = (ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext();
+                    String filepath = ctx.getRealPath( "/WEB-INF/Reportes/cursos_libres/" );
+                    hmParams.put( "SUBREPORT_DIR", filepath );
+                } else {
+                    sNombreReporte = "rep_registro_por_aula_auxiliar_nuevo.jasper";
+                    ServletContext ctx = (ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext();
+                    String filepath = ctx.getRealPath( "/WEB-INF/Reportes/cursos_libres/" );
+                    hmParams.put( "SUBREPORT_DIR", filepath );
+                }
+            } else {
+                sNombreReporte = sNombresReporte[iIdReporte];
+            }
+            jasperPrint = null;
+            if ( !sNombreReporte.isEmpty() ) {
+                context = FacesContext.getCurrentInstance();
+                reportStream = context.getExternalContext().getResourceAsStream( "/WEB-INF/Reportes/cursos_libres/" + sNombreReporte );
+                dmds = (DriverManagerDataSource)ServiceFinder.findBean( "dataSource" );
+                connection = dmds.getConnection();
+                hmParams.put( "p_sec_id", String.valueOf( w_sec_id ) );
+                hmParams.put( "p_siseva_detalle_id", String.valueOf( iIdAsignatura ) );
+                hmParams.put( "p_det_id", String.valueOf( iIdAsignatura ) );
+                jasperPrint = JasperFillManager.fillReport( reportStream, hmParams, connection );
+                connection.close();
+            }
+            return jasperPrint;
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean isEsRegistrosAcad() {
+        boolean blEsRegAcad;
+        bUsuario usuLog;
+
+        blEsRegAcad = false;
+        try {
+            usuLog = CommonWeb.traerUsuarioLogeado();
+            blEsRegAcad = usuLog.getRol_id() == 36 || usuLog.getRol_id() == 8 || usuLog.getRol_id() == 1 || usuLog.getRol_id() == 44;
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+        }
+        return blEsRegAcad;
+    }
+}

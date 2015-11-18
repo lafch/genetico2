@@ -1,0 +1,429 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.academica.managedBeans;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import javax.faces.component.UIParameter;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpSession;
+import net.sf.jasperreports.engine.JRException;
+import net.uch.academica.hibernateSpringDao.HSActaDAO;
+import net.uch.academica.hibernateSpringDao.HSAlumnoDAO;
+import net.uch.academica.hibernateSpringDao.HSMatriculaDAO;
+import net.uch.academica.hibernateSpringDao.HSSeccionDAO;
+import net.uch.academica.managedBeans.beans.BeanConvalidacion;
+import net.uch.mapping.AcActaDetalle;
+import net.uch.mapping.Sp_convalidacion_cursos;
+import net.uch.commonService.ServiceFinder;
+import net.uch.mapping.AcActa;
+import net.uch.mapping.AcAlumno;
+import net.uch.mapping.AcMatricula;
+import net.uch.mapping.AcMatriculaCurso;
+import net.uch.mapping.AcSeccion;
+import net.uch.tablaSistema.hibernateSpringDao.HSSemestreDAO;
+import net.uch.tablaSistema.managedBeans.bUsuario;
+import net.uch.util.Print;
+
+/**
+ *
+ * @author cesardl
+ */
+public class bConvalidacion {
+
+    private int alu_id;
+    private String alu_codigo;
+    private String alu_paterno;
+    private String alu_materno;
+    private String alu_nombre;
+    private int esp_id;
+    private String esp_nombre;
+    private String sem_ingreso;
+    private String oncomplete;
+    private String rep_alu_codigo;
+    private List<bConvalidacion> alumnos;
+    private List<BeanConvalidacion> convalidaciones;
+
+    /**
+     * Creates a new instance of bConvalidacion
+     */
+    public bConvalidacion() {
+    }
+
+    public int getAlu_id() {
+        return alu_id;
+    }
+
+    public void setAlu_id(int alu_id) {
+        this.alu_id = alu_id;
+    }
+
+    public String getAlu_codigo() {
+        return alu_codigo;
+    }
+
+    public void setAlu_codigo(String alu_codigo) {
+        this.alu_codigo = alu_codigo;
+    }
+
+    public String getAlu_materno() {
+        return alu_materno;
+    }
+
+    public void setAlu_materno(String alu_materno) {
+        this.alu_materno = alu_materno;
+    }
+
+    public String getAlu_nombre() {
+        return alu_nombre;
+    }
+
+    public void setAlu_nombre(String alu_nombre) {
+        this.alu_nombre = alu_nombre;
+    }
+
+    public String getAlu_paterno() {
+        return alu_paterno;
+    }
+
+    public void setAlu_paterno(String alu_paterno) {
+        this.alu_paterno = alu_paterno;
+    }
+
+    public int getEsp_id() {
+        return esp_id;
+    }
+
+    public void setEsp_id(int esp_id) {
+        this.esp_id = esp_id;
+    }
+
+    public String getEsp_nombre() {
+        return esp_nombre;
+    }
+
+    public void setEsp_nombre(String esp_nombre) {
+        this.esp_nombre = esp_nombre;
+    }
+
+    public String getSem_ingreso() {
+        return sem_ingreso;
+    }
+
+    public void setSem_ingreso(String sem_ingreso) {
+        this.sem_ingreso = sem_ingreso;
+    }
+
+    public String getRep_alu_codigo() {
+        return rep_alu_codigo;
+    }
+
+    public void setRep_alu_codigo(String rep_alu_codigo) {
+        this.rep_alu_codigo = rep_alu_codigo;
+    }
+
+    public List<bConvalidacion> getAlumnos() {
+        return alumnos;
+    }
+
+    public void setAlumnos(List<bConvalidacion> alumnos) {
+        this.alumnos = alumnos;
+    }
+
+    public List<BeanConvalidacion> getConvalidaciones() {
+        return convalidaciones;
+    }
+
+    public void setConvalidaciones(List<BeanConvalidacion> convalidaciones) {
+        this.convalidaciones = convalidaciones;
+    }
+
+    public String getOncomplete() {
+        return oncomplete;
+    }
+
+    public void setOncomplete(String oncomplete) {
+        this.oncomplete = oncomplete;
+    }
+
+    private boolean camposVacios() {
+        if (this.alu_codigo.trim().length() == 0
+                && this.alu_paterno.trim().length() == 0
+                && this.alu_materno.trim().length() == 0
+                && this.alu_nombre.trim().length() == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void buscarCursos() {
+        this.setOncomplete("");
+        if (camposVacios()) {
+            this.setOncomplete("javascript:alert('Ingrese algun parametro para la busqueda');");
+        } else {
+            HSAlumnoDAO daoAlumno = (HSAlumnoDAO) ServiceFinder.findBean("SpringHibernateDaoAlumno");
+            HSSemestreDAO daoSemestre = (HSSemestreDAO) ServiceFinder.findBean("SpringHibernateDaoSemestre");
+
+            List<AcAlumno> lAlumnos = daoAlumno.listaCoincidencias(this.alu_codigo,
+                    this.alu_paterno, this.alu_materno, this.alu_nombre);
+
+            List<bConvalidacion> tmp = new ArrayList<bConvalidacion>();
+            for (AcAlumno alu : lAlumnos) {
+                bConvalidacion conv = new bConvalidacion();
+                conv.setAlu_id(alu.getId());
+                conv.setAlu_codigo(alu.getAluCodigo());
+                conv.setAlu_paterno(alu.getAluAppaterno());
+                conv.setAlu_materno(alu.getAluApmaterno());
+                conv.setAlu_nombre(alu.getAluNombres());
+                conv.setEsp_id(alu.getEsp().getId());
+                conv.setEsp_nombre(alu.getEsp().getEspNombre());
+                conv.setSem_ingreso(daoSemestre.getSemestre(alu.getSemId()).getSemNombre());
+
+                tmp.add(conv);
+            }
+            this.setAlumnos(tmp);
+        }
+    }
+
+    public void capturarAlumno(ActionEvent event) {
+        UIParameter tmp_alu_id = (UIParameter) event.getComponent().findComponent("p_alu_id");
+        UIParameter tmp_alu_nom = (UIParameter) event.getComponent().findComponent("p_alu_nom");
+        UIParameter tmp_esp_id = (UIParameter) event.getComponent().findComponent("p_esp_id");
+        UIParameter tmp_esp_nom = (UIParameter) event.getComponent().findComponent("p_esp_nom");
+        UIParameter tmp_sem_nom = (UIParameter) event.getComponent().findComponent("p_sem_nom");
+
+        int p_alu_id = aInterger(tmp_alu_id.getValue().toString());
+        int p_esp_id = aInterger(tmp_esp_id.getValue().toString());
+        String p_alu_nom = tmp_alu_nom.getValue().toString();
+        String p_esp_nom = tmp_esp_nom.getValue().toString();
+        String p_sem_nom = tmp_sem_nom.getValue().toString();
+
+        this.setEsp_id(p_esp_id);
+        this.setEsp_nombre(p_esp_nom);
+        this.setAlu_id(p_alu_id);
+        this.setAlu_nombre(p_alu_nom);
+        this.setSem_ingreso(p_sem_nom);
+
+        HSSeccionDAO dao = (HSSeccionDAO) ServiceFinder.findBean("HibernateSpringDaoSeccion");
+        List<Sp_convalidacion_cursos> tmp = dao.listaConvalidacion(p_esp_id, p_alu_id);
+
+        List<BeanConvalidacion> convs = new ArrayList<BeanConvalidacion>();
+        for (Sp_convalidacion_cursos sp_conv_cur : tmp) {
+            BeanConvalidacion conv = new BeanConvalidacion(sp_conv_cur);
+
+            if (conv.getReg_nota().equalsIgnoreCase("")) {
+                conv.setDisable("true");
+                conv.setActivar(false);
+                conv.setStyle("background: gray;");
+            } else {
+                conv.setActivar(true);
+            }
+            convs.add(conv);
+        }
+        this.setConvalidaciones(convs);
+    }
+
+    private int aInterger(String str) {
+        try {
+            return Integer.parseInt(str.toString());
+        } catch (NumberFormatException nfe) {
+            throw nfe;
+        }
+    }
+
+    private int capturarUsuario() {
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().
+                getExternalContext().getSession(false);
+        int id_usu = ((bUsuario) session.getAttribute("usuario")).getId_usu();
+        return id_usu;
+    }
+
+    public void guardarConvalidacion() {
+        this.setOncomplete("");
+        if (validarNotas()) {
+            HSMatriculaDAO daoMatricula = (HSMatriculaDAO) ServiceFinder.findBean("SpringHibernateDaoMatricula");
+            AcMatricula mat = daoMatricula.seleccionarMatriculaAlumnoConvalidacion(this.alu_id);
+            //Set<AcMatriculaCurso> matcurs=new LinkedHashSet<AcMatriculaCurso>(mat.getAcMatriculaCursos());
+            List<AcMatriculaCurso> matcurs=new ArrayList<AcMatriculaCurso>();
+
+            /*if (mat != null) {
+                matcurs = new LinkedHashSet<AcMatriculaCurso>(mat.getAcMatriculaCursos());
+            } else {
+                mat = new AcMatricula();
+                mat.setAlu(new AcAlumno(this.getAlu_id()));
+                mat.setMatActivo("1");
+                mat.setMatCodigo("MAT-CONV");
+                mat.setMatFecha(new Date());
+                mat.setMatTipo("022001");
+                mat.setSemId(5);
+                mat.setUsuId(this.capturarUsuario());
+                matcurs = new LinkedHashSet<AcMatriculaCurso>();
+            }*/
+            if(mat==null){
+                mat = new AcMatricula();
+                mat.setAlu(new AcAlumno(this.getAlu_id()));
+                mat.setMatActivo("1");
+                mat.setMatCodigo("MAT-CONV");
+                mat.setMatFecha(new Date());
+                mat.setMatTipo("022001");
+                mat.setSemId(5);
+                mat.setUsuId(this.capturarUsuario());
+                daoMatricula.registrarMatricula(mat,3);//3 convalidacion no hacer nada en pagos
+                mat = daoMatricula.seleccionarMatriculaAlumnoConvalidacion(this.alu_id);
+            }
+
+
+            HSActaDAO daoActa = (HSActaDAO) ServiceFinder.findBean("SpringHibernateDaoActa");
+
+            List<AcActaDetalle> tmp_acta_detalle = new ArrayList<AcActaDetalle>();
+            for (BeanConvalidacion bean : convalidaciones) {
+                if(bean.getReg_cur_id()>0 && bean.isActivar()==false){
+                    AcActa acta = daoActa.seleccionarActa(bean.getReg_sec_id(), "036001");
+                    AcActaDetalle detalle=new AcActaDetalle();
+                    detalle.setAct(acta);
+                    detalle.setAluId(this.alu_id);
+                    daoActa.eliminarActaDetalle(detalle);
+
+                    AcMatriculaCurso matcur = new AcMatriculaCurso();
+                    AcSeccion sec=new AcSeccion();
+                    matcur.setMat(mat);
+                    sec.setId(bean.getReg_sec_id());
+                    matcur.setSec(sec);
+                    daoMatricula.eliminarMatriculaCurso(matcur);
+                }
+                if (bean.isActivar()) {
+                    AcMatriculaCurso matcur = new AcMatriculaCurso();
+                    matcur.setMat(mat);
+                    matcur.setMatcurActivo("1");
+                    matcur.setMatcurEstado("033001");
+                    matcur.setMatcurObs(null);
+                    matcur.setSec(new AcSeccion(bean.getReg_sec_id()));
+                    //System.out.println("el id de matricula_curso -> "+bean.getReg_cur_id());
+                    //if(bean.getReg_cur_id()!=null){
+                    //matcur.setId(bean.getReg_cur_id());
+                    //}
+                    if(bean.getReg_cur_id()>0){
+
+                        matcur.setId(bean.getReg_cur_id());
+                        System.out.println("entro aqui");
+                    }
+                    matcurs.add(matcur);
+
+                    AcActa acta = daoActa.seleccionarActa(bean.getReg_sec_id(), "036001");
+                    if (acta == null) {
+                        acta = new AcActa();
+                        acta.setActActivo("1");
+                        acta.setActCodigo(null);
+                        acta.setActCreacion(new Date());
+                        acta.setActNombre(null);
+                        acta.setActNumero(null);
+                        acta.setActTipo("036001");
+                        acta.setSec(new AcSeccion(bean.getReg_sec_id()));
+
+                        daoActa.insertarActa(acta);
+                        acta = daoActa.seleccionarActa(bean.getReg_sec_id(), "036001");
+                    }
+                    AcActaDetalle acta_detalle = new AcActaDetalle();
+
+                    acta_detalle.setId(bean.getReg_actdet_id());
+                    acta_detalle.setAct(acta);
+
+                    acta_detalle.setActdetActivo("1");
+                    acta_detalle.setActdetNota(bean.getNota());
+                    acta_detalle.setActdetTipoNota("034003");
+                    acta_detalle.setAluId(this.alu_id);
+                    acta_detalle.setSisevaDetalleId(0);
+                    tmp_acta_detalle.add(acta_detalle);
+                }
+            }
+            //mat.setAcMatriculaCursos(matcurs);
+
+            //daoMatricula.registrarMatricula(mat);
+            daoMatricula.insertarMatriculaCurso(matcurs);
+            daoActa.insertarActaDetalles(tmp_acta_detalle);
+
+            this.setAlu_paterno("");
+            this.setAlu_materno("");
+            this.setAlu_nombre("");
+            this.setAlu_codigo("");
+            this.setAlu_id(0);
+            this.setEsp_id(0);
+            this.setConvalidaciones(new ArrayList<BeanConvalidacion>());
+            this.setOncomplete("javascript:alert('Convalidacion terminada.');"
+                    + "Richfaces.hideModalPanel('mpConvalidacion')");
+        } else {
+            this.setOncomplete("javascript:alert('Error en la notas, revise por favor.');");
+        }
+    }
+
+    private boolean validarNotas() {
+        for (BeanConvalidacion bean : convalidaciones) {
+            if (bean.isActivar()) {
+                try {
+                    Float f = Float.parseFloat(bean.getReg_nota());
+                    if (f <= 10 || f > 20) {
+                        return false;
+                    } else {
+                        bean.setNota(f);
+                    }
+                } catch (NumberFormatException nfe) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void imprimir(ActionEvent event) {
+        UIParameter aluCodigo = (UIParameter) event.getComponent().findComponent("rep_alu_codigo");
+
+        this.setRep_alu_codigo(String.valueOf(aluCodigo.getValue()));
+    }
+
+    public void reporteBoletaNotas(OutputStream out, Object data)
+            throws IOException, EOFException, SQLException, JRException {
+        if (data.equals("repote_boleta")) {
+            FacesContext context = FacesContext.getCurrentInstance();
+
+            HashMap parametros = new HashMap();
+            parametros.put("logo", context.getExternalContext().getResource("/Imagenes/actions/logo_p.jpg"));
+            parametros.put("alu_codigo", this.getRep_alu_codigo());
+            parametros.put("sem_id", "5");
+
+            String jasper = "/WEB-INF/Reportes/boleta_notas_codigo.jasper";
+
+            Print print = new Print();
+            ByteArrayOutputStream buffer = print.cargar_reporte(jasper, parametros);
+
+            byte[] bytes = buffer.toByteArray();
+
+            InputStream input = new ByteArrayInputStream(bytes);
+
+            int size = input.available();
+            byte[] pdf = new byte[size];
+            input.read(pdf);
+            out.write(pdf);
+
+            buffer.flush();
+            buffer.close();
+            input.close();
+            out.flush();
+            out.close();
+        }
+    }
+}

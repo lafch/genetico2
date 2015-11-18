@@ -1,0 +1,286 @@
+<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %> 
+<%@ taglib uri="http://richfaces.org/rich" prefix="rich"%> 
+<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
+<%@ taglib uri="http://richfaces.org/a4j" prefix="a4j" %>
+
+<html>
+    <head>
+        <meta http-equiv="Expires" content="0" >
+        <meta http-equiv="Last-Modified" content="0">
+        <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="../css/formulario.css" rel="stylesheet" media="screen"/>
+        <title>Mantenimiento de Requisito</title>
+        <script type="text/javascript">
+            function getRightTop(ref) {
+                var position = new Object();
+                position.top = 0; //ref.offsetTop;
+                position.left =0; // ref.offsetLeft+ref.clientWidth+6;
+                return position;
+            }
+        </script>
+    </head>
+    <f:view >
+        <body>
+
+            <jsp:include page="../TablaSistema/Menu.jsp"/>
+            <rich:panel>
+                <h:form id="form1" style="width:100%" >
+                    <table width="100%" style="font-size:10px; font-family:verdana"  cellspacing="0" border="0" cellpadding="0">
+                        <tr>
+                            <td width="20%" colspan="2" ><strong>MANTENIMIENTO DE REQUISITOS</strong></td>
+                            <td width="30%" align="right"> </td>
+                            <td width="30%" align="right">
+
+                            </td>
+
+                            <td>
+
+                            </td>
+                            <td width="30%" align="right">
+                                <h:graphicImage value="/Imagenes/actions/filenew.png" width="16"
+                                                style="border-width: 0px;cursor: pointer;">
+                                    <a4j:support event="onclick"
+                                                 action="#{mBRequisito.nuevo}"
+                                                 oncomplete="#{mBRequisito.oncomplete}"
+                                                 reRender="fRequisito"
+                                                 />
+                                </h:graphicImage>
+                            </td>
+                            <td width="30%" align="right">
+                                <h:graphicImage value="/Imagenes/actions/fileprint.png"
+                                                style="cursor: pointer;"
+                                                title="Imprimir Listado"/>
+                            </td>
+                            <td align=right width="50%">
+                                <a4j:commandButton id="buscar" 
+                                                   image="/Imagenes/actions/viewmag.png"
+                                                   title="Buscar"
+                                                   action="#{mBRequisito.buscarRequisito}"
+                                                   reRender="dtLista" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="7"><hr width="100%" size="1"></td>
+                        </tr>
+                        <tr>
+                            <td width="20%" colspan="7"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <h:outputText value="Descripcion" /><rich:spacer width="15"/>
+                                <h:inputText size="40" value="#{mBRequisito.w_req_descripcion}"/>
+                            </td>
+                            <td colspan="4"></td>
+                        </tr>
+                    </table>
+                </h:form>
+
+                <h:form>
+                    <table aling="center">
+                        <tr>
+                            <td>
+                                <rich:dataTable value="#{mBRequisito.listaRequisito}" var="lista" rowKeyVar="row" 
+                                                id="dtLista" rows="12" width="600">
+                                    <rich:column>
+                                        <f:facet name="header"><h:outputText value="Nro" /> </f:facet>
+                                        <h:outputText value="#{row+1}" />
+                                    </rich:column>
+                                    <rich:column>
+                                        <f:facet name="header"><h:outputText value="Codigo" /> </f:facet>
+                                        <h:outputText value="#{lista.reqCodigo}" />
+                                    </rich:column>
+                                    <rich:column>
+                                        <f:facet name="header"><h:outputText value="Descripcion" /> </f:facet>
+                                        <h:outputText value="#{lista.reqDescripcion}" />
+                                    </rich:column>
+                                    <rich:column>
+                                        <f:facet name="header"><h:outputText value="Tipo" /> </f:facet>
+                                        <h:outputText value="#{lista.reqTipo == '048001'? 'ACADEMICO':'ADMINISTRATIVO'}" />
+                                    </rich:column>
+                                    <rich:column>
+                                        <f:facet name="header"><h:outputText value="Proceso" /> </f:facet>
+                                        <h:outputText value="#{lista.reqProceso}" />
+                                    </rich:column>
+                                    <rich:column>
+                                        <f:facet name="header"><h:outputText value="" /> </f:facet>
+                                        <h:graphicImage value="/Imagenes/actions/no.png" alt="Eliminar" title="Eliminar">
+                                            <a4j:support event="onclick" action="#{mBRequisito.abrirDelete}" oncomplete="#{mBRequisito.oncomplete}">
+                                                <f:setPropertyActionListener target="#{mBRequisito.p_indice}" value="#{row}"/>
+                                            </a4j:support>
+                                        </h:graphicImage>
+                                    </rich:column>
+                                    <rich:column>
+                                        <f:facet name="header"><h:outputText value="" /> </f:facet>
+                                        <h:graphicImage value="/Imagenes/actions/editpaste.png" alt="Modificar" title="Modificar">
+                                            <a4j:support event="onclick" action="#{mBRequisito.seleccionar}" 
+                                                         reRender="fRequisito" oncomplete="#{mBRequisito.oncomplete}">
+                                                <f:setPropertyActionListener target="#{mBRequisito.p_indice}" value="#{row}"/>
+                                            </a4j:support>
+                                        </h:graphicImage>
+                                    </rich:column>
+                                    <f:facet name="footer">
+                                        <rich:datascroller maxPages="10" reRender="dtLista"/>
+                                    </f:facet>
+                                </rich:dataTable>
+                            </td>
+
+                        </tr>
+                    </table>
+                </h:form>
+
+            </rich:panel>
+            <rich:modalPanel id="mpRequisito" autosized="true" zindex="1000">
+                <f:facet name="header">
+                    <h:outputText value="Requisito"/>
+                </f:facet>
+                <f:facet name="controls">
+                    <h:panelGroup>
+                        <h:graphicImage value="/Imagenes/actions/stop.png" style="cursor:pointer" onclick="Richfaces.hideModalPanel('mpRequisito')" title="Cerrar"/>
+                    </h:panelGroup>
+                </f:facet>
+                <a4j:form id="fRequisito">
+                    <table aling="center" width="300px">
+                        <tr>
+                            <td colspan="2" align="right">
+                               
+                                <a4j:commandButton image="/Imagenes/actions/filesave.png" action="#{mBRequisito.grabar}" 
+                                                   reRender="fRequisito,dtLista" oncomplete="#{mBRequisito.oncomplete}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><h:outputText value="Codigo" /></td>
+                            <td><h:inputText value="#{mBRequisito.objRequisito.reqCodigo}" id="iCodigo" required="true"> 
+                                    <f:validateLength minimum="3"/>
+                                </h:inputText>
+                                <rich:message for="iCodigo">
+                                    <f:facet name="errorMarker">
+                                        <h:graphicImage url="/Imagenes/actions/error.png"/>
+                                    </f:facet>
+                                    <f:facet name="passedMarker">
+                                        <h:outputText value=""/>
+                                    </f:facet>    
+                                </rich:message> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><h:outputText value="Descripcion" /></td>
+                            <td><h:inputText value="#{mBRequisito.objRequisito.reqDescripcion}" id="iDescripcion" required="true"> 
+                                    <f:validateLength minimum="3"/>
+                                </h:inputText>
+                                <rich:message for="iDescripcion">
+                                    <f:facet name="errorMarker">
+                                        <h:graphicImage url="/Imagenes/actions/error.png"/>
+                                    </f:facet>
+                                    <f:facet name="passedMarker">
+                                        <h:outputText value=""/>
+                                    </f:facet>    
+                                </rich:message> 
+                            
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><h:outputText value="Tipo" /></td>
+                            <td>
+                                <h:selectOneMenu value="#{mBRequisito.objRequisito.reqTipo}" id="iTipo">
+                                    <f:selectItems value="#{mBRequisito.cboTipo}"/>
+                                    <f:validateDoubleRange minimum="1"/>
+                                </h:selectOneMenu>
+                                <rich:message for="iTipo">
+                                    <f:facet name="errorMarker">
+                                        <h:graphicImage url="/Imagenes/actions/error.png"/>
+                                    </f:facet>
+                                    <f:facet name="passedMarker">
+                                        <h:outputText value=""/>
+                                    </f:facet>    
+                                </rich:message>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><h:outputText value="Proceso" /></td>
+                            <td>
+                                <h:selectOneMenu value="#{mBRequisito.objRequisito.reqProceso}" id="iProceso" immediate="true">
+                                    <f:selectItems value="#{mBRequisito.cboProceso}"/>
+                                    <a4j:support event="onchange" reRender="pgTipo,iExtra" />
+                                    <f:validateDoubleRange minimum="1"/>
+                                </h:selectOneMenu>
+                                <rich:message for="iProceso">
+                                    <f:facet name="errorMarker">
+                                        <h:graphicImage url="/Imagenes/actions/error.png"/>
+                                    </f:facet>
+                                    <f:facet name="passedMarker">
+                                        <h:outputText value=""/>
+                                    </f:facet>    
+                                </rich:message>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><h:outputText value="#{mBRequisito.objRequisito.reqProceso == '1'? 'Documento': mBRequisito.objRequisito.reqProceso == '3'? 'Concepto':''}" id="iExtra" /></td>
+                            <td>
+                                <h:panelGroup id="pgTipo">
+                                    <h:panelGroup rendered="#{mBRequisito.objRequisito.reqProceso == '1'}">
+                                        <h:selectOneMenu value="#{mBRequisito.objRequisito.reqCodigoDescriptivo}" 
+                                                         id="iDocumento" immediate="true" >
+                                            <f:selectItems value="#{mBRequisito.cboDocumento}"/>
+                                            <f:validateDoubleRange minimum="1"/>
+                                        </h:selectOneMenu>
+                                        <rich:message for="iDocumento">
+                                            <f:facet name="errorMarker">
+                                                <h:graphicImage url="/Imagenes/actions/error.png"/>
+                                            </f:facet>
+                                            <f:facet name="passedMarker">
+                                                <h:outputText value=""/>
+                                            </f:facet>    
+                                        </rich:message>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{mBRequisito.objRequisito.reqProceso == '3'}">
+                                        <h:selectOneMenu  id="iConcepto" value="#{mBRequisito.objRequisito.conId}" immediate="true">
+                                            <f:selectItems value="#{mBRequisito.cboConcepto}"  />
+                                         <f:validateDoubleRange minimum="1"/>
+                                        </h:selectOneMenu>
+                                        <rich:message for="iConcepto">
+                                            <f:facet name="errorMarker">
+                                                <h:graphicImage url="/Imagenes/actions/error.png"/>
+                                            </f:facet>
+                                            <f:facet name="passedMarker">
+                                                <h:outputText value=""/>
+                                            </f:facet>    
+                                        </rich:message>
+                                    </h:panelGroup>
+                                    
+                                </h:panelGroup>
+                            </td>
+                        </tr>
+                    </table>
+                </a4j:form>
+            </rich:modalPanel>
+            <rich:modalPanel id="mpDelete" zindex="1000">
+                <f:facet name="header">
+                    <h:outputText value="Eliminar Registro"/>
+                </f:facet>
+                <f:facet name="controls">
+                    <h:panelGroup>
+                        <h:graphicImage value="/Imagenes/actions/stop.png" style="cursor:pointer" onclick="Richfaces.hideModalPanel('mpDelete')" title="Cerrar"/>
+                    </h:panelGroup>
+                </f:facet>
+                <a4j:form>
+                    <table align="center">
+                        <tr>
+                            <td><h:outputText value="Desea Eliminar el Registro?"/> </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <a4j:commandButton value="No" oncomplete="Richfaces.hideModalPanel('mpDelete')" /><rich:spacer width="15" />
+                                <a4j:commandButton value="Si" action="#{mBRequisito.eliminar}"
+                                                   oncomplete="#{mBRequisito.oncomplete}" reRender="dtLista" />
+                            </td>
+                        </tr>
+                    </table>
+                </a4j:form>
+            </rich:modalPanel>
+
+        </body>
+    </f:view>
+</html>  
+

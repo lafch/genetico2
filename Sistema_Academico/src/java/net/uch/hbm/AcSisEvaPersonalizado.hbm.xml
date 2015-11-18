@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcSisEvaPersonalizado"
+        table="ac_sis_eva_personalizado"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="siseva_per_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="SisevaPerNombre"
+            column="siseva_per_nombre"
+            type="string"
+            not-null="false"
+            length="100"
+            />
+        <property
+            name="SisevaPerExaSemana"
+            column="siseva_per_exa_semana"
+            type="string"
+            not-null="false"
+            length="2"
+            />
+        <property
+            name="SisevaCodigo"
+            column="siseva_codigo"
+            type="string"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="SisevaPerPeso"
+            column="siseva_per_peso"
+            type="string"
+            not-null="false"
+            length="2"
+            />
+        <property
+            name="SisevaPerOrden"
+            column="siseva_per_orden"
+            type="integer"
+            not-null="false"
+            />
+        <property
+            name="SisevaPerActivo"
+            column="siseva_per_activo"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="SisevaPerAluTipo"
+            column="siseva_per_alu_tipo"
+            type="string"
+            not-null="false"
+            length="6"
+            />
+        <!-- nuevo implementado para nuevo sistema de evaluacion -->
+        <property
+            name="SisevaPerTipoNota"
+            column="siseva_per_tnota"
+            type="string"
+            not-null="false"
+            length="100"
+            />
+        <property
+            name="SisevaPerAgrupar"
+            column="siseva_per_agrupar"
+            type="string"
+            not-null="false"
+            length="100"
+            />
+        <property
+            name="SisevaPerSemestreEtapa"
+            column="siseva_per_setapa"
+            type="string"
+            not-null="false"
+            length="100"
+            />
+        
+        <many-to-one
+            name="Curape"
+            column="curape_id"
+            class="AcCursoAperturado"
+            not-null="true"
+            >
+        </many-to-one>
+        <many-to-one
+            name="SisevaDetalle"
+            column="siseva_detalle_id"
+            class="AcSisEvaDetalle"
+            not-null="true"
+            >
+        </many-to-one>
+
+
+        <set name="AcNotas" inverse="true" cascade="all">
+            <key column="siseva_per_id"/>
+            <one-to-many class="AcNota"/>
+        </set>
+
+        <!--
+        <set name="ClNotas" inverse="true" cascade="all">
+            <key column="siseva_per_id"/>
+            <one-to-many class="ClNota"/>
+        </set>
+        -->
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,32 @@
+package net.uch.cursoLibre.hibernateSpringDao;
+
+import java.util.List;
+import net.uch.mapping.ClAlumno;
+import net.uch.mapping.ClHoraria;
+
+public interface HSHorarioDAO {
+
+    public List<ClHoraria> seleccionarHorario( int sec_id ) throws Exception;
+    
+    //public List<ClHoraria> seleccionarHorarioAsignatura(int sec_id, int asig_id) throws Exception;
+
+    public void insertarHorario( ClHoraria horario ) throws Exception;
+
+    public void actualizarHorario( ClHoraria horario ) throws Exception;
+
+    public void insertarActualizarHorarios( List<ClHoraria> horarias );
+
+    public void eliminarHorario( int hor_id ) throws Exception;
+
+    public void eliminarHorarios( List<Integer> hor_ids );
+
+    public void eliminarHorariosPorSecId( int iSecId );
+
+    public List<ClAlumno> matriculadosSeccion( int sec_id );
+
+    public List<ClAlumno> prematriculadosSeccion( int sec_id );
+
+    public List seleccionarHorariosXTallerApe( int tal_id ) throws Exception;
+    
+    public List<ClHoraria> seleccionarHorarioAsignatura( int sec_id, int asig_id ) throws Exception;
+}

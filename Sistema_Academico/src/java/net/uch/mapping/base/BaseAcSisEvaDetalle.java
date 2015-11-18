@@ -1,0 +1,276 @@
+package net.uch.mapping.base;
+
+import java.io.Serializable;
+
+/**
+ * This is an object that contains data related to the ac_sis_eva_detalle table.
+ * Do not modify this class because it will be overwritten if the configuration
+ * file related to this class is modified.
+ *
+ * @hibernate.class table="ac_sis_eva_detalle"
+ */
+public abstract class BaseAcSisEvaDetalle implements Serializable {
+
+    public static String REF = "AcSisEvaDetalle";
+    public static String PROP_SISEVA_DETALLE_CODIGO = "SisevaDetalleCodigo";
+    public static String PROP_SISEVA_DETALLE_ACTIVO = "SisevaDetalleActivo";
+    public static String PROP_SISEVA_DETALLE_SUSTI = "SisevaDetalleSusti";
+    public static String PROP_SISEVA_DETALLE_NOMBRE = "SisevaDetalleNombre";
+    public static String PROP_ID = "Id";
+    public static String PROP_SISEVA_DETALLE_PESO = "SisevaDetallePeso";
+    public static String PROP_SISEVA_DETALLE_TNOTA = "SisevaDetalleTipoNota";
+    public static String PROP_SISEVA_DETALLE_AGRUPAR = "SisevaDetalleAgrupar";
+    public static String PROP_SISEVA_DETALLE_SETAPA = "SisevaDetalleSemestreEtapa";
+    public static String PROP_SISEVA = "Siseva";
+
+    // constructors
+    public BaseAcSisEvaDetalle() {
+        initialize();
+    }
+
+    /**
+     * Constructor for primary key
+     */
+    public BaseAcSisEvaDetalle( java.lang.Integer id ) {
+        this.setId( id );
+        initialize();
+    }
+
+    /**
+     * Constructor for required fields
+     */
+    public BaseAcSisEvaDetalle(
+            java.lang.Integer id,
+            net.uch.mapping.AcSisEvaluacion siseva ) {
+
+        this.setId( id );
+        this.setSiseva( siseva );
+        initialize();
+    }
+
+    public BaseAcSisEvaDetalle(
+            java.lang.Integer id,
+            net.uch.mapping.AcSisEvaluacion siseva, java.lang.String sisevaDetalleActivo ) {
+
+        this.setId( id );
+        this.setSiseva( siseva );
+        this.setSisevaDetalleActivo( sisevaDetalleActivo );
+        initialize();
+    }
+
+    protected void initialize() {
+    }
+    private int hashCode = Integer.MIN_VALUE;
+    // primary key
+    private java.lang.Integer id;
+    // fields
+    private java.lang.String sisevaDetalleCodigo;
+    private java.lang.String sisevaDetalleNombre;
+    private java.lang.Integer sisevaDetallePeso;
+    private java.lang.String sisevaDetalleActivo;
+    private java.lang.String sisevaDetalleSusti;
+    //fields nuevos para sistema de evaluacion agrupacion
+    private java.lang.String sisevaDetalleAgrupar;
+    private java.lang.String sisevaDetalleTipoNota;
+    private java.lang.String sisevaDetalleSemestreEtapa;
+    // many to one
+    private net.uch.mapping.AcSisEvaluacion siseva;
+    // collections
+    private java.util.Set<net.uch.mapping.AcSisEvaPersonalizado> acSisEvaPersonalizados;
+
+    /**
+     * Return the unique identifier of this class
+     *
+     * @hibernate.id generator-class="native" column="siseva_detalle_id"
+     */
+    public java.lang.Integer getId() {
+        return id;
+    }
+
+    /**
+     * Set the unique identifier of this class
+     *
+     * @param id the new ID
+     */
+    public void setId( java.lang.Integer id ) {
+        this.id = id;
+        this.hashCode = Integer.MIN_VALUE;
+    }
+
+    /**
+     * Return the value associated with the column: siseva_detalle_codigo
+     */
+    public java.lang.String getSisevaDetalleCodigo() {
+        return sisevaDetalleCodigo;
+    }
+
+    /**
+     * Set the value related to the column: siseva_detalle_codigo
+     *
+     * @param sisevaDetalleCodigo the siseva_detalle_codigo value
+     */
+    public void setSisevaDetalleCodigo( java.lang.String sisevaDetalleCodigo ) {
+        this.sisevaDetalleCodigo = sisevaDetalleCodigo;
+    }
+
+    /**
+     * Return the value associated with the column: siseva_detalle_nombre
+     */
+    public java.lang.String getSisevaDetalleNombre() {
+        return sisevaDetalleNombre;
+    }
+
+    /**
+     * Set the value related to the column: siseva_detalle_nombre
+     *
+     * @param sisevaDetalleNombre the siseva_detalle_nombre value
+     */
+    public void setSisevaDetalleNombre( java.lang.String sisevaDetalleNombre ) {
+        this.sisevaDetalleNombre = sisevaDetalleNombre;
+    }
+
+    /**
+     * Return the value associated with the column: siseva_detalle_peso
+     */
+    public java.lang.Integer getSisevaDetallePeso() {
+        return sisevaDetallePeso;
+    }
+
+    /**
+     * Set the value related to the column: siseva_detalle_peso
+     *
+     * @param sisevaDetallePeso the siseva_detalle_peso value
+     */
+    public void setSisevaDetallePeso( java.lang.Integer sisevaDetallePeso ) {
+        this.sisevaDetallePeso = sisevaDetallePeso;
+    }
+
+    /**
+     * Return the value associated with the column: siseva_detalle_activo
+     */
+    public java.lang.String getSisevaDetalleActivo() {
+        return sisevaDetalleActivo;
+    }
+
+    /**
+     * Set the value related to the column: siseva_detalle_activo
+     *
+     * @param sisevaDetalleActivo the siseva_detalle_activo value
+     */
+    public void setSisevaDetalleActivo( java.lang.String sisevaDetalleActivo ) {
+        this.sisevaDetalleActivo = sisevaDetalleActivo;
+    }
+
+    /**
+     * Return the value associated with the column: siseva_detalle_activo
+     */
+    public java.lang.String getSisevaDetalleSusti() {
+        return sisevaDetalleSusti;
+    }
+
+    /**
+     * Set the value related to the column: siseva_detalle_activo
+     *
+     * @param sisevaDetalleActivo the siseva_detalle_activo value
+     */
+    public void setSisevaDetalleSusti( java.lang.String sisevaDetalleSusti ) {
+        this.sisevaDetalleSusti = sisevaDetalleSusti;
+    }
+
+    public java.lang.String getSisevaDetalleAgrupar() {
+        return sisevaDetalleAgrupar;
+    }
+
+    public void setSisevaDetalleAgrupar( String sisevaDetalleAgrupar ) {
+        this.sisevaDetalleAgrupar = sisevaDetalleAgrupar;
+    }
+
+    public java.lang.String getSisevaDetalleTipoNota() {
+        return sisevaDetalleTipoNota;
+    }
+
+    public void setSisevaDetalleTipoNota( String sisevaDetalleTipoNota ) {
+        this.sisevaDetalleTipoNota = sisevaDetalleTipoNota;
+    }
+    
+    public java.lang.String getSisevaDetalleSemestreEtapa() {
+        return sisevaDetalleSemestreEtapa;
+    }
+
+    public void setSisevaDetalleSemestreEtapa( String sisevaDetalleSemestreEtapa ) {
+        this.sisevaDetalleSemestreEtapa = sisevaDetalleSemestreEtapa;
+    }
+    
+    
+
+    /**
+     * Return the value associated with the column: siseva_id
+     */
+    public net.uch.mapping.AcSisEvaluacion getSiseva() {
+        return siseva;
+    }
+
+    /**
+     * Set the value related to the column: siseva_id
+     *
+     * @param siseva the siseva_id value
+     */
+    public void setSiseva( net.uch.mapping.AcSisEvaluacion siseva ) {
+        this.siseva = siseva;
+    }
+
+    /**
+     * Return the value associated with the column: AcSisEvaPersonalizados
+     */
+    public java.util.Set<net.uch.mapping.AcSisEvaPersonalizado> getAcSisEvaPersonalizados() {
+        return acSisEvaPersonalizados;
+    }
+
+    /**
+     * Set the value related to the column: AcSisEvaPersonalizados
+     *
+     * @param acSisEvaPersonalizados the AcSisEvaPersonalizados value
+     */
+    public void setAcSisEvaPersonalizados( java.util.Set<net.uch.mapping.AcSisEvaPersonalizado> acSisEvaPersonalizados ) {
+        this.acSisEvaPersonalizados = acSisEvaPersonalizados;
+    }
+
+    public void addToAcSisEvaPersonalizados( net.uch.mapping.AcSisEvaPersonalizado acSisEvaPersonalizado ) {
+        if ( null == getAcSisEvaPersonalizados() ) {
+            setAcSisEvaPersonalizados( new java.util.TreeSet<net.uch.mapping.AcSisEvaPersonalizado>() );
+        }
+        getAcSisEvaPersonalizados().add( acSisEvaPersonalizado );
+    }
+
+    public boolean equals( Object obj ) {
+        if ( null == obj ) {
+            return false;
+        }
+        if ( !( obj instanceof net.uch.mapping.AcSisEvaDetalle ) ) {
+            return false;
+        } else {
+            net.uch.mapping.AcSisEvaDetalle acSisEvaDetalle = (net.uch.mapping.AcSisEvaDetalle)obj;
+            if ( null == this.getId() || null == acSisEvaDetalle.getId() ) {
+                return false;
+            } else {
+                return ( this.getId().equals( acSisEvaDetalle.getId() ) );
+            }
+        }
+    }
+
+    public int hashCode() {
+        if ( Integer.MIN_VALUE == this.hashCode ) {
+            if ( null == this.getId() ) {
+                return super.hashCode();
+            } else {
+                String hashStr = this.getClass().getName() + ":" + this.getId().hashCode();
+                this.hashCode = hashStr.hashCode();
+            }
+        }
+        return this.hashCode;
+    }
+
+    public String toString() {
+        return super.toString();
+    }
+}

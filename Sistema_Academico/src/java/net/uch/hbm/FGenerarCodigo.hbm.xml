@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="net.uch.mapping">
+  <class name="net.uch.mapping.Sp_generar_codigo">
+    <id column="codigo" name="codigo">
+      <generator class="native"/>
+    </id>
+    <property column="codigocl" name="codigocl" not-null="true"/>
+  </class>
+  <sql-query callable="true" name="sp_Generar_Codigo">
+        <return alias="codigos" class="net.uch.mapping.Sp_generar_codigo" lock-mode="read ">
+      <return-property column="codigo" name="codigo"/>
+      <return-property column="codigocl" name="codigocl"/>
+    </return>
+        {call sp_Generar_Codigo()}
+    </sql-query>
+</hibernate-mapping>

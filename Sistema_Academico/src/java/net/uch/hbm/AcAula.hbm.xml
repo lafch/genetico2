@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcAula"
+        table="ac_aula"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="aul_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="AulDes"
+            column="aul_des"
+            type="string"
+            not-null="true"
+            length="50"
+            />
+        <property
+            name="AulCap"
+            column="aul_cap"
+            type="integer"
+            not-null="true"
+            length="10"
+            />
+        
+        <property
+            name="AulTipo"
+            column="aul_tipo"
+            type="string"
+            not-null="true"
+            length="255"
+            />
+        <property
+            name="AulActivo"
+            column="aul_activo"
+            type="string"
+            not-null="true"
+            length="1"
+            />
+        <many-to-one
+            name="Pab"
+            column="pab_id"
+            class="AcPabellon"
+            not-null="true"
+            >
+        </many-to-one>
+        
+        <many-to-one
+            name="Esp"
+            column="esp_id"
+            class="AcEspecialidad"
+            not-null="false"
+            lazy="false"
+            >
+        </many-to-one>
+
+
+        <set name="AcHorarios" inverse="true">
+            <key column="aul_id"/>
+            <one-to-many class="AcHorario"/>
+        </set>
+
+
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="TbAsistencia"
+		table="tb_asistencia"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="asis_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="AsisCodigo"
+			column="asis_codigo"
+			type="string"
+			not-null="true"
+			length="10"
+		/>
+		<property
+			name="AsisDia"
+			column="asis_dia"
+			type="timestamp"
+			not-null="true"
+		/>
+		<property
+			name="HoraEntrada"
+			column="hora_entrada"
+			type="time"
+			not-null="true"
+		/>
+		<property
+			name="HoraSalida"
+			column="hora_salida"
+			type="time"
+			not-null="false"
+		/>
+
+
+	</class>	
+</hibernate-mapping>

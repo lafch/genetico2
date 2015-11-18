@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcSeccion"
+        table="ac_seccion"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="sec_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="SecCodigo"
+            column="sec_codigo"
+            type="string"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="SecNombre"
+            column="sec_nombre"
+            type="string"
+            not-null="false"
+            length="50"
+            />
+        <property
+            name="SecVacantes"
+            column="sec_vacantes"
+            type="integer"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="SecActivo"
+            column="sec_activo"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <many-to-one
+            name="Curape"
+            column="curape_id"
+            class="AcCursoAperturado"
+            not-null="true"
+            >
+        </many-to-one>
+
+
+        <set name="AcMatriculaCursos" inverse="true">
+            <key column="sec_id"/>
+            <one-to-many class="AcMatriculaCurso"/>
+        </set>
+
+        <set name="AcHorarios" inverse="true">
+            <key column="sec_id"/>
+            <one-to-many class="AcHorario"/>
+        </set>
+
+
+    </class>
+</hibernate-mapping>

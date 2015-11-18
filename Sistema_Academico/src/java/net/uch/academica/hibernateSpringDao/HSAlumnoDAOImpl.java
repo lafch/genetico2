@@ -1,0 +1,213 @@
+package net.uch.academica.hibernateSpringDao;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import net.uch.mapping.*;
+import net.uch.util.Print;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.dao.DataAccessException;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+public class HSAlumnoDAOImpl extends HibernateDaoSupport implements HSAlumnoDAO {
+
+    @Override
+    public void insertarAlumno(AcAlumno alu) throws DataAccessException {
+        this.getHibernateTemplate().save(alu);
+    }
+
+    @Override
+    public List seleccionarAlumno(String codigo, String paterno, String materno, String nombre, int facu, int espe) throws DataAccessException, java.sql.SQLException {
+        Criteria criteria = this.getSession().createCriteria(AcAlumno.class).add(Restrictions.like("AluCodigo", "%" + codigo + "%")).add(Restrictions.like("AluAppaterno", "%" + paterno + "%")).add(Restrictions.like("AluApmaterno", "%" + materno + "%")).add(Restrictions.like("AluNombres", "%" + nombre + "%")).add(Restrictions.eq("AluActivo", "1"));
+        if (espe != 0) {
+            criteria.add(Restrictions.eq("Esp.Id", espe));
+        }
+        return criteria.list();
+    }
+
+    @Override
+    public void eliminarAlumno(String id) throws DataAccessException {
+        String hqlUpdate = "update AcAlumno set AluActivo = :v_activo where Id = :v_id";
+        this.getSession().createQuery(hqlUpdate).setString("v_activo", "0").setString("v_id", id).executeUpdate();
+    }
+
+    @Override
+    public void actualizarAlumno(AcAlumno alu) throws DataAccessException {
+        this.getHibernateTemplate().update(alu);
+    }
+
+    @Override
+    public List seleccionarAlumnoEstPago(int esp_id, String tipo, int sem_id, int sem_id_actual) throws DataAccessException {
+        
+        String sQuery;
+        Query query;
+        sQuery =  " select * from ac_alumno WHERE "
+                + " ac_alumno.sem_id=:v_sem_id and ac_alumno.alu_activo=1 and ac_alumno.esp_id=:v_esp_id and ac_alumno.alu_tipo=:v_tipo "
+                + " and ac_alumno.alu_id not in( "
+                + " select DISTINCT ac_alumno.alu_id from ac_alumno "
+                + " inner join ad_alumno_tarifa on ad_alumno_tarifa.alu_id=ac_alumno.alu_id "
+                + " inner join ad_estructura_pagos_detalle on ad_estructura_pagos_detalle.estpagdet_id=ad_alumno_tarifa.estpagdet_id "
+                + " inner join ad_estructura_pagos on ad_estructura_pagos.estpag_id=ad_estructura_pagos_detalle.estpag_id "
+                + " where ac_alumno.sem_id=:v_sem_id and ac_alumno.alu_activo=1 and ac_alumno.esp_id=:v_esp_id and ac_alumno.alu_tipo=:v_tipo and ad_alumno_tarifa.alutar_activo=1 "
+                + " and ad_estructura_pagos.sem_id=:v_sem_id_actual and ad_estructura_pagos.estpag_activo=1 "
+                + " and ad_estructura_pagos_detalle.estpagdet_activo=1 ) and ac_alumno.alu_id not in( "
+                + " select ac_egresados.alu_id from ac_egresados )";
+
+        return this.getSession().createSQLQuery( sQuery ).addEntity( AcAlumno.class ).setInteger( "v_esp_id", esp_id ).setInteger( "v_sem_id", sem_id ).setInteger( "v_sem_id_actual", sem_id_actual ).setString("v_tipo", tipo).list();
+
+        //return this.getSession().createCriteria(AcAlumno.class).add(Expression.eq("Esp.Id", id_esp)).add(Expression.eq("AluTipo", tipo)).add(Expression.eq("AluActivo", "1")).add(Restrictions.eq("SemId", sem_id)).list();
+    }
+
+    @Override
+    public List seleccionarAlumnoCliente(String buscar) throws DataAccessException {
+        return this.getSession().createCriteria(AcAlumno.class).add(Restrictions.eq("AluActivo", "1")).add(Restrictions.like("AluAppaterno", "%" + buscar + "%")).addOrder(Order.asc("Id")).list();
+    }
+
+    @Override
+    public AcAlumno seleccionarAlumno(int id) throws Exception {
+        return (AcAlumno) this.getSession().createCriteria(AcAlumno.class).
+                add(Restrictions.eq("Id", id)).uniqueResult();
+    }
+
+    @Override
+    public List seleccionarUnAlumno(int id) throws DataAccessException {
+        return this.getSession().createCriteria(AcAlumno.class).
+                add(Restrictions.eq("AluActivo", "1")).
+                add(Restrictions.eq("Id", id)).list();
+    }
+
+    @Override
+    public List seleccionarEstPagx() throws DataAccessException, java.sql.SQLException {
+        return this.getSession().createCriteria(AdEstructuraPagos.class).add(Expression.eq("EstpagActivo", "1")).list();
+    }
+
+    @Override
+    public List seleccionarAlumnoEstPagoUnico(int id) throws DataAccessException {
+        return this.getSession().createCriteria(AcAlumno.class).add(Expression.eq("Id", id)).add(Expression.eq("AluActivo", "1")).list();
+    }
+
+    @Override
+    public String MaximoCodigo() throws DataAccessException {
+        List lista;
+        String codMax;
+        String hqlUpdate = " select max(substring(AluCodigo,5 ,8)) from AcAlumno ";
+        lista = this.getSession().createQuery(hqlUpdate).list();
+        if (lista.size() != 0) {
+            Object[] O;
+            codMax = lista.get(0).toString();
+            System.out.println("valorr " + codMax);
+        } else {
+            codMax = "0000";
+        }
+        return codMax;
+    }
+
+    @Override
+    public InputStream imprimirAsistencia() {
+//        List alumnos = this.getSession().createCriteria(AcAlumno.class).list();
+//        JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(alumnos);
+        HashMap parameters = new HashMap();
+        parameters.put("especialidad", new String("123"));
+        Print print = new Print();
+        byte[] bytes = print.cargar_reporte("/WEB-INF/Reportes/comprobante.jasper", parameters).toByteArray();
+        InputStream in = new ByteArrayInputStream(bytes);
+        return in;
+    }
+
+    @Override
+    public List seleccionarAlumnoSeccion(int sec_id) {
+        return this.getSession().createCriteria(AcAlumno.class).add(Restrictions.eq("AluActivo", "1")).addOrder(Order.asc("AluAppaterno")).addOrder(Order.asc("AluApmaterno")).addOrder(Order.asc("AluNombres")).createCriteria("AcNotas").add(Restrictions.eq("SecId", sec_id)).list();
+    }
+
+    @Override
+    public List listarAlumnoxSeccion(int sec_id) {
+        List listas = this.getSession().createCriteria(AcAlumno.class, "alu").add(Restrictions.eq("alu.AluActivo", "1")).createCriteria("alu.AcMatriculas", "mat").add(Restrictions.eq("mat.MatTipo", "022001")).add(Restrictions.eq("mat.MatActivo", "1")).createCriteria("mat.AcMatriculaCursos", "matriCur").add(Restrictions.eq("matriCur.Sec.Id", sec_id)).addOrder(Order.asc("alu.AluAppaterno")).list();
+        return listas;
+    }
+
+    @Override
+    public AcAlumno buscarAlumnoCodigo(String codigo) {
+        return (AcAlumno) this.getSession().createCriteria(AcAlumno.class).
+                add(Restrictions.and(
+                Restrictions.eq("AluActivo", "1"),
+                Restrictions.eq("AluCodigo", codigo))).uniqueResult();
+    }
+
+    @Override
+    public List<AcAlumno> listaCoincidencias(String codigo, String paterno, String materno, String nombre) {
+        Criteria c = this.getSession().createCriteria(AcAlumno.class).
+                add(Restrictions.eq("AluActivo", "1"));
+        if (paterno.trim().length() != 0) {
+            c.add(Restrictions.like("AluAppaterno", paterno.trim() + "%"));
+        }
+        if (materno.trim().length() != 0) {
+            c.add(Restrictions.like("AluApmaterno", materno.trim() + "%"));
+        }
+        if (nombre.trim().length() != 0) {
+            c.add(Restrictions.like("AluNombres", "%" + nombre.trim() + "%"));
+        }
+        if (codigo.trim().length() != 0) {
+            c.add(Restrictions.eq("AluCodigo", codigo));
+        }
+        c.addOrder(Order.asc("AluAppaterno")).
+                addOrder(Order.asc("AluApmaterno"));
+
+        return c.list();
+    }
+
+    @Override
+    public List<AcAlumno> listarAlumnosporDato(String dato) {
+        List lista;
+        String hqlSelect="select Id, AluCodigo, AluAppaterno, AluApmaterno, AluNombres from AcAlumno where concat(AluAppaterno,' ',AluApmaterno) like concat('%',:v_dato,'%') and AluActivo= :v_activo";
+        lista=this.getSession().createQuery(hqlSelect).setString("v_dato", dato).setString("v_activo", "1").list();
+        return lista;
+    }
+
+    @Override
+    public int buscarAlumnoFicha(int alu_id) {
+        int v_econtrado=0;
+         List lista=this.getSession().createCriteria(TbAlumnoFicha.class).add(Restrictions.eq("aluId", alu_id))
+                 .add(Restrictions.eq("ficActivo", "1")).list();
+         v_econtrado=lista.size();
+         return v_econtrado;
+    }
+
+    @Override
+    public List<Sp_creditosPorCicloByAluId> creditosPorCicloAlumno(Integer aluId) {
+        Query query = this.getSession().getNamedQuery("sp_creditosPorCicloByAluId").
+                setInteger("p_alu_id", aluId);
+
+        return query.list();
+    }
+
+    @Override
+    public List<Sp_cursosPorAlumno> cursosPorAlumno(Integer aluId) throws DataAccessException{
+        Query query = null;
+        try {
+            query = this.getSession().getNamedQuery("sp_cursosPorAlumno").
+                setInteger("p_alu_id", aluId);
+        } 
+        catch (Exception e) {
+            System.out.println("erro ->> "+e);
+            e.printStackTrace();
+        }
+        
+
+        return query.list();
+    }
+
+    @Override
+    public List<AcAlumno> buscarAlumnos(AcAlumno acAlumno) {
+        List<AcAlumno> lista=new ArrayList<AcAlumno>();
+        String hql="from AcAlumno where AluAppaterno like concat('%',:v_paterno,'%') and ";
+        return lista;
+    }
+
+
+}

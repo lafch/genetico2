@@ -1,0 +1,396 @@
+<%-- 
+    Document   : monitorearDesercion
+    Created on : 29-may-2013, 9:21:06
+    Author     : JTEJADA
+--%>
+<%@ taglib uri="http://richfaces.org/rich" prefix="rich"%> 
+<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
+<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
+<%@ taglib uri="http://richfaces.org/a4j" prefix="a4j" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Monitoreo de deserción de estudiantes</title>
+    </head>
+    <f:view>
+        <body>
+            <jsp:include page="../TablaSistema/Menu.jsp"></jsp:include>
+            <rich:panel>
+                <h:form id="frmFiltroMonitDeserc" style="width:100%">
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0" style="font-size:10px; font-family:verdana">
+                        <tr>
+                            <td width="100%" colspan="10">
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                    <tr>
+                                        <td align="left"><h:outputText value="MONITOREO DE DESERCIÓN DE ESTUDIANTES" style="font-weight: bold;"/></td>
+                                        <td align="right">
+                                            <a4j:status>
+                                                <f:facet name="start">
+                                                    <h:graphicImage  value="/Imagenes/actions/loading2.gif"/>
+                                                </f:facet>
+                                            </a4j:status>
+                                            <rich:spacer width="8px"/>
+                                            <h:commandButton image="/Imagenes/actions/viewmag.png" title="Buscar"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr style="height: 20px;">
+                            <td colspan="10">
+                                <hr size="1" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="10%">
+                                <h:outputText value="Institución :" />
+                            </td>
+                            <td colspan="9" align="left">
+                                <h:selectOneMenu value="#{managerMonitoreoDesercion.instId}" >
+                                    <f:selectItems value="#{managerMonitoreoDesercion.cboInstituciones}" />
+                                    <a4j:support event="onchange" reRender="cboAreas,cboModulos"/>
+                                </h:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="10%">
+                                <h:outputText value="Área :" />
+                            </td>
+                            <td colspan="9" align="left">
+                                <h:selectOneMenu id="cboAreas" value="#{managerMonitoreoDesercion.areaId}" >
+                                    <f:selectItems value="#{managerMonitoreoDesercion.cboAreas}" />
+                                    <a4j:support event="onchange" reRender="cboModulos"/>
+                                </h:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="10%">
+                                <h:outputText value="Módulo :" />
+                            </td>
+                            <td colspan="9" align="left">
+                                <h:selectOneMenu id="cboModulos" value="#{managerMonitoreoDesercion.moduloId}" >
+                                    <f:selectItems value="#{managerMonitoreoDesercion.cboModulos}" />
+                                    <a4j:support event="onchange" reRender="cboCursos"/>
+                                </h:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="10%">
+                                <h:outputText value="Curso :" />
+                            </td>
+                            <td colspan="9" align="left">
+                                <h:selectOneMenu id="cboCursos" value="#{managerMonitoreoDesercion.cursoId}" >
+                                    <f:selectItems value="#{managerMonitoreoDesercion.cboCurso}" />
+                                    <a4j:support event="onchange" reRender="frmTbDesertores"/>
+                                </h:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="10%">
+                                <h:outputText value="Alumno :" />
+                            </td>
+                            <td colspan="9" align="left">
+                                <h:inputText value="#{managerMonitoreoDesercion.nomApeFiltro}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="10%">
+                                <h:outputText value="Núm. Tlf. :" />
+                            </td>
+                            <td colspan="9" align="left">
+                                <h:inputText value="#{managerMonitoreoDesercion.numTlfFiltro}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="10%">
+                                <h:outputText value="Desactivados:" />
+                            </td>
+                            <td colspan="2" align="left" width="12%">
+                                <h:selectManyCheckbox value="#{managerMonitoreoDesercion.selectedItems}">
+                                    <f:selectItem itemValue="0" itemLabel="Activar" />
+                                </h:selectManyCheckbox>
+                            </td>
+                            <td width="5%" align="left">
+                                <h:outputText value="Interesados:" />
+                            </td>
+                            <td colspan="6" align="left">
+                                <h:selectManyCheckbox value="#{managerMonitoreoDesercion.selectedItems2}">
+                                    <f:selectItem itemValue="0" itemLabel="Activar" />
+                                </h:selectManyCheckbox>
+                            </td>
+                        </tr>
+                        <tr style="height: 20px;">
+                            <td colspan="10">
+                                <hr size="1" />
+                            </td>
+                        </tr>
+                    </table>
+                </h:form>
+                <h:form id="frmTbDesertores">
+                    <rich:datascroller id="paginacion" align="right" for="tbDesertores"  maxPages="10" style="width : 100%;"/>
+                    <rich:spacer height="20px"/>
+                    <rich:dataTable id="tbDesertores"
+                                    onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+                                    onRowMouseOut="this.style.backgroundColor='#FFFFFF'"
+                                    cellpadding="0"
+                                    cellspacing="0"
+                                    width="100%"
+                                    rows="10" 
+                                    value="#{managerMonitoreoDesercion.lstDesertores}" 
+                                    var="desertor" >
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="#" />
+                            </f:facet>
+                            <h:outputText value="#{desertor.expr1}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Cod. Alumno" />
+                            </f:facet>
+                            <h:outputText value="#{desertor.expr2}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Alumno" />
+                            </f:facet>
+                            <h:outputText value="#{desertor.expr3}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="E-Mail" />
+                            </f:facet>
+                            <h:outputText value="#{desertor.expr4}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Tlf. Fijo" />
+                            </f:facet>
+                            <h:outputText value="#{desertor.expr5}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Tlf. Celular" />
+                            </f:facet>
+                            <h:outputText value="#{desertor.expr6}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Curso" />
+                            </f:facet>
+                            <h:outputText value="#{desertor.expr7}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Taller" />
+                            </f:facet>
+                            <h:outputText value="#{desertor.expr9}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Fecha Término" />
+                            </f:facet>
+                            <h:outputText value="#{desertor.expr8}"/>
+                        </rich:column>
+                        <rich:column style="background-color:#{desertor.expr12 == 'SI'?'#FFDBDE':'#CBEDB9'}">
+                            <f:facet name="header">
+                                <h:outputText value="LLAMADO" />
+                            </f:facet>
+                            <h:outputText value="#{desertor.expr12}"/>
+                        </rich:column>
+                        <rich:column style="background-color:#{desertor.expr13 == 'SI'?'#BFDFFF':'#FFFFFF'}">
+                            <f:facet name="header">
+                                <h:outputText value="INTERESADO" />
+                            </f:facet>
+                            <h:outputText value="#{desertor.expr13}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Observacion" />
+                            </f:facet>
+                            <a4j:commandButton id="btnModObs" image="/Imagenes/actions/viewmag.png" title="Modificar observación"
+                                               actionListener="#{managerMonitoreoDesercion.modificarObservacion}"
+                                               oncomplete="#{managerMonitoreoDesercion.oncomplete}" reRender="mpModifObs">
+
+                                <f:param name="param_sec_id" value="#{desertor.expr10}" />
+                                <f:param name="param_alu_id" value="#{desertor.expr11}" />
+                            </a4j:commandButton>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Cursos llevados" />
+                            </f:facet>
+                            <a4j:commandButton id="btnListarCursos" image="/Imagenes/actions/klipper_dock.png" title="Listar cursos llevados"
+                                               actionListener="#{managerMonitoreoDesercion.listarCursosLlevados}"
+                                               oncomplete="#{managerMonitoreoDesercion.oncomplete}" reRender="mpLstCursos">
+
+                                <f:param name="param_alu_id2" value="#{desertor.expr11}" />
+                            </a4j:commandButton>
+                        </rich:column>
+                    </rich:dataTable>
+                </h:form>
+            </rich:panel>
+            <rich:modalPanel id="mpLstCursos" autosized="true" zindex="3000" width="700" height="120">
+                <f:facet name="header">
+                    <h:outputText value="Lista de cursos llevados"/>
+                </f:facet>
+                <f:facet name="controls">
+                    <h:panelGroup>
+                        <h:graphicImage value="/Imagenes/actions/stop.png" style="cursor:pointer" onclick="Richfaces.hideModalPanel('mpLstCursos')" title="Cerrar"/>
+                    </h:panelGroup>
+                </f:facet>
+                <h:form id="frmLstCursos">
+                    <rich:datascroller id="paginacion" align="right" for="tbCursosLlevados" maxPages="10" style="width : 100%;"/>
+                    <rich:spacer height="10" />
+                    <rich:dataTable id="tbCursosLlevados"
+                                    onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+                                    onRowMouseOut="this.style.backgroundColor='#FFFFFF'"
+                                    cellpadding="0"
+                                    cellspacing="0"
+                                    width="100%"
+                                    rows="10" 
+                                    value="#{managerMonitoreoDesercion.lstCursosLlevados}" 
+                                    var="curso" >
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="ÁREA" />
+                            </f:facet>
+                            <h:outputText value="#{curso.expr1}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="MÓDULO" />
+                            </f:facet>
+                            <h:outputText value="#{curso.expr2}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="CURSO" />
+                            </f:facet>
+                            <h:outputText value="#{curso.expr3}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="SECCIÓN" />
+                            </f:facet>
+                            <h:outputText value="#{curso.expr4}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="FECHA INICIO" />
+                            </f:facet>
+                            <h:outputText value="#{curso.expr5}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="FECHA FIN" />
+                            </f:facet>
+                            <h:outputText value="#{curso.expr6}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="PROMEDIO" />
+                            </f:facet>
+                            <h:outputText value="#{curso.expr7}"/>
+                        </rich:column>
+                    </rich:dataTable>
+                </h:form>
+            </rich:modalPanel>
+            <rich:modalPanel id="mpModifObs" zindex="3000" width="450" height="630">
+                <f:facet name="header">
+                    <h:outputText value="Observación"/>
+                </f:facet>
+                <f:facet name="controls">
+                    <h:panelGroup>
+                        <h:graphicImage value="/Imagenes/actions/stop.png" style="cursor:pointer" onclick="Richfaces.hideModalPanel('mpModifObs')" title="Cerrar"/>
+                    </h:panelGroup>
+                </f:facet>
+                <h:form id="frmModifObs">
+                    <h:panelGrid style="width:100%;">
+                        <h:outputText value="ALUMNO : " style="font-weight: bold;" />
+                        <h:outputText value="#{managerMonitoreoDesercion.beanClAlumDeser.clAlumno.aluAppaterno} #{managerMonitoreoDesercion.beanClAlumDeser.clAlumno.aluApmaterno}, #{managerMonitoreoDesercion.beanClAlumDeser.clAlumno.aluNombres}" />
+                        <h:outputText value="MÓDULO : " style="font-weight: bold;" />
+                        <h:outputText value="#{managerMonitoreoDesercion.beanClAlumDeser.arbModulo.arbDescripcion}" />
+                        <h:outputText value="CANCELAR LLAMADAS : " style="font-weight: bold;" />
+                        <h:panelGroup>
+                            <h:selectBooleanCheckbox id="chkCancelar" value="#{managerMonitoreoDesercion.beanClAlumDeser.cancelarLlamadas}"/>
+                            <h:outputLabel for="chkCancelar" style="color:#CC0000" value="Tener en cuenta que al marcar la casilla, el alumno no aparecerá en la lista de desertores para no ser llamado nuevamente." />
+                            <br />
+                            <rich:spacer height="7" />
+                        </h:panelGroup>
+                        <h:outputText value="GRADO DE INTERES: " style="font-weight: bold;" />
+                        <h:panelGroup>
+                            <h:selectBooleanCheckbox id="chkInteres" value="#{managerMonitoreoDesercion.beanClAlumDeser.gradoInteres}"/>
+                            <h:outputLabel for="chkInteres" style="color:#265CFF" value="Obs: marcado: interes alto/ sin marcar:sin interes" />
+                            <br />
+                            <rich:spacer height="7" />
+                        </h:panelGroup>
+                        <h:outputText value="ÚLTIMO CURSO : " style="font-weight: bold;" />
+                        <h:outputText value="#{managerMonitoreoDesercion.beanClAlumDeser.clSecUlt.clArbolAcademico.arbAcadPadre.arbDescripcion} / #{managerMonitoreoDesercion.beanClAlumDeser.clSecUlt.clArbolAcademico.arbDescripcion}" />
+                        <h:outputText value="MOTIVO DESERCIÓN : " style="font-weight: bold;" />
+                        <h:selectManyCheckbox  value="#{managerMonitoreoDesercion.beanClAlumDeser.lstMotivos}">
+                            <f:selectItems value="#{managerMonitoreoDesercion.chksMotivosDesercion}" />
+                        </h:selectManyCheckbox>
+                        <h:outputText value="DESCRIPCIÓN MOTIVO DESERCIÓN : " style="font-weight: bold;" />
+                        <h:inputText value="#{managerMonitoreoDesercion.beanClAlumDeser.descMotivos}" />
+                    </h:panelGrid>
+                    <hr />
+                    <h:panelGrid style="width:100%;">
+                        <h:outputText value="FECHA CONTACTO" style="font-weight: bold;" />
+                        <rich:calendar value="#{managerMonitoreoDesercion.fechaContacto}" />
+                        <h:outputText value="OBSERVACIÓN" style="font-weight: bold;" />
+                        <h:inputTextarea style="width:100%;" value="#{managerMonitoreoDesercion.observacion}" />
+                        <a4j:commandButton image="/Imagenes/actions/filesave.png" actionListener="#{managerMonitoreoDesercion.guardarObservacion}" oncomplete="#{managerMonitoreoDesercion.oncomplete}" reRender="tbObsDeserc,frmTbDesertores" />
+                    </h:panelGrid>
+                    <hr />
+                    <rich:dataTable id="tbObsDeserc"
+                                    onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+                                    onRowMouseOut="this.style.backgroundColor='#FFFFFF'"
+                                    cellpadding="0"
+                                    cellspacing="0"
+                                    width="100%"
+                                    rows="10" 
+                                    value="#{managerMonitoreoDesercion.beanClAlumDeser.lstObsDeser}" 
+                                    var="obsDeserc" style="display: block;margin: 0;overflow-y: scroll;height:170px">
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="ID" />
+                            </f:facet>
+                            <h:outputText value="#{obsDeserc.id}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="FECHA REGISTRO." />
+                            </f:facet>
+                            <h:outputText value="#{obsDeserc.fechaRegistro}">
+                                <f:convertDateTime pattern="dd / MM / yyyy HH:mm:ss"/>
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="FECHA CONTACTO" />
+                            </f:facet>
+                            <h:outputText value="#{obsDeserc.fechaContacto}">
+                                <f:convertDateTime pattern="dd / MM / yyyy"/>
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="ULTIMA OBS." />
+                            </f:facet>
+                            <h:outputText value="#{obsDeserc.observacion}"/>
+                        </rich:column>
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="USUARIO" />
+                            </f:facet>
+                            <h:outputText value="#{obsDeserc.tbUsuario.usuUsuario}"/>
+                        </rich:column>
+                    </rich:dataTable>
+                </h:form>
+            </rich:modalPanel>
+        </body>
+    </f:view>
+</html>

@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcMatriculaCurso"
+        table="ac_matricula_curso"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="matcur_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="MatcurActivo"
+            column="matcur_activo"
+            type="string"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="MatcurObs"
+            column="matcur_obs"
+            type="string"
+            not-null="false"
+            length="50"
+            />
+        <property
+            name="MatcurEstado"
+            column="matcur_estado"
+            type="string"
+            not-null="false"
+            length="6"
+            />
+        <many-to-one
+            name="Sec"
+            column="sec_id"
+            class="AcSeccion"
+            not-null="true"
+            >
+        </many-to-one>
+        <many-to-one
+            name="Mat"
+            column="mat_id"
+            class="AcMatricula"
+            not-null="true"
+            >
+        </many-to-one>
+
+    </class>
+</hibernate-mapping>

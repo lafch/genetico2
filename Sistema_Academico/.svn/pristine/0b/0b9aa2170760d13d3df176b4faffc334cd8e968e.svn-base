@@ -1,0 +1,153 @@
+<%@ taglib uri="http://richfaces.org/rich" prefix="rich"%>
+<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
+<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
+<%@ taglib uri="http://richfaces.org/a4j" prefix="a4j" %>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="../css/formulario.css" rel="stylesheet" media="screen"/>
+        <title>Mantenimiento de Usuarios</title>
+        <script type="text/javascript">
+            function getRightTop(ref) {
+                var position = new Object();
+                position.top = 0; //ref.offsetTop;
+                position.left =0; // ref.offsetLeft+ref.clientWidth+6;
+                return position;
+            }
+        </script> 
+    </head>
+    <body>
+        <f:view >
+            <jsp:include page="../TablaSistema/Menu.jsp"></jsp:include>
+            <rich:panel style=" width : 100%;" >
+                <f:facet name="FACULTADES">
+                </f:facet>
+                <h:form id="form1" style="width:100%">
+                    <table width="100%" style="font-size:10px; font-family:verdana">
+                        <tr >
+                            <td width="20%" colspan="2" ><strong>MANTENIMIENTO DE USUARIOS</strong>
+                            </td>
+                            <td width="30%"></td>
+                            <td width="30%" align="right">
+                                <a4j:status>
+                                    <f:facet name="start">
+                                        <h:graphicImage  value="../Imagenes/actions/loading.gif"/>
+                                    </f:facet>
+                                </a4j:status>
+                            </td>
+                            <td width="30%"></td>
+                            <td width="30%" align="right">
+                                <%--<h:graphicImage value="/Imagenes/actions/fileprint.png" title="Imprimir Listado"/>--%>
+                                <h:graphicImage value="/Imagenes/actions/filenew.png" style="border-width: 0px;cursor: pointer">
+                                    <a4j:support oncomplete="javascript:Richfaces.showModalPanel('mp')"
+                                                 event="onclick" action="#{managerUsuario.Nuevo}" reRender="password_u,usuario_u,rol_u" />
+                                </h:graphicImage>
+                            </td>
+
+                            <td align=right width="50%">
+                                <a4j:commandButton type="button" id="buscar"
+                                                   action="#{managerUsuario.Seleccionar}"
+                                                   image="/Imagenes/actions/viewmag.png"
+                                                   reRender="formUsuario"
+                                                   title="Buscar"/>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td colspan="7" width="100%">
+                                <hr width="100%" size="1"></td>
+                        </tr>
+                        <tr>
+                            <td width="20%" colspan="2">
+                            </td>
+                            <td width="30%"></td>
+                            <td width="50%"></td>
+                        </tr>
+                        <tr>
+                        </tr>
+                        <tr>
+                            <td width="10%">Usuario:
+                            </td>
+                            <td width="30%">
+                                <h:inputText value="#{managerUsuario.bus_usuario}" />
+                            <td width="50%"></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="7" width="100%">
+                                <hr width="100%" size="1">
+                            </td>
+                        </tr>
+
+                    </table>
+                </h:form>
+                <h:form id="formUsuario" style=" width : 100%;">
+                    <rich:dataTable value="#{managerUsuario.listUsuarios}" var="usu" width="20%">
+                        <h:column >
+                            <f:facet name="header">
+                                <h:outputText value="Usuario" />
+                            </f:facet>
+                            <h:outputText value="#{usu.usu_usu}" />
+                        </h:column>
+                        <h:column >
+                            <f:facet name="header">
+                                <h:outputText value="Password" />
+                            </f:facet>
+                            <h:outputText value="#{usu.usu_psw}" />
+                        </h:column>
+                    </rich:dataTable>
+                </h:form>
+            </rich:panel>
+
+            <rich:modalPanel  id="mp" autosized="true" zindex="2000"
+                              width="500" height="100">
+                <f:facet name="header">
+                    <h:outputText value="Registro de Usuarios" />
+                </f:facet>
+                <f:facet name="controls">
+                    <h:graphicImage value="/Imagenes/actions/stop.png" style="cursor:pointer"
+                                    onclick="Richfaces.hideModalPanel('mp')" title="Cerrar"/>
+                </f:facet>
+                <h:form>
+                    <table width="100%" style="font-size:10px; font-family:verdana;">
+                        <tr >
+                            <td align="right" colspan="4">
+                                <a4j:commandButton   image="/Imagenes/actions/filesave.png"  title="Guardar"
+                                                     actionListener="#{managerUsuario.crearUsuario}"
+                                                     oncomplete="#{managerUsuario.oncomplete}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"><hr size="1"></td>
+                        </tr>
+                        <tr>
+                            <td width="35%" class="tdLabel">Usuario</td>
+                            <td width="65%">
+                                <h:inputText label="Usuario" id="usuario_u"  style=" width : 180px;" value="#{managerUsuario.usuario_u}"  maxlength="45"/>
+                            </td>
+                            <td align="right" width="20%">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="35%" class="tdLabel">Password</td>
+                            <td width="65%">
+                                <h:inputText id="password_u" label="Password" value="#{managerUsuario.password_u}" style="width : 180px;"/>
+                            </td>
+                            <td width="20%"></td>
+                        </tr>
+                        <tr>
+                            <td width="35%" class="tdLabel">Rol</td>
+                            <td width="65%">
+                                <h:selectOneMenu id="rol_u" value="#{managerUsuario.usu_rol_id}">
+                                    <f:selectItems value="#{managerUsuario.usu_rol_descripcion}"/>
+                                </h:selectOneMenu>
+                            </td>
+                            <td width="20%"></td>
+                        </tr>
+                    </table>
+                </h:form>
+            </rich:modalPanel>
+        </f:view>
+    </body>
+</html>

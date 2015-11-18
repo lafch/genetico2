@@ -1,0 +1,553 @@
+package net.uch.academica.managedBeans;
+
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import javax.faces.component.UIParameter;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpSession;
+import net.uch.academica.hibernateSpringDao.HSTurnoDAO;
+import net.uch.academica.hibernateSpringDao.HSTurnoDetalleDAO;
+import net.uch.commonService.ServiceFinder;
+import net.uch.mapping.AcSemestre;
+import net.uch.mapping.AcTurno;
+import net.uch.mapping.AcTurnoDetalle;
+import net.uch.mapping.TbCatalogo;
+import net.uch.tablaSistema.hibernateSpringDao.HSCatalogoDAO;
+import net.uch.tablaSistema.hibernateSpringDao.HSSemestreDAO;
+import net.uch.tablaSistema.managedBeans.bUsuario;
+
+public class bTurno {
+
+    private int id_s;
+    private int id_i;
+    private String codigo_s;
+    private String codigo_i;
+    private String nombre_s;
+    private String nombre_i;
+    private int periodo_s;
+    private int periodo_i = 6;
+    private String inicio_s;
+    private String inicio_h_i = "00";
+    private String inicio_m_i = "00";
+    private String inicio_meridiano_i;
+    private String vigente_s;
+    private boolean vigente_i;
+    private int semestre_s;
+    private int semestre_i;
+    private int tiempo_s;
+    private int tiempo_i=45;
+    private List tablaTurno;
+    private List tablaTurnoDetalle;
+    private String codigo_f;
+    private String nombre_f;
+    private int semestre_f;
+    private SelectItem[] combo_semestres;
+    private SelectItem[] combo_semestres_f;
+    private SelectItem[] combo_meridianos;
+    private static int id_aux = 0;
+    private static String codigo_aux;
+    private static String nombre_aux;
+    private static int periodo_aux = 6;
+    private static String inicio_aux;
+    private static boolean vigente_aux;
+    private static int semestre_aux;
+    private static int tiempo_aux=45;
+    private int id_det;
+    private String inicio_det;
+    private String fin_det;
+    private String oncomplete;
+
+    public void bTurno() throws Exception {
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        HttpSession session1 = (HttpSession) context.getSession(false);
+        bUsuario usu = (bUsuario) session1.getAttribute("usuario");
+        if (usu != null) {
+        } else {
+            throw new Exception();
+        }
+    }
+
+    public int getId_s() {
+        return id_s;
+    }
+
+    public void setId_s(int id_s) {
+        this.id_s = id_s;
+    }
+
+    public int getId_i() {
+        if (id_aux == 0) {
+            return id_i;
+        } else {
+            return id_aux;
+        }
+    }
+
+    public void setId_i(int id_i) {
+        this.id_i = id_i;
+    }
+
+    public String getCodigo_s() {
+        return codigo_s;
+    }
+
+    public void setCodigo_s(String codigo_s) {
+        this.codigo_s = codigo_s;
+    }
+
+    public String getCodigo_i() {
+        if (id_aux == 0) {
+            return codigo_i;
+        } else {
+            return codigo_aux;
+        }
+    }
+
+    public void setCodigo_i(String codigo_i) {
+        this.codigo_i = codigo_i;
+    }
+
+    public String getNombre_s() {
+        return nombre_s;
+    }
+
+    public void setNombre_s(String nombre_s) {
+        this.nombre_s = nombre_s;
+    }
+
+    public String getNombre_i() {
+        if (id_aux == 0) {
+            return nombre_i;
+        } else {
+            return nombre_aux;
+        }
+    }
+
+    public void setNombre_i(String nombre_i) {
+        this.nombre_i = nombre_i;
+    }
+
+    public int getPeriodo_s() {
+        return periodo_s;
+    }
+
+    public void setPeriodo_s(int periodo_s) {
+        this.periodo_s = periodo_s;
+    }
+
+    public int getPeriodo_i() {
+        if (id_aux == 0) {
+            return periodo_i;
+        } else {
+            return periodo_aux;
+        }
+    }
+
+    public void setPeriodo_i(int periodo_i) {
+        this.periodo_i = periodo_i;
+    }
+
+    public String getInicio_s() {
+        return inicio_s;
+    }
+
+    public void setInicio_s(String inicio_s) {
+        this.inicio_s = inicio_s;
+    }
+
+    public String getInicio_h_i() {
+        if (id_aux == 0) {
+            return inicio_h_i;
+        } else {
+            String hora = inicio_aux.substring(0, 2);
+            return hora;
+        }
+    }
+
+    public void setInicio_h_i(String inicio_h_i) {
+        this.inicio_h_i = inicio_h_i;
+    }
+
+    public String getInicio_m_i() {
+        if (id_aux == 0) {
+            return inicio_m_i;
+        } else {
+            String minutos = inicio_aux.substring(3, 5);
+            return minutos;
+        }
+    }
+
+    public void setInicio_m_i(String inicio_m_i) {
+        this.inicio_m_i = inicio_m_i;
+    }
+
+    public String getInicio_meridiano_i() {
+        return inicio_meridiano_i;
+    }
+
+    public void setInicio_meridiano_i(String inicio_meridiano_i) {
+        this.inicio_meridiano_i = inicio_meridiano_i;
+    }
+
+    public String getVigente_s() {
+        return vigente_s;
+    }
+
+    public void setVigente_s(String vigente_s) {
+        this.vigente_s = vigente_s;
+    }
+
+    public boolean isVigente_i() {
+        if (id_aux == 0) {
+            return vigente_i;
+        } else {
+            return vigente_aux;
+        }
+    }
+
+    public void setVigente_i(boolean vigente_i) {
+        this.vigente_i = vigente_i;
+    }
+
+    public int getSemestre_s() {
+        return semestre_s;
+    }
+
+    public void setSemestre_s(int semestre_s) {
+        this.semestre_s = semestre_s;
+    }
+
+    public int getSemestre_i() {
+        if (id_aux == 0) {
+            return semestre_i;
+        } else {
+            return semestre_aux;
+        }
+    }
+
+    public void setSemestre_i(int semestre_i) {
+        this.semestre_i = semestre_i;
+    }
+
+    public int getTiempo_s() {
+        return tiempo_s;
+    }
+
+    public void setTiempo_s(int tiempo_s) {
+        this.tiempo_s = tiempo_s;
+    }
+
+    public int getTiempo_i() {
+        if (id_aux == 0) {
+            return tiempo_i;
+        } else {
+            return tiempo_aux;
+        }
+    }
+
+    public void setTiempo_i(int tiempo_i) {
+        this.tiempo_i = tiempo_i;
+    }
+
+    public List getTablaTurno() {
+        return tablaTurno;
+    }
+
+    public void setTablaTurno(List tablaTurno) {
+        this.tablaTurno = tablaTurno;
+    }
+
+    public String getCodigo_f() {
+        return codigo_f;
+    }
+
+    public void setCodigo_f(String codigo_f) {
+        this.codigo_f = codigo_f;
+    }
+
+    public String getNombre_f() {
+        return nombre_f;
+    }
+
+    public void setNombre_f(String nombre_f) {
+        this.nombre_f = nombre_f;
+    }
+
+    public int getSemestre_f() {
+        return semestre_f;
+    }
+
+    public void setSemestre_f(int semestre_f) {
+        this.semestre_f = semestre_f;
+    }
+
+    public int getId_det() {
+        return id_det;
+    }
+
+    public void setId_det(int id_det) {
+        this.id_det = id_det;
+    }
+
+    public String getInicio_det() {
+        return inicio_det;
+    }
+
+    public void setInicio_det(String inicio_det) {
+        this.inicio_det = inicio_det;
+    }
+
+    public String getFin_det() {
+        return fin_det;
+    }
+
+    public void setFin_det(String fin_det) {
+        this.fin_det = fin_det;
+    }
+
+    public List getTablaTurnoDetalle() {
+        HSTurnoDetalleDAO dao = (HSTurnoDetalleDAO) ServiceFinder.findBean("HibernateSpringDaoTurnoDetalle");
+        List lista = dao.seleccionarTurnoDetalle(id_aux);
+        List listaTurnoDetalle = new ArrayList();
+        bTurno turno;
+        for (int i = 0; i < lista.size(); i++) {
+            Object O[] = (Object[]) lista.get(i);
+            turno = new bTurno();
+            turno.setId_det(Integer.parseInt(O[0].toString()));
+            turno.setInicio_det(O[1].toString());
+            int j = i + 1;
+            Object P[];
+            if (j == lista.size()) {
+                P = (Object[]) lista.get(i);
+                P[1] = suma(P[1].toString(), tiempo_aux);
+            } else {
+                P = (Object[]) lista.get(j);
+            }
+            turno.setFin_det(P[1].toString());
+            listaTurnoDetalle.add(turno);
+        }
+        this.setTablaTurnoDetalle(listaTurnoDetalle);
+        return tablaTurnoDetalle;
+    }
+
+    public String suma(String hora, int minutos) {
+        int minutos_t = Integer.parseInt(hora.substring(0, 2)) * 60 + Integer.parseInt(hora.substring(3, 5));
+        int ho = (minutos_t + minutos) / 60;
+        int mi = (minutos_t + minutos) % 60;
+        return (ho + ":" + mi + ":00");
+    }
+
+    public void setTablaTurnoDetalle(List tablaTurnoDetalle) {
+        this.tablaTurnoDetalle = tablaTurnoDetalle;
+    }
+
+    public SelectItem[] getCombo_semestres() throws Exception {
+        HSSemestreDAO dao = (HSSemestreDAO) ServiceFinder.findBean("SpringHibernateDaoSemestre");
+        List lista = dao.seleccionarSemestre("", "");
+        combo_semestres = new SelectItem[1];
+        combo_semestres[0] = new SelectItem(0, "[Seleccione]");
+        if (lista.size() != 0) {
+            combo_semestres = new SelectItem[lista.size()];
+            for (int i = 0; i < combo_semestres.length; i++) {
+                combo_semestres[i] = new SelectItem(((AcSemestre) lista.get(i)).getId(), ((AcSemestre) lista.get(i)).getSemNombre());
+            }
+        }
+        return combo_semestres;
+    }
+
+    public void setCombo_semestres(SelectItem[] combo_semestres) {
+        this.combo_semestres = combo_semestres;
+    }
+
+    public SelectItem[] getCombo_semestres_f() throws Exception {
+        HSSemestreDAO dao = (HSSemestreDAO) ServiceFinder.findBean("SpringHibernateDaoSemestre");
+        List lista = dao.seleccionarSemestre("", "");
+        combo_semestres_f = new SelectItem[1];
+        combo_semestres_f[0] = new SelectItem(0, "[Seleccione]");
+        if (lista.size() != 0) {
+            combo_semestres_f = new SelectItem[lista.size() + 1];
+            for (int i = 0; i < combo_semestres_f.length - 1; i++) {
+                combo_semestres_f[0] = new SelectItem(0, "TODOS");
+                combo_semestres_f[i + 1] = new SelectItem(((AcSemestre) lista.get(i)).getId(), ((AcSemestre) lista.get(i)).getSemNombre());
+            }
+        }
+        return combo_semestres_f;
+    }
+
+    public void setCombo_semestres_f(SelectItem[] combo_semestres_f) {
+        this.combo_semestres_f = combo_semestres_f;
+    }
+
+    public SelectItem[] getCombo_meridianos() throws Exception {
+        HSCatalogoDAO dao = (HSCatalogoDAO) ServiceFinder.findBean("SpringHibernateDaoCatalogo");
+        List lista = dao.seleccionarCatalogo("008");
+        combo_meridianos = new SelectItem[1];
+        combo_meridianos[0] = new SelectItem(0, "[Seleccione]");
+        if (lista.size() != 0) {
+            combo_meridianos = new SelectItem[lista.size()];
+            for (int i = 0; i < combo_meridianos.length; i++) {
+                combo_meridianos[i] = new SelectItem(((TbCatalogo) lista.get(i)).getCatValor(), ((TbCatalogo) lista.get(i)).getCatDescripcionElemento());
+            }
+        }
+        return combo_meridianos;
+    }
+
+    public void setCombo_meridianos(SelectItem[] combo_meridianos) {
+        this.combo_meridianos = combo_meridianos;
+    }
+    
+    public String getOncomplete() {
+        return oncomplete;
+    }
+
+    public void setOncomplete(String oncomplete) {
+        this.oncomplete = oncomplete;
+    }
+
+    public void Nuevo() {
+        this.setId_i(0);
+        id_aux = 0;
+        this.setNombre_i("");
+        nombre_aux = "";
+        this.setCodigo_i("");
+        codigo_aux = "";
+        this.setPeriodo_i(6);
+        periodo_aux = 6;
+        this.setSemestre_i(0);
+        this.setVigente_i(false);
+        this.setTiempo_i(0);
+    }
+
+    public void Insertar(ActionEvent event) {
+        int minutos_totales = 0;
+        id_aux = 0;
+        HSTurnoDAO dao = (HSTurnoDAO) ServiceFinder.findBean("HibernateSpringDaoTurno");
+        AcTurno turno = new AcTurno();
+        turno.setId(-1);
+        turno.setTurCodigo(this.getCodigo_i());
+        turno.setTurNombre(this.getNombre_i());
+        turno.setTurPeriodo(this.getPeriodo_i());
+        String h = this.getInicio_h_i() + ":" + this.getInicio_m_i() + " " + this.getInicio_meridiano_i();
+        if((this.getCodigo_i().trim()).length()>0 && (this.getNombre_i().trim()).length()>0 && this.getPeriodo_i()>1){
+        if (this.getInicio_meridiano_i().equals("AM")) {
+            minutos_totales = 60 * Integer.parseInt(this.getInicio_h_i()) + Integer.parseInt(this.getInicio_m_i());
+        } else if (this.getInicio_meridiano_i().equals("PM")) {
+            minutos_totales = 60 * Integer.parseInt(this.getInicio_h_i()) + Integer.parseInt(this.getInicio_m_i()) + 720;
+        }
+        Time time = null;
+        try {
+            SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
+            Date date = df.parse(h);
+            time = new Time(date.getTime());
+        } catch (Exception e) {
+            this.setOncomplete("javascript:alert('Formato incorrecto.')");
+            System.out.println("Formato incorrecto");
+        }
+        turno.setTurHoraInicio(time);
+        turno.setSemId(this.getSemestre_i());
+        String vigente = "1";
+        if (!this.isVigente_i()) {
+            vigente = "0";
+        }
+        turno.setTurVigente(vigente);
+        turno.setTurTiempoPeriodo(this.getTiempo_i());
+        Set<AcTurnoDetalle> lista = null;
+        lista = new LinkedHashSet<AcTurnoDetalle>();
+        for (int i = 0; i < this.getPeriodo_i(); i++) {
+            InsertarDetalle(lista, turno, h);
+            minutos_totales += this.getTiempo_i();
+            int hora = (minutos_totales / 60);
+            if (minutos_totales > 720) {
+                h = hora - 12 + ":" + (minutos_totales % 60) + " " + "PM";
+            } else {
+                h = hora + ":" + (minutos_totales % 60) + " " + "AM";
+            }
+        }
+        turno.setAcTurnoDetalles(lista);
+        turno.setTurActivo("1");
+        if (this.getId_i() == 0) {
+            dao.insertarTurno(turno);
+            this.setOncomplete("javascript:alert('Se guardo el registro correctamente');Richfaces.hideModalPanel('mp')");
+        } else {
+            dao.actualizarTurno(turno);
+            this.setOncomplete("javascript:alert('Se guardo el registro correctamente');Richfaces.hideModalPanel('mp')");
+        }
+        }else{
+            this.setOncomplete("javascript:alert('ingrese los datos completos.')");
+        }
+    }
+
+    public void InsertarDetalle(Set lista, AcTurno turno, String h) {
+        AcTurnoDetalle turnoDetalle = new AcTurnoDetalle();
+        Time time = null;
+        try {
+            SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
+            Date date = df.parse(h);
+            time = new Time(date.getTime());
+        } catch (Exception e) {
+            System.out.println("Formato incorrecto");
+        }
+        turnoDetalle.setTur(turno);
+        turnoDetalle.setTurdetHora(time);
+        turnoDetalle.setTurdetActivo("1");
+        lista.add(turnoDetalle);
+    }
+
+    public void Seleccionar() {
+        HSTurnoDAO dao = (HSTurnoDAO) ServiceFinder.findBean("HibernateSpringDaoTurno");
+        List lista = dao.seleccionarTurno(this.getCodigo_f(), this.getNombre_f(), this.getSemestre_f());
+        List listaTurno = new ArrayList();
+        bTurno turno;
+        for (int i = 0; i < lista.size(); i++) {
+            Object O[] = (Object[]) lista.get(i);
+            turno = new bTurno();
+            turno.setId_s(Integer.parseInt(O[0].toString()));
+            turno.setCodigo_s(O[1].toString());
+            turno.setNombre_s(O[2].toString());
+            turno.setPeriodo_s(Integer.parseInt(O[3].toString()));
+            turno.setInicio_s(O[4].toString());
+            turno.setVigente_s(O[5].toString());
+            turno.setSemestre_s(Integer.parseInt(O[6].toString()));
+            turno.setTiempo_s(Integer.parseInt(O[7].toString()));
+            listaTurno.add(turno);
+        }
+        this.setTablaTurno(listaTurno);
+    }
+
+    public void Editar(ActionEvent event) {
+        UIParameter id = (UIParameter) event.getComponent().findComponent("id_s");
+        UIParameter codigo = (UIParameter) event.getComponent().findComponent("codigo_s");
+        UIParameter nombre = (UIParameter) event.getComponent().findComponent("nombre_s");
+        UIParameter periodos = (UIParameter) event.getComponent().findComponent("periodos_s");
+        UIParameter inicio = (UIParameter) event.getComponent().findComponent("inicio_s");
+        UIParameter vigente = (UIParameter) event.getComponent().findComponent("vigente_s");
+        UIParameter semestre = (UIParameter) event.getComponent().findComponent("semestre_s");
+        UIParameter tiempo = (UIParameter) event.getComponent().findComponent("tiempo_s");
+        id_aux = Integer.parseInt(id.getValue().toString());
+        nombre_aux = nombre.getValue().toString();
+        codigo_aux = codigo.getValue().toString();
+        periodo_aux = Integer.parseInt(periodos.getValue().toString());
+        semestre_aux = Integer.parseInt(semestre.getValue().toString());
+        inicio_aux = inicio.getValue().toString();
+        String v = "false";
+        if (vigente.getValue().toString().equals("1")) {
+            v = "true";
+        }
+        vigente_aux = Boolean.parseBoolean(v);
+        tiempo_aux = Integer.parseInt(tiempo.getValue().toString());
+    }
+
+    public void Eliminar(ActionEvent event) throws Exception {
+        UIParameter delete = (UIParameter) event.getComponent().findComponent("id_s");
+        HSTurnoDAO dao = (HSTurnoDAO) ServiceFinder.findBean("HibernateSpringDaoTurno");
+        dao.eliminarTurno(Integer.parseInt(delete.getValue().toString()));
+    }
+}

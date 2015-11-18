@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcCurso"
+        table="ac_curso"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="cur_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="CurCodigo"
+            column="cur_codigo"
+            type="string"
+            not-null="false"
+            length="20"
+            />
+        <property
+            name="CurNombre"
+            column="cur_nombre"
+            type="string"
+            not-null="false"
+            length="50"
+            />
+        <property
+            name="CurActivo"
+            column="cur_activo"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <many-to-one
+            name="Esp"
+            column="esp_id"
+            class="AcEspecialidad"
+            not-null="false"
+            lazy="false"
+            >
+        </many-to-one>
+
+
+        <set name="AcPlanCursos" inverse="true" lazy="false" cascade="all">
+            <key column="cur_id"/>
+            <one-to-many class="AcPlanCurso"/>
+        </set>
+
+
+    </class>
+</hibernate-mapping>

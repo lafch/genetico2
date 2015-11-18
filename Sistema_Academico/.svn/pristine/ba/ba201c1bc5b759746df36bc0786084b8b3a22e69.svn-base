@@ -1,0 +1,31 @@
+package net.uch.mapping;
+
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Set;
+
+import net.uch.mapping.base.BaseAcSesionAsistencia;
+
+
+/**
+ * AcSesionAsistencia entity. @author MyEclipse Persistence Tools
+ */
+public class AcSesionAsistencia extends BaseAcSesionAsistencia implements java.io.Serializable {
+
+    // Constructors
+
+    /** default constructor */
+    public AcSesionAsistencia() {
+    }
+
+	/** minimal constructor */
+    public AcSesionAsistencia(AcSeccion acSeccion, Integer docId, Integer docIdBk) {
+        super(acSeccion, docId, docIdBk);        
+    }
+    
+    /** full constructor */
+    public AcSesionAsistencia(AcSeccion acSeccion, Date sesFechaSesion, Date sesFechaRegistro, Timestamp sesFechaInicio, Timestamp sesFechaFin, String sesActivo, Integer sesTimeTolerancia, Integer sesTimeAntes, Integer sesTimeTope, Integer aulId, String sesEstado, Integer sesFechaSalida, Integer docId, Integer docIdBk, String sesTipo, String sesTipoAsistencia, Set acSesionEfectivaAsistencias, Set acSesionEfectivaAsisDocs) {
+        super(acSeccion, sesFechaSesion, sesFechaRegistro, sesFechaInicio, sesFechaFin, sesActivo, sesTimeTolerancia, sesTimeAntes, sesTimeTope, aulId, sesEstado, sesFechaSalida, docId, docIdBk, sesTipo, sesTipoAsistencia, acSesionEfectivaAsistencias, acSesionEfectivaAsisDocs);        
+    }
+   
+}

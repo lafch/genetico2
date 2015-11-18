@@ -1,0 +1,94 @@
+package net.uch.tablaSistema.hibernateSpringDao;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import net.uch.mapping.TbCatalogo;
+import org.hibernate.criterion.Expression;
+import org.springframework.dao.DataAccessException;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+public class HSCatalogoDAOImpl extends HibernateDaoSupport implements HSCatalogoDAO {
+
+    private static Map<String, List<TbCatalogo>> hmCatalogo = new HashMap<String, List<TbCatalogo>>();
+
+    @Override
+    public List seleccionarCatalogo( String codigo ) {
+        List lstCat;
+        lstCat = hmCatalogo.get( codigo );
+        if ( lstCat == null ) {
+            lstCat = this.getSession().createCriteria( TbCatalogo.class ).
+                    add( Expression.eq( "CatActivo", "1" ) ).
+                    add( Expression.not( Expression.eq( "CatCodigoElemento", "000" ) ) ).
+                    add( Expression.eq( "CatCodigoGrupo", codigo ) ).list();
+            if ( lstCat != null && !lstCat.isEmpty() ) {
+                hmCatalogo.put( codigo, lstCat );
+            }
+        }
+        return lstCat;
+    }
+
+    @Override
+    public String seleccionarDescripcion( String sCodigo ) {
+        String sCodGrup;
+        String sDesc;
+        TbCatalogo cat;
+        List<TbCatalogo> lstCat;
+
+        sDesc = "";
+        if ( sCodigo != null && sCodigo.trim().length() == 6 ) {
+            sCodGrup = sCodigo.substring( 0, 3 );
+            lstCat = hmCatalogo.get( sCodGrup );
+            if ( lstCat != null && !lstCat.isEmpty() ) {
+                for ( TbCatalogo catAux : lstCat ) {
+                    if ( (catAux.getCatCodigoGrupo() + catAux.getCatCodigoElemento()).equals( sCodigo ) ) {
+                        sDesc = catAux.getCatDescripcionElemento();
+                        break;
+                    }
+                }
+            } else {
+                cat = (TbCatalogo) this.getSession().createCriteria( TbCatalogo.class ).
+                        add( Expression.eq( "CatActivo", "1" ) ).
+                        add( Expression.eq( "CatCodigoGrupo", sCodigo.substring( 0, 3 ) ) ).
+                        add( Expression.eq( "CatCodigoElemento", sCodigo.substring( 3, 6 ) ) ).
+                        uniqueResult();
+                sDesc = cat.getCatDescripcionElemento();
+            }
+        }
+        return sDesc;
+    }
+
+    @Override
+    public String seleccionarValor( String codigo ) throws DataAccessException {
+        List lista = this.getSession().createCriteria( TbCatalogo.class ).add( Expression.eq( "CatCodigoGrupo", codigo.substring( 0, 3 ) ) ).add( Expression.eq( "CatCodigoElemento", codigo.substring( 3, 6 ) ) ).add( Expression.eq( "CatActivo", "1" ) ).list();
+        return ((TbCatalogo) lista.get( 0 )).getCatValor();
+    }
+
+    @Override
+    public List<TbCatalogo> seleccionarGrupo( String codigo ) {
+        return this.getSession().createCriteria( TbCatalogo.class ).
+                add( Expression.eq( "CatCodigoGrupo", codigo ) ).
+                add( Expression.eq( "CatActivo", "1" ) ).
+                add( Expression.not( Expression.eq( "CatCodigoElemento", "000" ) ) ).
+                list();
+    }
+
+    @Override
+    public List<TbCatalogo> seleccionarGrupoxValor( String codigo ) {
+        return this.getSession().createCriteria( TbCatalogo.class ).
+                add( Expression.eq( "CatValor", codigo ) ).
+                add( Expression.eq( "CatActivo", "1" ) ).
+                list();
+    }
+
+    @Override
+    public List<TbCatalogo> selecionarFilaCatalogo( String codigo ) {
+        String codigo2 = codigo.substring( 3, 6 );
+        String codigo1 = codigo.substring( 0, 3 );
+
+        return this.getSession().createCriteria( TbCatalogo.class ).
+                add( Expression.eq( "CatActivo", "1" ) ).
+                add( Expression.eq( "CatCodigoElemento", codigo2 ) ).
+                add( Expression.eq( "CatCodigoGrupo", codigo1 ) ).list();
+    }
+}

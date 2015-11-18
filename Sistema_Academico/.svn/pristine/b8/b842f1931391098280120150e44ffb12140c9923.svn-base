@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcSisEvaDetalle"
+        table="ac_sis_eva_detalle"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="siseva_detalle_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="SisevaDetalleCodigo"
+            column="siseva_detalle_codigo"
+            type="string"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="SisevaDetalleNombre"
+            column="siseva_detalle_nombre"
+            type="string"
+            not-null="false"
+            length="100"
+            />
+        <property
+            name="SisevaDetallePeso"
+            column="siseva_detalle_peso"
+            type="integer"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="SisevaDetalleActivo"
+            column="siseva_detalle_activo"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="SisevaDetalleSusti"
+            column="siseva_detalle_susti"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <many-to-one
+            name="Siseva"
+            column="siseva_id"
+            class="AcSisEvaluacion"
+            not-null="true"
+            >
+        </many-to-one>
+
+        <set name="AcSisEvaPersonalizados" inverse="true" cascade="all">
+            <key column="siseva_detalle_id"/>
+            <one-to-many class="AcSisEvaPersonalizado"/>
+        </set>
+
+    </class>
+</hibernate-mapping>

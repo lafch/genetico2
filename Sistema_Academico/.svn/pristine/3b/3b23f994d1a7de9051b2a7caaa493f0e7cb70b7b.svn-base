@@ -1,0 +1,19 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.tablaSistema.hibernateSpringDao;
+
+import java.util.List;
+import net.uch.mapping.TbMenu;
+
+/**
+ *
+ * @author cesardl
+ */
+public interface HSMenuDAO {
+
+    public List<TbMenu> seleccionToolBar(int rol_id);
+
+    public List<TbMenu> seleccionHijos(int men_id, int rol_id);
+}

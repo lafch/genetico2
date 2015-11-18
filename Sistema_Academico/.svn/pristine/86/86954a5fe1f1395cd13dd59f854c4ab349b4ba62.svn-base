@@ -1,0 +1,702 @@
+package net.uch.academica.managedBeans;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import javax.faces.component.UIParameter;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpSession;
+import net.uch.academica.hibernateSpringDao.HSSistemaEvaluacionDAO;
+import net.uch.commonService.ServiceFinder;
+import net.uch.mapping.AcSisEvaDetalle;
+import net.uch.mapping.AcSisEvaPersonalizado;
+import net.uch.mapping.AcSisEvaluacion;
+import net.uch.mapping.TbCatalogo;
+import net.uch.tablaSistema.hibernateSpringDao.HSCatalogoDAO;
+import net.uch.tablaSistema.managedBeans.bUsuario;
+import net.uch.util.CommonDAO;
+
+public class bSistemaEvaluacion {
+
+    private int id_s;
+    private int id_i;
+    private String codigo_s;
+    private String codigo_i;
+    private String nombre_s;
+    private String nombre_i;
+    private Date creacion_s;
+    private Date creacion_i;
+    private String vigente_s;
+    private String vigente_i;
+    private String activo_det;
+    private String nombre_f;
+    private List detalle_s;
+    private int id_aux; //static
+    private String nombre_aux; //static
+    private String codigo_aux; //static
+    private Date creacion_aux; //static
+    private String vigente_aux; //static
+    private String cod_det_aux; //static
+    private String nom_det_aux; //static
+    private String agrupar_det_aux; //static
+    private String tnota_det_aux; //static
+    private String setapa_det_aux;
+    private int pes_det_aux; //static
+    private List tablaSisEva;
+    private List tablaSisEvaDetalle;
+    private int id_det = 0;
+    private String nombre_det;
+    private String codigo_det;
+    private int peso_det;
+    private List<bSistemaEvaluacion> detalle = new ArrayList<bSistemaEvaluacion>(); //static
+    private String editable = "false";
+    private String view = "true";
+    private boolean editable_bool = false;
+    private boolean view_bool = true;
+    private boolean visible = false;
+    private boolean ver = false;
+    public String flag_ver = "0";
+    private String oncomplete;
+    public String imagen = "/Imagenes/actions/down.png";
+    private List<AcSisEvaPersonalizado> lstClSisEvaPerPlant;
+    private boolean sisevaBoolVigente;
+    private String sisevaImgVigente;
+    private SelectItem[] tipoNota;
+    private SelectItem[] semestreEtapa;
+    private String seTipoNota;
+    private String seSemestreEtapa;
+    private String v_tipo_nota;
+    private String v_semestre_etapa;
+    private String agruparSisEva;
+
+    public bSistemaEvaluacion() throws Exception {
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        HttpSession session1 = (HttpSession)context.getSession( false );
+        bUsuario usu = (bUsuario)session1.getAttribute( "usuario" );
+        if ( usu != null ) {
+        } else {
+            throw new Exception();
+        }
+    }
+
+    public List<AcSisEvaPersonalizado> getLstClSisEvaPerPlant() {
+        return lstClSisEvaPerPlant;
+    }
+
+    public void setLstClSisEvaPerPlant( List<AcSisEvaPersonalizado> lstClSisEvaPerPlant ) {
+        this.lstClSisEvaPerPlant = lstClSisEvaPerPlant;
+    }
+
+    public String getOncomplete() {
+        return oncomplete;
+    }
+
+    public void setOncomplete( String oncomplete ) {
+        this.oncomplete = oncomplete;
+    }
+
+    public int getId_s() {
+        return id_s;
+    }
+
+    public void setId_s( int id_s ) {
+        this.id_s = id_s;
+    }
+
+    public int getId_i() {
+        if ( id_aux != 0 ) {
+            return id_aux;
+        } else {
+            return id_i;
+        }
+    }
+
+    public void setId_i( int id_i ) {
+        this.id_i = id_i;
+    }
+
+    public String getCodigo_s() {
+        return codigo_s;
+    }
+
+    public void setCodigo_s( String codigo_s ) {
+        this.codigo_s = codigo_s;
+    }
+
+    public String getCodigo_i() {
+        /*if(id_aux!=0)
+         return codigo_aux;
+         else*/
+        return codigo_i;
+    }
+
+    public void setCodigo_i( String codigo_i ) {
+        this.codigo_i = codigo_i;
+    }
+
+    public String getNombre_s() {
+        return nombre_s;
+    }
+
+    public void setNombre_s( String nombre_s ) {
+        this.nombre_s = nombre_s;
+    }
+
+    public String getNombre_i() {
+        if ( id_aux != 0 ) {
+            return nombre_aux;
+        } else {
+            return nombre_i;
+        }
+    }
+
+    public void setNombre_i( String nombre_i ) {
+        this.nombre_i = nombre_i;
+    }
+
+    public Date getCreacion_s() {
+        return creacion_s;
+    }
+
+    public void setCreacion_s( Date creacion_s ) {
+        this.creacion_s = creacion_s;
+    }
+
+    public Date getCreacion_i() {
+        return creacion_i;
+    }
+
+    public void setCreacion_i( Date creacion_i ) {
+        this.creacion_i = creacion_i;
+    }
+
+    public String getVigente_s() {
+        return vigente_s;
+    }
+
+    public void setVigente_s( String vigente_s ) {
+
+        this.vigente_s = vigente_s;
+    }
+
+    public boolean isSisevaBoolVigente() {
+        return sisevaBoolVigente;
+    }
+
+    public void setSisevaBoolVigente( boolean sisevaBoolVigente ) {
+        this.sisevaBoolVigente = sisevaBoolVigente;
+    }
+
+    public String getSisevaImgVigente() {
+        if ( vigente_s.equalsIgnoreCase( "1" ) ) {
+            this.setSisevaImgVigente( "/Imagenes/actions/activar.png" );
+            this.setSisevaBoolVigente( true );
+        } else {
+            this.setSisevaImgVigente( "/Imagenes/actions/desactivar.png" );
+            this.setSisevaBoolVigente( false );
+        }
+        return sisevaImgVigente;
+    }
+
+    public void setSisevaImgVigente( String sisevaImgVigente ) {
+        this.sisevaImgVigente = sisevaImgVigente;
+    }
+
+    public String getVigente_i() {
+        if ( id_aux != 0 ) {
+            return vigente_aux;
+        } else {
+            return vigente_i;
+        }
+    }
+
+    public void setVigente_i( String vigente_i ) {
+        this.vigente_i = vigente_i;
+    }
+
+    public String getNombre_f() {
+        return nombre_f;
+    }
+
+    public void setNombre_f( String nombre_f ) {
+        this.nombre_f = nombre_f;
+    }
+
+    public List getTablaSisEva() {
+        return tablaSisEva;
+    }
+
+    public void setTablaSisEva( List tablaSisEva ) {
+        this.tablaSisEva = tablaSisEva;
+    }
+
+    public int getId_det() {
+        return id_det;
+    }
+
+    public void setId_det( int id_det ) {
+        this.id_det = id_det;
+    }
+
+    public String getNombre_det() {
+        return nombre_det;
+    }
+
+    public void setNombre_det( String nombre_det ) {
+        this.nombre_det = nombre_det;
+    }
+
+    public int getPeso_det() {
+        return peso_det;
+    }
+
+    public void setPeso_det( int peso_det ) {
+        this.peso_det = peso_det;
+    }
+
+    public String getAgruparSisEva() {
+        return agruparSisEva;
+    }
+
+    public void setAgruparSisEva( String agruparSisEva ) {
+        this.agruparSisEva = agruparSisEva;
+    }
+
+    public List getTablaSisEvaDetalle() {
+        return tablaSisEvaDetalle;
+    }
+
+    public List view( List<bSistemaEvaluacion> detalle ) {
+        List<bSistemaEvaluacion> lista = new ArrayList<bSistemaEvaluacion>();
+        for ( int j = 0; j < detalle.size(); j++ ) {
+            if ( ( (bSistemaEvaluacion)detalle.get( j ) ).getActivo_det().equals( "1" ) ) {
+                lista.add( detalle.get( j ) );
+            }
+        }
+        return lista;
+    }
+
+    public void setTablaSisEvaDetalle( List tablaSisEvaDetalle ) {
+        this.tablaSisEvaDetalle = tablaSisEvaDetalle;
+    }
+
+    public List getDetalle_s() {
+        return detalle_s;
+    }
+
+    public void setDetalle_s( List detalle_s ) {
+        this.detalle_s = detalle_s;
+    }
+
+    public String getCodigo_det() {
+        return codigo_det;
+    }
+
+    public void setCodigo_det( String codigo_det ) {
+        this.codigo_det = codigo_det;
+    }
+
+    public String getActivo_det() {
+        return activo_det;
+    }
+
+    public void setActivo_det( String activo_det ) {
+        this.activo_det = activo_det;
+    }
+
+    public String getEditable() {
+        return editable;
+    }
+
+    public void setEditable( String editable ) {
+        this.editable = editable;
+    }
+
+    public String getView() {
+        return view;
+    }
+
+    public void setView( String view ) {
+        this.view = view;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible( boolean visible ) {
+        this.visible = visible;
+    }
+
+    public boolean isVer() {
+        return ver;
+    }
+
+    public void setVer( boolean ver ) {
+        this.ver = ver;
+    }
+
+    public boolean isEditable_bool() {
+        return editable_bool;
+    }
+
+    public void setEditable_bool( boolean editable_bool ) {
+        this.editable_bool = editable_bool;
+    }
+
+    public boolean isView_bool() {
+        return view_bool;
+    }
+
+    public void setView_bool( boolean view_bool ) {
+        this.view_bool = view_bool;
+    }
+
+    public String getFlag_ver() {
+        return flag_ver;
+    }
+
+    public void setFlag_ver( String flag_ver ) {
+        this.flag_ver = flag_ver;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen( String imagen ) {
+        this.imagen = imagen;
+    }
+
+    public String getV_tipo_nota() {
+        return v_tipo_nota;
+    }
+
+    public void setV_tipo_nota( String v_tipo_nota ) {
+        this.v_tipo_nota = v_tipo_nota;
+    }
+
+    public String getV_semestre_etapa() {
+        return v_semestre_etapa;
+    }
+
+    public void setV_semestre_etapa( String v_semestre_etapa ) {
+        this.v_semestre_etapa = v_semestre_etapa;
+    }
+
+    public void Nuevo() {
+        id_aux = 0;
+        this.setId_i( 0 );
+        codigo_aux = "";
+        this.setCodigo_i( "" );
+        nombre_aux = "";
+        this.setNombre_i( "" );
+        vigente_aux = "0";
+        this.setVigente_i( "0" );
+        detalle.clear();
+        this.setCodigo_det( "" );
+        this.setNombre_det( "" );
+        this.setPeso_det( 0 );
+    }
+
+    public void Seleccionar() throws Exception {
+        HSSistemaEvaluacionDAO dao = (HSSistemaEvaluacionDAO)ServiceFinder.findBean( "SpringHibernateDaoSistemaEvaluacion" );
+        tablaSisEva = new ArrayList();
+        List lista = dao.seleccionarSistemaEvaluacion( this.getNombre_f() );
+        bSistemaEvaluacion evaluacion;
+        for ( int i = 0; i < lista.size(); i++ ) {
+            evaluacion = new bSistemaEvaluacion();
+            evaluacion.setId_s( ( (AcSisEvaluacion)lista.get( i ) ).getId() );
+            evaluacion.setCodigo_s( ( (AcSisEvaluacion)lista.get( i ) ).getSisevaCodigo() );
+            evaluacion.setCreacion_s( ( (AcSisEvaluacion)lista.get( i ) ).getSisevaCreacion() );
+            evaluacion.setNombre_s( ( (AcSisEvaluacion)lista.get( i ) ).getSisevaNombre() );
+            evaluacion.setVigente_s( ( (AcSisEvaluacion)lista.get( i ) ).getSisevaVigente() );
+            Set<AcSisEvaDetalle> sisevadet = new LinkedHashSet<AcSisEvaDetalle>();
+            sisevadet = ( (AcSisEvaluacion)lista.get( i ) ).getAcSisEvaDetalles();
+            List list = Collections.synchronizedList( new LinkedList( sisevadet ) );
+            List a = new ArrayList();
+            if ( list.size() != 0 ) {
+                bSistemaEvaluacion siseva;
+                for ( int j = 0; j < list.size(); j++ ) {
+                    siseva = new bSistemaEvaluacion();
+                    siseva.setId_det( ( (AcSisEvaDetalle)list.get( j ) ).getId() );
+                    siseva.setCodigo_det( ( (AcSisEvaDetalle)list.get( j ) ).getSisevaDetalleCodigo() );
+                    siseva.setNombre_det( ( (AcSisEvaDetalle)list.get( j ) ).getSisevaDetalleNombre() );
+                    siseva.setPeso_det( ( (AcSisEvaDetalle)list.get( j ) ).getSisevaDetallePeso() );
+                    siseva.setActivo_det( ( (AcSisEvaDetalle)list.get( j ) ).getSisevaDetalleActivo() );
+                    siseva.setAgruparSisEva( ( (AcSisEvaDetalle)list.get( j ) ).getSisevaDetalleAgrupar() );
+                    siseva.setSETipoNota( ( (AcSisEvaDetalle)list.get( j ) ).getSisevaDetalleTipoNota() );
+                    siseva.setSESemestreEtapa( ( (AcSisEvaDetalle)list.get( j ) ).getSisevaDetalleSemestreEtapa() );
+                    //siseva.setTipoNota( ( (AcSisEvaDetalle)list.get( j ) ).getSisevaDetalleTipoNota());
+
+                    if ( ( (AcSisEvaDetalle)list.get( j ) ).getSisevaDetalleActivo().equals( "1" ) ) {
+                        a.add( siseva );
+                    }
+                }
+            }
+            evaluacion.setDetalle_s( a );
+            tablaSisEva.add( evaluacion );
+        }
+        this.setTablaSisEva( tablaSisEva );
+    }
+
+    public void mostrarPlantilla( ActionEvent event ) {
+        int id_siseva_tmp = Integer.parseInt( ( (UIParameter)event.getComponent().findComponent( "id_siseva_tmp" ) ).getValue().toString() );
+        if ( id_siseva_tmp != 0 ) {
+            lstClSisEvaPerPlant = CommonDAO.getSistemaEvaluacionDAO().listarSisEvaPerPlantilla( id_siseva_tmp, 0 );
+        } else {
+            lstClSisEvaPerPlant = new ArrayList<AcSisEvaPersonalizado>();
+        }
+        oncomplete = "Richfaces.showModalPanel('mpClSisEvaPerPlantilla')";
+    }
+
+    public void Insertar( ActionEvent event ) {
+        id_aux = 0;
+        HSSistemaEvaluacionDAO dao = (HSSistemaEvaluacionDAO)ServiceFinder.findBean( "SpringHibernateDaoSistemaEvaluacion" );
+        AcSisEvaluacion siseva = new AcSisEvaluacion();
+        siseva.setId( this.getId_i() );
+        siseva.setSisevaCodigo( this.getCodigo_i() );
+        siseva.setSisevaNombre( this.getNombre_i() );
+        Date date = new Date();
+        siseva.setSisevaCreacion( date );
+        siseva.setSisevaVigente( this.getVigente_i() );
+        siseva.setSisevaActivo( "1" );
+        Set<AcSisEvaDetalle> lista_detalle = new LinkedHashSet<AcSisEvaDetalle>();
+        for ( int i = 0; i < detalle.size(); i++ ) {
+            AcSisEvaDetalle sisevadet = new AcSisEvaDetalle();
+            if ( ( (bSistemaEvaluacion)detalle.get( i ) ).getId_det() > 0 ) {
+                sisevadet.setId( ( (bSistemaEvaluacion)detalle.get( i ) ).getId_det() );
+            }
+            sisevadet.setSisevaDetalleCodigo( ( (bSistemaEvaluacion)detalle.get( i ) ).getCodigo_det() );
+            sisevadet.setSisevaDetallePeso( ( (bSistemaEvaluacion)detalle.get( i ) ).getPeso_det() );
+            sisevadet.setSisevaDetalleNombre( ( (bSistemaEvaluacion)detalle.get( i ) ).getNombre_det() );
+            sisevadet.setSisevaDetalleActivo( ( (bSistemaEvaluacion)detalle.get( i ) ).getActivo_det() );
+            
+            sisevadet.setSisevaDetalleTipoNota( ( (bSistemaEvaluacion)detalle.get( i ) ).getSETipoNota() );
+            sisevadet.setSisevaDetalleSemestreEtapa( ( (bSistemaEvaluacion)detalle.get( i ) ).getSESemestreEtapa() );
+            sisevadet.setSisevaDetalleAgrupar( ( (bSistemaEvaluacion)detalle.get( i ) ).getAgruparSisEva() );
+            
+            sisevadet.setSiseva( siseva );
+            lista_detalle.add( sisevadet );
+        }
+        siseva.setAcSisEvaDetalles( lista_detalle );
+        if ( this.getId_i() == 0 ) {
+            dao.insertarSistemaEvaluacion( siseva );
+        } else {
+            dao.actualizarSistemaEvaluacion( siseva );
+        }
+    }
+
+    public void Editar( ActionEvent event ) throws Exception {
+        List a = new ArrayList();
+        UIParameter id = (UIParameter)event.getComponent().findComponent( "id_s" );
+        UIParameter codigo = (UIParameter)event.getComponent().findComponent( "codigo_s" );
+        UIParameter nombre = (UIParameter)event.getComponent().findComponent( "nombre_s" );
+        UIParameter creacion = (UIParameter)event.getComponent().findComponent( "creacion_s" );
+        UIParameter vigente = (UIParameter)event.getComponent().findComponent( "vigente_s" );
+        id_aux = Integer.parseInt( id.getValue().toString() );
+        codigo_aux = codigo.getValue().toString();
+        nombre_aux = nombre.getValue().toString();
+        vigente_aux = vigente.getValue().toString();
+        this.setCodigo_i( codigo_aux );
+        HSSistemaEvaluacionDAO dao = (HSSistemaEvaluacionDAO)ServiceFinder.findBean( "SpringHibernateDaoSistemaEvaluacion" );
+        List lista = dao.seleccionarSistemaEvaluacion( id_aux );
+        Set<AcSisEvaDetalle> sisevadet = new LinkedHashSet<AcSisEvaDetalle>();
+        //List<AcSisEvaDetalle> sisevadet = new ArrayList();
+        sisevadet = ( (AcSisEvaluacion)lista.get( 0 ) ).getAcSisEvaDetalles();
+        List list = Collections.synchronizedList( new LinkedList( sisevadet ) );
+
+        if ( list.size() != 0 ) {
+            System.out.println( "tamano:" + list.size() );
+            bSistemaEvaluacion siseva;
+            for ( int i = 0; i < list.size(); i++ ) {
+                siseva = new bSistemaEvaluacion();
+                siseva.setId_det( ( (AcSisEvaDetalle)list.get( i ) ).getId() );
+                siseva.setCodigo_det( ( (AcSisEvaDetalle)list.get( i ) ).getSisevaDetalleCodigo() );
+                siseva.setNombre_det( ( (AcSisEvaDetalle)list.get( i ) ).getSisevaDetalleNombre() );
+                siseva.setPeso_det( ( (AcSisEvaDetalle)list.get( i ) ).getSisevaDetallePeso() );
+                siseva.setActivo_det( ( (AcSisEvaDetalle)list.get( i ) ).getSisevaDetalleActivo() );
+
+                siseva.setSETipoNota( ( (AcSisEvaDetalle)list.get( i ) ).getSisevaDetalleTipoNota() );
+                siseva.setV_tipo_nota( CommonDAO.getTbCatalogoDAO().seleccionarDescripcion( ( (AcSisEvaDetalle)list.get( i ) ).getSisevaDetalleTipoNota() ) );
+
+                siseva.setSESemestreEtapa( ( (AcSisEvaDetalle)list.get( i ) ).getSisevaDetalleSemestreEtapa() );
+                siseva.setV_semestre_etapa( CommonDAO.getTbCatalogoDAO().seleccionarDescripcion( ( (AcSisEvaDetalle)list.get( i ) ).getSisevaDetalleSemestreEtapa() ) );
+
+                siseva.setAgruparSisEva( ( (AcSisEvaDetalle)list.get( i ) ).getSisevaDetalleAgrupar() );
+
+                if ( ( (AcSisEvaDetalle)list.get( i ) ).getSisevaDetalleActivo().equals( "1" ) ) {
+                    a.add( siseva );
+                    //System.out.println("SI");
+                }
+            }
+        }
+        detalle = a;
+        this.setTablaSisEvaDetalle( a );
+    }
+
+    public void Eliminar( ActionEvent event ) {
+        UIParameter id = (UIParameter)event.getComponent().findComponent( "id_s" );
+        HSSistemaEvaluacionDAO dao = (HSSistemaEvaluacionDAO)ServiceFinder.findBean( "SpringHibernateDaoSistemaEvaluacion" );
+        dao.eliminarSistemaEvaluacion( Integer.parseInt( id.getValue().toString() ) );
+    }
+
+    public void Agregar() throws Exception {
+        bSistemaEvaluacion evaluacion = new bSistemaEvaluacion();
+        evaluacion.setId_det( id_det );
+        evaluacion.setCodigo_det( this.getCodigo_det() );
+        evaluacion.setNombre_det( this.getNombre_det() );
+        evaluacion.setPeso_det( this.getPeso_det() );
+        evaluacion.setActivo_det( "1" );
+        evaluacion.setSETipoNota( this.getSETipoNota() );
+        evaluacion.setSESemestreEtapa( this.getSESemestreEtapa() );
+        evaluacion.setV_tipo_nota( CommonDAO.getTbCatalogoDAO().seleccionarDescripcion( this.getSETipoNota() ) );
+        evaluacion.setV_semestre_etapa( CommonDAO.getTbCatalogoDAO().seleccionarDescripcion( this.getSESemestreEtapa() ) );
+        evaluacion.setAgruparSisEva( this.getAgruparSisEva() );
+        detalle.add( evaluacion );
+        this.setTablaSisEvaDetalle( detalle );
+        id_det--;
+    }
+
+    public void Quitar( ActionEvent event ) throws Exception {
+        int variable = 0;
+        UIParameter id = (UIParameter)event.getComponent().findComponent( "id_det2" );
+        bSistemaEvaluacion evaluacion = new bSistemaEvaluacion();
+        evaluacion.setId_det( Integer.parseInt( id.getValue().toString() ) );
+        for ( int i = 0; i < detalle.size(); i++ ) {
+            if ( Integer.parseInt( id.getValue().toString() ) == ( (bSistemaEvaluacion)detalle.get( i ) ).getId_det() ) {
+                if ( Integer.parseInt( id.getValue().toString() ) > 0 ) {
+                    ( (bSistemaEvaluacion)detalle.get( i ) ).setActivo_det( "0" );
+                } else {
+                    detalle.remove( i );
+                }
+            }
+        }
+    }
+
+    public void Edit( ActionEvent event ) {
+
+
+        cod_det_aux = this.getCodigo_det();
+        nom_det_aux = this.getNombre_det();
+        pes_det_aux = this.getPeso_det();
+        agrupar_det_aux = this.getAgruparSisEva();
+        this.setV_tipo_nota( CommonDAO.getTbCatalogoDAO().seleccionarDescripcion( this.getSETipoNota() ) );
+        this.setV_semestre_etapa( CommonDAO.getTbCatalogoDAO().seleccionarDescripcion( this.getSESemestreEtapa() ) );
+        tnota_det_aux = this.getV_tipo_nota();
+        setapa_det_aux = this.getV_semestre_etapa();
+
+        this.setView( "false" );
+        this.setEditable( "true" );
+        this.setView_bool( false );
+        this.setEditable_bool( true );
+        this.setVisible( true );
+    }
+
+    public void Aceptar( ActionEvent event ) {
+        this.setV_tipo_nota( CommonDAO.getTbCatalogoDAO().seleccionarDescripcion( this.getSETipoNota() ) );
+        this.setV_semestre_etapa( CommonDAO.getTbCatalogoDAO().seleccionarDescripcion( this.getSESemestreEtapa() ) );
+        this.setView( "true" );
+        this.setEditable( "false" );
+        this.setView_bool( true );
+        this.setEditable_bool( false );
+        this.setVisible( false );
+    }
+
+    public void Cancelar( ActionEvent event ) {
+        this.setCodigo_det( cod_det_aux );
+        this.setNombre_det( nom_det_aux );
+        this.setPeso_det( pes_det_aux );
+        this.setAgruparSisEva( agrupar_det_aux );
+        this.setV_tipo_nota( tnota_det_aux );
+        this.setV_semestre_etapa( setapa_det_aux );
+        this.setView( "true" );
+        this.setEditable( "false" );
+        this.setView_bool( true );
+        this.setEditable_bool( false );
+        this.setVisible( false );
+    }
+
+    public void Ver( ActionEvent event ) {
+        UIParameter flag = (UIParameter)event.getComponent().findComponent( "flag" );
+        if ( flag.getValue().toString().equals( "0" ) ) {
+            this.setVer( true );
+            this.setFlag_ver( "1" );
+            this.setImagen( "/Imagenes/actions/up.png" );
+        } else {
+            this.setVer( false );
+            this.setFlag_ver( "0" );
+            this.setImagen( "/Imagenes/actions/down.png" );
+        }
+    }
+
+    /* Nuevo ingreso de sistema de evaluacion */
+    public SelectItem[] getTipoNota() {
+        if ( tipoNota == null ) {
+            try {
+                HSCatalogoDAO dao = (HSCatalogoDAO)ServiceFinder.findBean( "SpringHibernateDaoCatalogo" );
+                List<TbCatalogo> lista = dao.seleccionarCatalogo( "034" );
+                tipoNota = new SelectItem[ lista.size() + 1 ];
+                tipoNota[0] = new SelectItem( "000000", "[Seleccione]" );
+                for ( int i = 0; i < lista.size(); i++ ) {
+                    tipoNota[i + 1] = new SelectItem( lista.get( i ).getCatCodigoGrupo() + lista.get( i ).getCatCodigoElemento(), lista.get( i ).getCatDescripcionElemento() );
+                }
+            } catch ( Exception e ) {
+                System.err.println( "Error al cargar los tipos de clase " + e.getMessage() );
+                tipoNota = new SelectItem[ 1 ];
+                tipoNota[0] = new SelectItem( "000000", "[Seleccione]" );
+            }
+        }
+        return tipoNota;
+    }
+
+    public void setTipoNota( SelectItem[] tipoNota ) {
+        this.tipoNota = tipoNota;
+    }
+
+    public SelectItem[] getSemestreEtapa() {
+        if ( semestreEtapa == null ) {
+            try {
+                HSCatalogoDAO dao = (HSCatalogoDAO)ServiceFinder.findBean( "SpringHibernateDaoCatalogo" );
+                List<TbCatalogo> lista = dao.seleccionarCatalogo( "092" );
+                semestreEtapa = new SelectItem[ lista.size() + 1 ];
+                semestreEtapa[0] = new SelectItem( "000000", "[Seleccione]" );
+                for ( int i = 0; i < lista.size(); i++ ) {
+                    semestreEtapa[i + 1] = new SelectItem( lista.get( i ).getCatCodigoGrupo() + lista.get( i ).getCatCodigoElemento(), lista.get( i ).getCatDescripcionElemento() );
+                }
+            } catch ( Exception e ) {
+                System.err.println( "Error al cargar los tipos de clase " + e.getMessage() );
+                semestreEtapa = new SelectItem[ 1 ];
+                semestreEtapa[0] = new SelectItem( "000000", "[Seleccione]" );
+            }
+        }
+        return semestreEtapa;
+    }
+
+    public void setSemestreEtapa( SelectItem[] semestreEtapa ) {
+        this.semestreEtapa = semestreEtapa;
+    }
+
+    public String getSETipoNota() {
+        return this.seTipoNota;
+    }
+
+    public void setSETipoNota( String seTipoNota ) {
+        this.seTipoNota = seTipoNota;
+    }
+
+    public String getSESemestreEtapa() {
+        return this.seSemestreEtapa;
+    }
+
+    public void setSESemestreEtapa( String seSemestreEtapa ) {
+        this.seSemestreEtapa = seSemestreEtapa;
+    }
+}

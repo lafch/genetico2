@@ -1,0 +1,455 @@
+package net.uch.mapping.base;
+
+import java.io.Serializable;
+
+
+/**
+ * This is an object that contains data related to the ac_docente table.
+ * Do not modify this class because it will be overwritten if the configuration file
+ * related to this class is modified.
+ *
+ * @hibernate.class
+ *  table="ac_docente"
+ */
+
+public abstract class BaseAcDocente  implements Serializable {
+
+	public static String REF = "AcDocente";
+	public static String PROP_DOC_NOMBRE = "DocNombre";
+	public static String PROP_DOC_CODIGO = "DocCodigo";
+	public static String PROP_DOC_CORREO = "DocCorreo";
+	public static String PROP_DOC_TELEFONO = "DocTelefono";
+	public static String PROP_DOC_FOTO = "DocFoto";
+	public static String PROP_DOC_PERIODO_INICIO = "DocPeriodoInicio";
+	public static String PROP_DOC_RESIDENCIA = "DocResidencia";
+	public static String PROP_ID = "Id";
+	public static String PROP_DOC_SEXO = "DocSexo";
+	public static String PROP_DOC_NACIMIENTO = "DocNacimiento";
+	public static String PROP_DOC_ACTIVO = "DocActivo";
+        public static String PROP_DOC_TIPO = "DocTipo";
+	public static String PROP_DOC_SITUACION = "DocSituacion";
+        public static String PROP_DOC_NOMBRES = "DocNombres";
+        public static String PROP_DOC_APPATERNO = "DocAppaterno";
+        public static String PROP_DOC_APMATERNO = "DocApmaterno";
+        public static String PROP_DOC_DNI = "DocDni";
+        public static String PROP_DOC_PASSWORD = "DocPassword";
+        public static String PROP_DOC_FAC_ID = "DocFacId";
+
+
+
+	// constructors
+	public BaseAcDocente () {
+		initialize();
+	}
+
+    public String getDocPassword() {
+        return docPassword;
+    }
+
+    public void setDocPassword(String docPassword) {
+        this.docPassword = docPassword;
+    }
+
+	/**
+	 * Constructor for primary key
+	 */
+	public BaseAcDocente (java.lang.Integer id) {
+		this.setId(id);
+		initialize();
+	}
+
+	protected void initialize () {}
+
+
+
+	private int hashCode = Integer.MIN_VALUE;
+
+	// primary key
+	private java.lang.Integer id;
+
+	// fields
+	private java.lang.String docCodigo;
+	private java.lang.String docNombre;
+	private byte[] docFoto;
+	private java.lang.String docSituacion;
+	private java.util.Date docPeriodoInicio;
+	private java.lang.String docNacimiento;
+	private java.lang.String docResidencia;
+	private java.lang.String docTelefono;
+	private java.lang.String docSexo;
+	private java.lang.String docCorreo;
+	private java.lang.String docActivo;
+        private java.lang.String docNombres;
+        private java.lang.String docAppaterno;
+        private java.lang.String docApmaterno;
+        private java.lang.String docDni;
+        private java.lang.String docPassword;
+        private java.lang.String docTipo;
+        private java.lang.Integer docFacId;
+
+
+    
+
+
+	// collections
+	private java.util.Set<net.uch.mapping.AcDisponibilidad> acDisponibilidads;
+	private java.util.Set<net.uch.mapping.AcHorario> acHorarios;
+	private java.util.Set<net.uch.mapping.AcVidaDocente> acVidaDocentes;
+
+
+
+	/**
+	 * Return the unique identifier of this class
+     * @hibernate.id
+     *  generator-class="native"
+     *  column="doc_id"
+     */
+	public java.lang.Integer getId () {
+		return id;
+	}
+
+	/**
+	 * Set the unique identifier of this class
+	 * @param id the new ID
+	 */
+	public void setId (java.lang.Integer id) {
+		this.id = id;
+		this.hashCode = Integer.MIN_VALUE;
+	}
+
+
+
+
+	/**
+	 * Return the value associated with the column: doc_codigo
+	 */
+	public java.lang.String getDocCodigo () {
+		return docCodigo;
+	}
+
+	/**
+	 * Set the value related to the column: doc_codigo
+	 * @param docCodigo the doc_codigo value
+	 */
+	public void setDocCodigo (java.lang.String docCodigo) {
+		this.docCodigo = docCodigo;
+	}
+
+
+
+	/**
+	 * Return the value associated with the column: doc_nombre
+	 */
+	public java.lang.String getDocNombre () {
+		return docNombre;
+	}
+
+	/**
+	 * Set the value related to the column: doc_nombre
+	 * @param docNombre the doc_nombre value
+	 */
+	public void setDocNombre (java.lang.String docNombre) {
+		this.docNombre = docNombre;
+	}
+
+
+
+	/**
+	 * Return the value associated with the column: doc_foto
+	 */
+	public byte[] getDocFoto () {
+		return docFoto;
+	}
+
+	/**
+	 * Set the value related to the column: doc_foto
+	 * @param docFoto the doc_foto value
+	 */
+	public void setDocFoto (byte[] docFoto) {
+		this.docFoto = docFoto;
+	}
+
+
+
+	/**
+	 * Return the value associated with the column: doc_situacion
+	 */
+	public java.lang.String getDocSituacion () {
+		return docSituacion;
+	}
+
+	/**
+	 * Set the value related to the column: doc_situacion
+	 * @param docSituacion the doc_situacion value
+	 */
+	public void setDocSituacion (java.lang.String docSituacion) {
+		this.docSituacion = docSituacion;
+	}
+
+
+
+	/**
+	 * Return the value associated with the column: doc_periodo_inicio
+	 */
+	public java.util.Date getDocPeriodoInicio () {
+		return docPeriodoInicio;
+	}
+
+	/**
+	 * Set the value related to the column: doc_periodo_inicio
+	 * @param docPeriodoInicio the doc_periodo_inicio value
+	 */
+	public void setDocPeriodoInicio (java.util.Date docPeriodoInicio) {
+		this.docPeriodoInicio = docPeriodoInicio;
+	}
+
+
+
+	/**
+	 * Return the value associated with the column: doc_nacimiento
+	 */
+	public java.lang.String getDocNacimiento () {
+		return docNacimiento;
+	}
+
+	/**
+	 * Set the value related to the column: doc_nacimiento
+	 * @param docNacimiento the doc_nacimiento value
+	 */
+	public void setDocNacimiento (java.lang.String docNacimiento) {
+		this.docNacimiento = docNacimiento;
+	}
+
+
+
+	/**
+	 * Return the value associated with the column: doc_residencia
+	 */
+	public java.lang.String getDocResidencia () {
+		return docResidencia;
+	}
+
+	/**
+	 * Set the value related to the column: doc_residencia
+	 * @param docResidencia the doc_residencia value
+	 */
+	public void setDocResidencia (java.lang.String docResidencia) {
+		this.docResidencia = docResidencia;
+	}
+
+
+
+	/**
+	 * Return the value associated with the column: doc_telefono
+	 */
+	public java.lang.String getDocTelefono () {
+		return docTelefono;
+	}
+
+	/**
+	 * Set the value related to the column: doc_telefono
+	 * @param docTelefono the doc_telefono value
+	 */
+	public void setDocTelefono (java.lang.String docTelefono) {
+		this.docTelefono = docTelefono;
+	}
+
+
+
+	/**
+	 * Return the value associated with the column: doc_sexo
+	 */
+	public java.lang.String getDocSexo () {
+		return docSexo;
+	}
+
+	/**
+	 * Set the value related to the column: doc_sexo
+	 * @param docSexo the doc_sexo value
+	 */
+	public void setDocSexo (java.lang.String docSexo) {
+		this.docSexo = docSexo;
+	}
+
+
+
+	/**
+	 * Return the value associated with the column: doc_correo
+	 */
+	public java.lang.String getDocCorreo () {
+		return docCorreo;
+	}
+
+	/**
+	 * Set the value related to the column: doc_correo
+	 * @param docCorreo the doc_correo value
+	 */
+	public void setDocCorreo (java.lang.String docCorreo) {
+		this.docCorreo = docCorreo;
+	}
+
+
+
+	/**
+	 * Return the value associated with the column: doc_activo
+	 */
+	public java.lang.String getDocActivo () {
+		return docActivo;
+	}
+
+        /**
+	 * Return the value associated with the column: doc_activo
+	 */
+	public java.lang.String getDocTipo () {
+		return docTipo;
+	}
+
+	/**
+	 * Set the value related to the column: doc_activo
+	 * @param docActivo the doc_activo value
+	 */
+	public void setDocActivo (java.lang.String docActivo) {
+		this.docActivo = docActivo;
+	}
+
+         public String getDocApmaterno() {
+            return docApmaterno;
+        }
+
+        public void setDocApmaterno(String docApmaterno) {
+            this.docApmaterno = docApmaterno;
+        }
+
+        public String getDocAppaterno() {
+            return docAppaterno;
+        }
+
+        public void setDocAppaterno(String docAppaterno) {
+            this.docAppaterno = docAppaterno;
+        }
+
+        public String getDocDni() {
+            return docDni;
+        }
+
+        public void setDocDni(String docDni) {
+            this.docDni = docDni;
+        }
+
+        public String getDocNombres() {
+            return docNombres;
+        }
+
+        public void setDocNombres(String docNombres) {
+            this.docNombres = docNombres;
+        }
+
+        public void setDocTipo(String docTipo) {
+            this.docTipo = docTipo;
+        }
+        
+        public void setDocFacId(Integer docFacId) {
+            this.docFacId = docFacId;
+        }
+        
+        public Integer getDocFacId() {
+            return docFacId;
+        }
+
+           
+
+	/**
+	 * Return the value associated with the column: AcDisponibilidads
+	 */
+	public java.util.Set<net.uch.mapping.AcDisponibilidad> getAcDisponibilidads () {
+		return acDisponibilidads;
+	}
+
+	/**
+	 * Set the value related to the column: AcDisponibilidads
+	 * @param acDisponibilidads the AcDisponibilidads value
+	 */
+	public void setAcDisponibilidads (java.util.Set<net.uch.mapping.AcDisponibilidad> acDisponibilidads) {
+		this.acDisponibilidads = acDisponibilidads;
+	}
+
+	public void addToAcDisponibilidads (net.uch.mapping.AcDisponibilidad acDisponibilidad) {
+		if (null == getAcDisponibilidads()) setAcDisponibilidads(new java.util.TreeSet<net.uch.mapping.AcDisponibilidad>());
+		getAcDisponibilidads().add(acDisponibilidad);
+	}
+
+
+
+	/**
+	 * Return the value associated with the column: AcHorarios
+	 */
+	public java.util.Set<net.uch.mapping.AcHorario> getAcHorarios () {
+		return acHorarios;
+	}
+
+	/**
+	 * Set the value related to the column: AcHorarios
+	 * @param acHorarios the AcHorarios value
+	 */
+	public void setAcHorarios (java.util.Set<net.uch.mapping.AcHorario> acHorarios) {
+		this.acHorarios = acHorarios;
+	}
+
+	public void addToAcHorarios (net.uch.mapping.AcHorario acHorario) {
+		if (null == getAcHorarios()) setAcHorarios(new java.util.TreeSet<net.uch.mapping.AcHorario>());
+		getAcHorarios().add(acHorario);
+	}
+
+
+
+	/**
+	 * Return the value associated with the column: AcVidaDocentes
+	 */
+	public java.util.Set<net.uch.mapping.AcVidaDocente> getAcVidaDocentes () {
+		return acVidaDocentes;
+	}
+
+	/**
+	 * Set the value related to the column: AcVidaDocentes
+	 * @param acVidaDocentes the AcVidaDocentes value
+	 */
+	public void setAcVidaDocentes (java.util.Set<net.uch.mapping.AcVidaDocente> acVidaDocentes) {
+		this.acVidaDocentes = acVidaDocentes;
+	}
+
+	public void addToAcVidaDocentes (net.uch.mapping.AcVidaDocente acVidaDocente) {
+		if (null == getAcVidaDocentes()) setAcVidaDocentes(new java.util.TreeSet<net.uch.mapping.AcVidaDocente>());
+		getAcVidaDocentes().add(acVidaDocente);
+	}
+
+
+
+
+	public boolean equals (Object obj) {
+		if (null == obj) return false;
+		if (!(obj instanceof net.uch.mapping.AcDocente)) return false;
+		else {
+			net.uch.mapping.AcDocente acDocente = (net.uch.mapping.AcDocente) obj;
+			if (null == this.getId() || null == acDocente.getId()) return false;
+			else return (this.getId().equals(acDocente.getId()));
+		}
+	}
+
+	public int hashCode () {
+		if (Integer.MIN_VALUE == this.hashCode) {
+			if (null == this.getId()) return super.hashCode();
+			else {
+				String hashStr = this.getClass().getName() + ":" + this.getId().hashCode();
+				this.hashCode = hashStr.hashCode();
+			}
+		}
+		return this.hashCode;
+	}
+
+
+	public String toString () {
+		return super.toString();
+	}
+
+
+}

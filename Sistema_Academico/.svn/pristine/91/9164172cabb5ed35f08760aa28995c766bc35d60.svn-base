@@ -1,0 +1,848 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.asistenciaDocente.managedBeans;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.faces.component.UIParameter;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+import net.uch.academica.hibernateSpringDao.HSDocenteDAO;
+import net.uch.asistenciaDocente.hibernateSpringDao.HSAsistenciaDocenteDAO;
+import net.uch.asistenciaDocente.managedBeans.beans.AsistenciaDocenteBean;
+import net.uch.asistenciaDocente.managedBeans.beans.NuevaAsistenciaBean;
+import net.uch.asistenciaDocente.managedBeans.beans.NuevaHoraAdicional;
+import net.uch.commonService.ServiceFinder;
+import net.uch.mapping.AcDocente;
+import net.uch.mapping.AcSeccion;
+import net.uch.mapping.AcSesionAsistencia;
+import net.uch.mapping.AcSesionEfectivaAsisDoc;
+import net.uch.mapping.TbCatalogo;
+import net.uch.tablaSistema.hibernateSpringDao.HSCatalogoDAO;
+
+/**
+ *
+ * @author cesardl
+ */
+public class bAsistenciaDocente {
+
+    private String dato;
+    private String suggestion;
+    private String suggestionha;
+    private int b_doc_id;
+    private String b_doc_codigo;
+    private String b_doc_nombre;
+    private Date b_session_fecha_ini;
+    private Date b_session_fecha_fin;
+    private String b_tipasis_code;
+    private SelectItem b_tipasis[];
+    private String w_doc_nombre;
+    private String w_doc_codigo;
+    private int w_doc_id = 0;
+    private String w_sec_nombre;
+    private String w_cur_nombre;
+    private SimpleDateFormat formatTimeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private Date hora_ingre;
+    private String doc_nombre;
+    private String b_esp_nombre;
+    private Date b_hora_Ini_2;
+    private Date b_hora_Fin_2;
+    private int s_doc_id;
+    private int b_ses_id;
+    private Date b_fecha_registro = new Date();
+    private String b_sec_nombre;
+    private String b_cur_nombre;
+    private int b_plan_cur_id;
+    private List<bAsistenciaDocente> b_listar_Sessiones = new ArrayList<bAsistenciaDocente>();
+    private Date b_ses_horaIni = new Date();
+    private Date b_ses_horaFin = new Date();
+    private AsistenciaDocenteBean asisDocente = new AsistenciaDocenteBean();
+    private NuevaAsistenciaBean nuevAsisDocente = new NuevaAsistenciaBean();
+    private NuevaHoraAdicional nuevaHoraAdicional = new NuevaHoraAdicional();
+    
+    private String oncomplete;
+
+    //CONSTRUCTORES
+    public bAsistenciaDocente() {
+    }
+
+    public bAsistenciaDocente(int p) {
+    }
+
+    public SelectItem[] getB_tipasis() {
+        try {
+            HSCatalogoDAO catalogoDAO = (HSCatalogoDAO) ServiceFinder.findBean("SpringHibernateDaoCatalogo");
+            List l = catalogoDAO.seleccionarCatalogo("050");
+            b_tipasis = new SelectItem[l.size() + 1];
+
+            for (int i = 0; i < l.size(); i++) {
+                TbCatalogo cat = (TbCatalogo) l.get(i);
+                b_tipasis[i + 1] = new SelectItem("050" + cat.getCatCodigoElemento(), cat.getCatDescripcionElemento());
+            }
+        } catch (Exception e) {
+            b_tipasis = new SelectItem[1];
+        } finally {
+            b_tipasis[0] = new SelectItem(0, "[Seleccione]");
+        }
+        return b_tipasis;
+    }
+
+    public void setB_tipasis(SelectItem[] b_tipasis) {
+        this.b_tipasis = b_tipasis;
+    }
+
+    public String getB_tipasis_code() {
+        return b_tipasis_code;
+    }
+
+    public void setB_tipasis_code(String b_tipasis_code) {
+        this.b_tipasis_code = b_tipasis_code;
+    }
+
+    public String getB_esp_nombre() {
+        return b_esp_nombre;
+    }
+
+    public void setB_esp_nombre(String b_esp_nombre) {
+        this.b_esp_nombre = b_esp_nombre;
+    }
+
+    public int getS_doc_id() {
+        return s_doc_id;
+    }
+
+    public void setS_doc_id(int s_doc_id) {
+        this.s_doc_id = s_doc_id;
+    }
+
+    public Date getB_hora_Fin_2() {
+        return b_hora_Fin_2;
+    }
+
+    public void setB_hora_Fin_2(Date b_hora_Fin_2) {
+        this.b_hora_Fin_2 = b_hora_Fin_2;
+    }
+
+    public Date getB_hora_Ini_2() {
+        return b_hora_Ini_2;
+    }
+
+    public void setB_hora_Ini_2(Date b_hora_Ini_2) {
+        this.b_hora_Ini_2 = b_hora_Ini_2;
+    }
+
+    public Date getB_session_fecha_ini() {
+        return b_session_fecha_ini;
+    }
+
+    public void setB_session_fecha_ini(Date b_session_fecha_ini) {
+        this.b_session_fecha_ini = b_session_fecha_ini;
+    }
+
+    public Date getB_session_fecha_fin() {
+        return b_session_fecha_fin;
+    }
+
+    public void setB_session_fecha_fin(Date b_session_fecha_fin) {
+        this.b_session_fecha_fin = b_session_fecha_fin;
+    }
+    private SelectItem[] cboDocente;
+
+    public SelectItem[] getCboDocente() throws Exception {
+        HSDocenteDAO dao2 = (HSDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoDocente");
+        List<AcDocente> listaDocente = dao2.seleccionarDocente();
+
+        cboDocente = new SelectItem[listaDocente.size()];
+        for (int i = 0; i < cboDocente.length; i++) {
+            cboDocente[i] = new SelectItem(listaDocente.get(i).getId(), listaDocente.get(i).getDocNombre());
+        }
+        return cboDocente;
+    }
+
+    public void setCboDocente(SelectItem[] cboDocente) {
+        this.cboDocente = cboDocente;
+    }
+
+    public Date getHora_ingre() {
+        return hora_ingre;
+    }
+
+    public void setHora_ingre(Date hora_ingre) {
+        this.hora_ingre = hora_ingre;
+    }
+
+    public String getDoc_nombre() {
+        return doc_nombre;
+    }
+
+    public void setDoc_nombre(String doc_nombre) {
+        this.doc_nombre = doc_nombre;
+    }
+
+    public String getW_cur_nombre() {
+        return w_cur_nombre;
+    }
+
+    public void setW_cur_nombre(String w_cur_nombre) {
+        this.w_cur_nombre = w_cur_nombre;
+    }
+
+    public String getW_sec_nombre() {
+        return w_sec_nombre;
+    }
+
+    public void setW_sec_nombre(String w_sec_nombre) {
+        this.w_sec_nombre = w_sec_nombre;
+    }
+
+    public String getOncomplete() {
+        return oncomplete;
+    }
+
+    public void setOncomplete(String oncomplete) {
+        this.oncomplete = oncomplete;
+    }
+
+    public AsistenciaDocenteBean getAsisDocente() {
+        return asisDocente;
+    }
+
+    public void setAsisDocente(AsistenciaDocenteBean asisDocente) {
+        this.asisDocente = asisDocente;
+    }
+
+    public NuevaAsistenciaBean getNuevAsisDocente() {
+        return nuevAsisDocente;
+    }
+    
+
+    public void setNuevAsisDocente(NuevaAsistenciaBean nuevAsisDocente) {
+        this.nuevAsisDocente = nuevAsisDocente;
+    }
+    
+    public NuevaHoraAdicional getNuevaHoraAdicional() {
+        return nuevaHoraAdicional;
+    }
+    
+
+    public void setNuevaHoraAdicional(NuevaHoraAdicional nuevaHoraAdicional) {
+        this.nuevaHoraAdicional = nuevaHoraAdicional;
+    }
+
+    public Date getB_ses_horaFin() {
+        return b_ses_horaFin;
+    }
+
+    public void setB_ses_horaFin(Date b_ses_horaFin) {
+        this.b_ses_horaFin = b_ses_horaFin;
+    }
+
+    public Date getB_ses_horaIni() {
+        return b_ses_horaIni;
+    }
+
+    public void setB_ses_horaIni(Date b_ses_horaIni) {
+        this.b_ses_horaIni = b_ses_horaIni;
+    }
+
+    public List<bAsistenciaDocente> getB_listar_Sessiones() {
+        return b_listar_Sessiones;
+    }
+
+    public void setB_listar_Sessiones(List<bAsistenciaDocente> b_listar_Sessiones) {
+        this.b_listar_Sessiones = b_listar_Sessiones;
+    }
+
+    public String getB_cur_nombre() {
+        return b_cur_nombre;
+    }
+
+    public void setB_cur_nombre(String b_cur_nombre) {
+        this.b_cur_nombre = b_cur_nombre;
+    }
+
+    public Date getB_fecha_registro() {
+        return b_fecha_registro;
+    }
+
+    public void setB_fecha_registro(Date b_fecha_registro) {
+        this.b_fecha_registro = b_fecha_registro;
+    }
+
+    public int getB_plan_cur_id() {
+        return b_plan_cur_id;
+    }
+
+    public void setB_plan_cur_id(int b_plan_cur_id) {
+        this.b_plan_cur_id = b_plan_cur_id;
+    }
+
+    public String getB_sec_nombre() {
+        return b_sec_nombre;
+    }
+
+    public void setB_sec_nombre(String b_sec_nombre) {
+        this.b_sec_nombre = b_sec_nombre;
+    }
+
+    public int getB_ses_id() {
+        return b_ses_id;
+    }
+
+    public void setB_ses_id(int b_ses_id) {
+        this.b_ses_id = b_ses_id;
+    }
+
+    public String getDato() {
+        return dato;
+    }
+
+    public void setDato(String dato) {
+        this.dato = dato;
+    }
+
+    public String getSuggestion() {
+        return suggestion;
+    }
+
+    public void setSuggestion(String suggestion) {
+        this.suggestion = suggestion;
+    }
+    public String getSuggestionha() {
+        return suggestionha;
+    }
+
+    public void setSuggestionha(String suggestionha) {
+        this.suggestionha = suggestionha;
+    }
+
+    public String getB_doc_nombre() {
+        return b_doc_nombre;
+    }
+
+    public void setB_doc_nombre(String b_doc_nombre) {
+        this.b_doc_nombre = b_doc_nombre;
+    }
+
+    public String getB_doc_codigo() {
+        return b_doc_codigo;
+    }
+
+    public void setB_doc_codigo(String b_doc_codigo) {
+        this.b_doc_codigo = b_doc_codigo;
+    }
+
+    public int getB_doc_id() {
+        return b_doc_id;
+    }
+
+    public void setB_doc_id(int b_doc_id) {
+        this.b_doc_id = b_doc_id;
+    }
+
+    public String getW_doc_nombre() {
+        return w_doc_nombre;
+    }
+
+    public void setW_doc_nombre(String w_doc_nombre) {
+        this.w_doc_nombre = w_doc_nombre;
+    }
+
+    public String getW_doc_codigo() {
+        return w_doc_codigo;
+    }
+
+    public void setW_doc_codigo(String w_doc_codigo) {
+        this.w_doc_codigo = w_doc_codigo;
+    }
+
+    /**
+     * Retorna el docIdBk
+     * @return
+     */
+    public int getW_doc_id() {
+        return w_doc_id;
+    }
+
+    /**
+     * Setea el docIdBk
+     * @param w_doc_id
+     */
+    public void setW_doc_id(int w_doc_id) {
+        this.w_doc_id = w_doc_id;
+    }
+
+    public List<bAsistenciaDocente> autocomplete(Object suggestion) {
+        List<bAsistenciaDocente> listaEmpleados = new ArrayList<bAsistenciaDocente>();
+        String ref = (String) suggestion;
+        HSAsistenciaDocenteDAO dao = (HSAsistenciaDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoAsistenciaDocente");
+        List empleados = dao.buscarDocente_x_dato1(ref);
+//        System.out.println("entro al auto");
+        for (int i = 0; i < empleados.size(); i++) {
+            bAsistenciaDocente doc = new bAsistenciaDocente(0);
+            doc.setB_doc_codigo(((AcDocente) empleados.get(i)).getDocCodigo());
+            doc.setB_doc_id(((AcDocente) empleados.get(i)).getId());
+            doc.setB_doc_nombre(((AcDocente) empleados.get(i)).getDocNombre());
+            listaEmpleados.add(doc);
+        }
+        return listaEmpleados;
+    }
+    
+    public List<bAsistenciaDocente> autocompleteha(Object suggestionha) {
+        List<bAsistenciaDocente> listaEmpleados = new ArrayList<bAsistenciaDocente>();
+        String ref = (String) suggestionha;
+        HSAsistenciaDocenteDAO dao = (HSAsistenciaDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoAsistenciaDocente");
+        List empleados = dao.buscarDocente_x_dato(ref);
+//        System.out.println("entro al auto");
+        for (int i = 0; i < empleados.size(); i++) {
+            bAsistenciaDocente doc = new bAsistenciaDocente(0);
+            doc.setB_doc_codigo(((AcDocente) empleados.get(i)).getDocCodigo());
+            doc.setB_doc_id(((AcDocente) empleados.get(i)).getId());
+            //this.setS_doc_id(doc.getB_doc_id());
+            doc.setB_doc_nombre(((AcDocente) empleados.get(i)).getDocNombre());
+            listaEmpleados.add(doc);
+        }
+        return listaEmpleados;
+    }
+
+    /**
+     * Muestra las sessiones de acuerdo a los parametros ingresados
+     * @param event
+     * @throws Exception
+     */
+    public void mostrarSessionAsistencia(ActionEvent event) {
+        try {
+//            System.out.println("el doc_id - " + getW_doc_id());
+//            System.out.println("el fecha_ini - " + getB_session_fecha_ini());
+//            System.out.println("el fecha_fin - " + getB_session_fecha_fin());
+//            System.out.println("el tipo de asistencia - " + getB_tipasis_code());
+
+            HSAsistenciaDocenteDAO daoAsistencia = (HSAsistenciaDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoAsistenciaDocente");
+            HSDocenteDAO daoDocente = (HSDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoDocente");
+            List<bAsistenciaDocente> listaEmpleados = new ArrayList<bAsistenciaDocente>();
+
+            List<AcSesionAsistencia> empleados = daoAsistencia.listarSessionAsistencia_x_docenteFecha(this.getW_doc_id(), this.getB_session_fecha_ini(),
+                    this.getB_session_fecha_fin(), this.getB_tipasis_code());
+
+            for (int i = 0; i < empleados.size(); i++) {
+                bAsistenciaDocente asis = new bAsistenciaDocente(0);
+                AcSesionAsistencia sesasis = empleados.get(i);
+
+                if (this.getB_tipasis_code().equalsIgnoreCase("050001")) {
+                    asis.setB_cur_nombre(sesasis.getAcSeccion().getCurape().getPlancur().getCur().getCurNombre());
+                    asis.setB_sec_nombre(sesasis.getAcSeccion().getSecNombre());
+                } else if (this.getB_tipasis_code().equalsIgnoreCase("050002")) {
+                    asis.setB_cur_nombre(daoAsistencia.seleccionarArea(sesasis.getAcSeccion().getId().intValue()).getAreNombre());
+                    asis.setB_sec_nombre("AREA");
+                }
+                asis.setB_fecha_registro(sesasis.getSesFechaRegistro());
+                asis.setB_ses_horaIni(sesasis.getSesFechaInicio());
+                asis.setB_ses_horaFin(sesasis.getSesFechaFin());
+                asis.setB_ses_id(sesasis.getSesId());
+                asis.setB_doc_id(sesasis.getDocId());
+                asis.setW_doc_id(sesasis.getDocIdBk());
+                asis.setDoc_nombre(daoDocente.seleccionarDocente(sesasis.getDocId()).getDocNombre());
+
+                listaEmpleados.add(asis);
+            }
+            this.setB_listar_Sessiones(listaEmpleados);
+        } catch (Exception e) {
+        }
+    }
+
+    public void seleccionarMarcaDocente(ActionEvent event) throws Exception {
+        HSAsistenciaDocenteDAO dao = (HSAsistenciaDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoAsistenciaDocente");
+        HSDocenteDAO daoDoc = (HSDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoDocente");
+
+        int p_ses_id = Integer.parseInt(((UIParameter) event.getComponent().findComponent("w_ses_id")).getValue().toString());
+        String p_cur_nombre = ((UIParameter) event.getComponent().findComponent("p_cur_nombre")).getValue().toString();
+        String p_sec_nombre = ((UIParameter) event.getComponent().findComponent("p_sec_nombre")).getValue().toString();
+        int p_doc_id = Integer.parseInt(((UIParameter) event.getComponent().findComponent("w_doc_id")).getValue().toString());
+
+        try {
+            AcSesionEfectivaAsisDoc sesefeasisdoc = dao.listaMarcadoDeAsistencia_x_Docente(p_ses_id);
+            AsistenciaDocenteBean asis = new AsistenciaDocenteBean();
+
+//            System.out.println("ses_id: " + p_ses_id);
+            if (sesefeasisdoc instanceof AcSesionEfectivaAsisDoc) {
+//                System.out.println("existe el ingreso!");
+//                System.out.println("doc: " + sesefeasisdoc.getAcDocente().getDocNombre());
+//                System.out.println("tipo ses doc: " + sesefeasisdoc.getSesefeasisdocTipo());
+
+                asis.setDoc_id(sesefeasisdoc.getAcDocente().getId());
+                asis.setDoc_codigo(sesefeasisdoc.getAcDocente().getDocCodigo());
+                asis.setDoc_nombre(sesefeasisdoc.getAcDocente().getDocNombre());
+                asis.setSes_id(sesefeasisdoc.getAcSesionAsistencia().getSesId());
+                asis.setSec_nombre(sesefeasisdoc.getAcSesionAsistencia().getAcSeccion().getSecNombre());
+                asis.setCur_nombre(sesefeasisdoc.getAcSesionAsistencia().getAcSeccion().getCurape().getPlancur().getCur().getCurNombre());
+                asis.setEstasis_code(sesefeasisdoc.getSesefeasisdocTipo());
+                asis.setSesefeasisdoc_fecha(sesefeasisdoc.getAcSesionAsistencia().getSesFechaRegistro());
+                asis.setSesefeasisdoc_id(sesefeasisdoc.getSesefeasisdocId());
+
+                Timestamp t1 = sesefeasisdoc.getSesefeasisdocRegistro();
+                Timestamp t2 = sesefeasisdoc.getSesefeasisdocSalida();
+                if (t1 != null) {
+                    asis.setReg_hora(t1.getHours());
+                    asis.setReg_min(t1.getMinutes());
+                }
+                if (t2 != null) {
+                    asis.setSal_hora(t2.getHours());
+                    asis.setSal_min(t2.getMinutes());
+                }
+                AcSesionAsistencia ses = dao.listarSessionAsistencia_x_sesid(p_ses_id);
+                asis.setRegistro(ses.getSesFechaInicio());
+                asis.setSalida(ses.getSesFechaFin());
+                asis.setSesefeasisdoc_registro(sesefeasisdoc.getSesefeasisdocRegistro());
+                asis.setSesefeasisdoc_salida(sesefeasisdoc.getSesefeasisdocSalida());
+                asis.setSesefeasisdoc_obs(sesefeasisdoc.getSesefeasisdocObs());
+            } else {
+//                System.out.println("nuevo ingreso!");
+                AcDocente doc = daoDoc.seleccionarDocente(p_doc_id);
+                AcSesionAsistencia ses = dao.listarSessionAsistencia_x_sesid(p_ses_id);
+                asis.setRegistro(ses.getSesFechaInicio());
+                asis.setSalida(ses.getSesFechaFin());
+                asis.setSesefeasisdoc_fecha(ses.getSesFechaRegistro());
+                asis.setDoc_id(doc.getId());
+                asis.setDoc_codigo(doc.getDocCodigo());
+                asis.setDoc_nombre(doc.getDocNombre());
+                asis.setSes_id(p_ses_id);
+                asis.setSec_nombre(p_sec_nombre);
+                asis.setCur_nombre(p_cur_nombre);
+            }
+//            System.out.println(asis);
+            this.setAsisDocente(asis);
+            this.setOncomplete("Richfaces.showModalPanel('mpAsisDocente')");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void guardarMarcaAsistencia(ActionEvent event) {
+        int p_ses_id = Integer.parseInt(((UIParameter) event.getComponent().findComponent("p_ses_id")).getValue().toString());
+        int s_doc_aux_id = Integer.parseInt(((UIParameter) event.getComponent().findComponent("p_doc_id")).getValue().toString());
+        int p_sesefec_id = Integer.parseInt(((UIParameter) event.getComponent().findComponent("p_sesefec_id")).getValue().toString());
+
+        try {
+            if (this.getAsisDocente().getEstasis_code().equals("0")) {
+                this.setOncomplete("javascript:alert('SELECCIONE UN TIPO DE ASISTENCIA');");
+            } else if (this.getAsisDocente().getReg_hora() == 0 && this.getAsisDocente().getReg_min() == 0) {
+                this.setOncomplete("javascript:alert('INGRESE LA HORA DE INGRESO');");
+            } else {
+//                System.out.println(this.getAsisDocente());
+//                System.out.println("el id de la seccion " + p_ses_id);
+//                System.out.println("el id del doc " + s_doc_aux_id);
+//                System.out.println("el id q c guarda es: " + p_sesefec_id);
+//                System.out.println("hora reg: " + this.getAsisDocente().getReg_hora());
+//                System.out.println("min reg: " + this.getAsisDocente().getReg_min());
+//                System.out.println("hora sal: " + this.getAsisDocente().getSal_hora());
+//                System.out.println("min sal: " + this.getAsisDocente().getSal_min());
+
+                Date dateRegistro = new Date(this.getAsisDocente().getSesefeasisdoc_fecha().getTime());
+                dateRegistro.setHours(this.getAsisDocente().getReg_hora());
+                dateRegistro.setMinutes(this.getAsisDocente().getReg_min());
+
+                Date dateSalida = new Date(this.getAsisDocente().getSesefeasisdoc_fecha().getTime());
+                dateSalida.setHours(this.getAsisDocente().getSal_hora());
+                dateSalida.setMinutes(this.getAsisDocente().getSal_min());
+
+                HSAsistenciaDocenteDAO dao = (HSAsistenciaDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoAsistenciaDocente");
+
+                AcSesionEfectivaAsisDoc sefec = new AcSesionEfectivaAsisDoc();
+
+                if (p_sesefec_id != 0) {
+                    sefec.setSesefeasisdocId(p_sesefec_id);
+                }
+                Timestamp tfRegistro = Timestamp.valueOf(formatTimeStamp.format(dateRegistro));
+                sefec.setSesefeasisdocRegistro(tfRegistro);
+
+                Timestamp tfSalida = null;
+                if (this.getAsisDocente().getSal_hora() == 0 && this.getAsisDocente().getSal_min() == 0) {
+                    sefec.setSesefeasisdocSalida(tfSalida);
+                } else {
+                    tfSalida = Timestamp.valueOf(formatTimeStamp.format(dateSalida));
+                    sefec.setSesefeasisdocSalida(tfSalida);
+                }
+                sefec.setSesefeasisdocObs(this.getAsisDocente().getSesefeasisdoc_obs());
+                sefec.setSesefeasisdocActivo("1");
+                sefec.setSesefeasisdocTole(0);
+                sefec.setSesefeasisdocTipo(this.getAsisDocente().getEstasis_code());
+                sefec.setAcSesionAsistencia(dao.listarSessionAsistencia_x_sesid(p_ses_id));
+                sefec.setAcDocente(new AcDocente(s_doc_aux_id));
+
+                dao.ingresarAsisteanDocente(sefec);
+                this.mostrarSessionAsistencia(event);
+                this.setOncomplete("javascript:alert('REGISTRO COMPLETO');"
+                        + "Richfaces.hideModalPanel('mpAsisDocente')");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void EliminarFila(ActionEvent event) throws Exception {
+        System.out.println("entro EliminarFila");
+        UIParameter delete = (UIParameter) event.getComponent().findComponent("delete");
+        Eliminar(delete.getValue().toString());
+    }
+
+    public void Eliminar(String id) throws Exception {
+        System.out.println("Entro a eliminar");
+        HSAsistenciaDocenteDAO dao = (HSAsistenciaDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoAsistenciaDocente");
+        dao.eliminarSesionDocente("" + id);
+
+        this.setOncomplete("javascript:alert('REGISTRO ELIMINADO SATISFACCTORIAMENTE');"
+                        + "Richfaces.hideModalPanel('mpAsisDocente')");
+
+    }
+
+    public void seleccionarSesion(ActionEvent event) throws Exception {
+        this.setOncomplete("");
+
+        int p_ses_id = Integer.parseInt(((UIParameter) event.getComponent().findComponent("w_ses_id")).getValue().toString());
+
+        HSAsistenciaDocenteDAO daoAsistencia = (HSAsistenciaDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoAsistenciaDocente");
+        HSDocenteDAO daoDocente = (HSDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoDocente");
+
+        AcSesionAsistencia sesasis = daoAsistencia.listarSessionAsistencia_x_sesid(p_ses_id);
+
+        AcDocente doc = (AcDocente) daoDocente.seleccionarDocente(sesasis.getDocId());
+        this.setB_ses_id(p_ses_id);
+        this.setB_doc_id(doc.getId());
+        this.setS_doc_id(doc.getId());
+        this.setB_doc_nombre(doc.getDocNombre());
+        this.setW_doc_id(sesasis.getDocIdBk());
+//        this.setB_sec_nombre(sesasis.getAcSeccion().getSecNombre());
+//        this.setB_cur_nombre(sesasis.getAcSeccion().getCurape().getPlancur().getCur().getCurNombre());
+        if (this.getB_tipasis_code().equalsIgnoreCase("050001")) {
+            this.setB_cur_nombre(sesasis.getAcSeccion().getCurape().getPlancur().getCur().getCurNombre());
+            this.setB_sec_nombre(sesasis.getAcSeccion().getSecNombre());
+            this.setB_esp_nombre(sesasis.getAcSeccion().getCurape().getPlancur().getCur().getEsp().getEspNombre());
+        } else if (this.getB_tipasis_code().equalsIgnoreCase("050002")) {
+            String area = daoAsistencia.seleccionarArea(sesasis.getAcSeccion().getId().intValue()).getAreNombre();
+            this.setB_cur_nombre(area);
+            this.setB_sec_nombre("AREA");
+            this.setB_esp_nombre(area);
+        }
+
+        this.setB_hora_Ini_2(sesasis.getSesFechaInicio());
+        this.setB_hora_Fin_2(sesasis.getSesFechaFin());
+
+        this.setOncomplete("Richfaces.showModalPanel('mpSessionAsis')");
+    }
+
+    public void actualizarSesion(ActionEvent event) {
+        int s_ses_id = Integer.parseInt(((UIParameter) event.getComponent().findComponent("p_ses_id")).getValue().toString());
+        int s_cambio = Integer.parseInt(((UIParameter) event.getComponent().findComponent("p_cambio")).getValue().toString());
+        int s_doc_ant = Integer.parseInt(((UIParameter) event.getComponent().findComponent("p_doc_ant")).getValue().toString());
+        Object obj_inicio = ((UIParameter) event.getComponent().findComponent("p_inicio")).getValue();
+        Object obj_fin = ((UIParameter) event.getComponent().findComponent("p_fin")).getValue();
+
+        Date s_inicio = (Date) obj_inicio;
+        Date s_fin = (Date) obj_fin;
+        try {
+            HSAsistenciaDocenteDAO dao = (HSAsistenciaDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoAsistenciaDocente");
+            String tipo;
+            //System.out.println("--->"+ dao.listarSessionAsistencia_x_sesid(s_ses_id).getSesTipo());
+//            System.out.println("nuevo doc: " + s_cambio + "\tentra: " + s_doc_ant);
+            if (s_cambio != s_doc_ant) {
+                tipo = "047002";
+            } else {
+                tipo = dao.listarSessionAsistencia_x_sesid(s_ses_id).getSesTipo();
+            }
+            dao.actualizarSesionDocente(s_ses_id, s_cambio, s_inicio, s_fin, tipo);
+
+            this.mostrarSessionAsistencia(event);
+
+            this.setOncomplete("javascript:alert('SE ACTUALIZO CORRECTAMENTE LA SESSION');"
+                    + "Richfaces.hideModalPanel('mpSessionAsis')");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void eliminarSesion(ActionEvent event) {
+        //int s_ses_id = Integer.parseInt(((UIParameter) event.getComponent().findComponent("delete")).getValue().toString());
+        String s_ses_id = (((UIParameter) event.getComponent().findComponent("delete")).getValue().toString());
+        System.out.println("entro al metodo");
+        try {
+            HSAsistenciaDocenteDAO dao = (HSAsistenciaDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoAsistenciaDocente");
+            String tipo;
+            dao.eliminarSesionDocente(s_ses_id);
+            this.mostrarSessionAsistencia(event);
+            this.setOncomplete("javascript:alert('SE ACTUALIZO CORRECTAMENTE LA SESSION');"
+                    + "Richfaces.hideModalPanel('mpSessionAsis')");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void limpiar() {
+        nuevAsisDocente = new NuevaAsistenciaBean();
+    }
+    
+    public void limpiarAdicional() {
+        nuevaHoraAdicional = new NuevaHoraAdicional();
+        /*this.b_doc_nombre="";
+        this.b_doc_id=0;
+        this.b_doc_codigo="";
+        this.s_doc_id=0;
+        this.suggestionha="";*/
+    }
+
+    public void validarNuevaSesion() {
+        this.setOncomplete("");
+        try {
+            Date d1 = this.getNuevAsisDocente().getN_fsesion();
+
+            Date d_reg = new Date(d1.getTime());
+            d_reg.setHours(this.getNuevAsisDocente().getReg_hora());
+            d_reg.setMinutes(this.getNuevAsisDocente().getReg_min());
+            this.getNuevAsisDocente().setN_fsesion_ini(d_reg);
+
+            Date d_sal = new Date(d1.getTime());
+            d_sal.setHours(this.getNuevAsisDocente().getSal_hora());
+            d_sal.setMinutes(this.getNuevAsisDocente().getSal_min());
+            this.getNuevAsisDocente().setN_fsesion_fin(d_sal);
+
+            String ts_reg = formatTimeStamp.format(d_reg);
+            String ts_sal = formatTimeStamp.format(d_sal);
+
+            if (this.getNuevAsisDocente().getN_doc_id() == 0) {
+                this.setOncomplete("javascript:alert('SELECCIONE UN DOCENTE');");
+            } else if (this.getNuevAsisDocente().getN_especialidad_code() == 0) {
+                this.setOncomplete("javascript:alert('SELECCIONE UNA ESPECIALIDAD');");
+            } else if (this.getNuevAsisDocente().getN_seccion_code().equalsIgnoreCase("0")) {
+                this.setOncomplete("javascript:alert('SELECCIONE UNA SECCION');");
+            } else if (this.getNuevAsisDocente().getN_curso_seccion() == 0) {
+                this.setOncomplete("javascript:alert('SELECCIONE UN CURSO');");
+            } else if (this.getNuevAsisDocente().getReg_hora() == 0 || this.getNuevAsisDocente().getSal_hora() == 0) {
+                this.setOncomplete("javascript:alert('INGRESE HORAS');");
+            } else if (ts_reg.compareTo(ts_sal) > 0) {
+                this.setOncomplete("javascript:alert('LA HORA DE INICIO NO PUEDE SER MAYOR QUE LA DE FIN');");
+            } else if (this.getNuevAsisDocente().getN_tipasis_code().equalsIgnoreCase("0")) {
+                this.setOncomplete("javascript:alert('INGRESE UN TIPO DE ASISTENCIA');");
+            } else if (this.getNuevAsisDocente().getN_tipses_code().equalsIgnoreCase("0")) {
+                this.setOncomplete("javascript:alert('INGRESE UN TIPO DE SESION');");
+            } else {
+                nuevaSesion();
+                this.setOncomplete("javascript:alert('SE INGRESO LA NUEVA SESSION');"
+                        + "Richfaces.hideModalPanel('mpNuevaSesion')");
+            }
+        } catch (NullPointerException npe) {
+            this.setOncomplete("javascript:alert('INGRESE FECHAS');");
+        }
+    }
+    
+    public void validarHoraAdicional() {
+        this.setOncomplete("");
+        try {
+            Date d1 = this.getNuevaHoraAdicional().getN_fsesion();
+
+            Date d_reg = new Date(d1.getTime());
+            d_reg.setHours(this.getNuevaHoraAdicional().getReg_hora());
+            d_reg.setMinutes(this.getNuevaHoraAdicional().getReg_min());
+            this.getNuevaHoraAdicional().setN_fsesion_ini(d_reg);
+
+            Date d_sal = new Date(d1.getTime());
+            d_sal.setHours(this.getNuevaHoraAdicional().getSal_hora());
+            d_sal.setMinutes(this.getNuevaHoraAdicional().getSal_min());
+            this.getNuevaHoraAdicional().setN_fsesion_fin(d_sal);
+
+            String ts_reg = formatTimeStamp.format(d_reg);
+            String ts_sal = formatTimeStamp.format(d_sal);
+
+            if (this.getNuevaHoraAdicional().getN_doc_id() == 0) {
+                this.setOncomplete("javascript:alert('SELECCIONE UN DOCENTE');");
+            } else
+            /*if (this.getS_doc_id() == 0) {
+                this.setOncomplete("javascript:alert('SELECCIONE UN DOCENTE');");
+            } else*/
+            if (this.getNuevaHoraAdicional().getN_especialidad_code() == 0) {
+                this.setOncomplete("javascript:alert('SELECCIONE UNA ESPECIALIDAD');");
+                
+            }  else if (this.getNuevaHoraAdicional().getN_seccion_code().equalsIgnoreCase("0")) {
+                this.setOncomplete("javascript:alert('SELECCIONE UNA SECCION');");
+            }  else if (this.getNuevaHoraAdicional().getReg_hora() == 0 || this.getNuevaHoraAdicional().getSal_hora() == 0) {
+                this.setOncomplete("javascript:alert('INGRESE HORAS');");
+            } else if (ts_reg.compareTo(ts_sal) > 0) {
+                this.setOncomplete("javascript:alert('LA HORA DE INICIO NO PUEDE SER MAYOR QUE LA DE FIN');");
+            } else if (this.getNuevaHoraAdicional().getN_tipasis_code().equalsIgnoreCase("0")) {
+                this.setOncomplete("javascript:alert('INGRESE UN TIPO DE ASISTENCIA');");
+            } else if (this.getNuevaHoraAdicional().getN_tipses_code().equalsIgnoreCase("0")) {
+                this.setOncomplete("javascript:alert('INGRESE UN TIPO DE SESION');");
+            } else {
+                horaAdicional();
+                this.setOncomplete("javascript:alert('SE INGRESO LA NUEVA SESSION');"
+                        + "Richfaces.hideModalPanel('mpHoraAdicional')");
+            }
+        } catch (NullPointerException npe) {
+            this.setOncomplete("javascript:alert('INGRESE FECHAS');");
+        }
+    }
+
+    private void nuevaSesion() {
+        try {
+            HSAsistenciaDocenteDAO dao = (HSAsistenciaDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoAsistenciaDocente");
+
+            AcSesionAsistencia sesasis = new AcSesionAsistencia();
+
+            sesasis.setAcSeccion(new AcSeccion(this.getNuevAsisDocente().getN_curso_seccion()));
+            sesasis.setSesFechaSesion(this.getNuevAsisDocente().getN_fsesion());
+            sesasis.setSesFechaRegistro(this.getNuevAsisDocente().getN_fsesion());
+            sesasis.setSesFechaInicio(Timestamp.valueOf(formatTimeStamp.format(this.getNuevAsisDocente().getN_fsesion_ini())));
+            sesasis.setSesFechaFin(Timestamp.valueOf(formatTimeStamp.format(this.getNuevAsisDocente().getN_fsesion_fin())));
+            sesasis.setSesActivo("1");
+            sesasis.setSesTimeTolerancia(20);
+            sesasis.setSesTimeAntes(20);
+            sesasis.setSesTimeTope(30);
+            sesasis.setAulId(0);
+            sesasis.setSesEstado("044001");
+            sesasis.setSesFechaSalida(null);
+            sesasis.setDocId(this.getNuevAsisDocente().getN_doc_id());
+            sesasis.setDocIdBk(this.getNuevAsisDocente().getN_doc_id());
+            sesasis.setSesTipo(this.getNuevAsisDocente().getN_tipses_code());
+            sesasis.setSesTipoAsistencia(this.getNuevAsisDocente().getN_tipasis_code());
+
+            dao.ingresarSesionAsistencia(sesasis);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void horaAdicional() {
+        try {
+            HSAsistenciaDocenteDAO dao = (HSAsistenciaDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoAsistenciaDocente");
+
+            AcSesionAsistencia sesasis = new AcSesionAsistencia();
+            //this.getNuevAsisDocente().getN_curso_seccion()
+            
+            sesasis.setAcSeccion(new AcSeccion(this.getNuevaHoraAdicional().getN_curso_seccion()));
+            sesasis.setSesFechaSesion(this.getNuevaHoraAdicional().getN_fsesion());
+            sesasis.setSesFechaRegistro(this.getNuevaHoraAdicional().getN_fsesion());
+            sesasis.setSesFechaInicio(Timestamp.valueOf(formatTimeStamp.format(this.getNuevaHoraAdicional().getN_fsesion_ini())));
+            sesasis.setSesFechaFin(Timestamp.valueOf(formatTimeStamp.format(this.getNuevaHoraAdicional().getN_fsesion_fin())));
+            sesasis.setSesActivo("1");
+            sesasis.setSesTimeTolerancia(20);
+            sesasis.setSesTimeAntes(20);
+            sesasis.setSesTimeTope(30);
+            sesasis.setAulId(0);
+            sesasis.setSesEstado("044001");
+            sesasis.setSesFechaSalida(null);
+            sesasis.setDocId(this.getNuevaHoraAdicional().getN_doc_id());
+            sesasis.setDocIdBk(this.getNuevaHoraAdicional().getN_doc_id());
+            //sesasis.setDocId(this.getS_doc_id());
+            //sesasis.setDocIdBk(this.getS_doc_id());
+            sesasis.setSesTipo(this.getNuevaHoraAdicional().getN_tipses_code());
+            sesasis.setSesTipoAsistencia(this.getNuevaHoraAdicional().getN_tipasis_code());
+
+            dao.ingresarSesionAsistencia(sesasis);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

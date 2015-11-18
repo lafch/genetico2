@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="AcPlancurricular"
+		table="ac_plancurricular"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="plan_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="PlanCodigo"
+			column="plan_codigo"
+			type="string"
+			not-null="false"
+			length="20"
+		/>
+		<property
+			name="PlanDescripcion"
+			column="plan_descripcion"
+			type="string"
+			not-null="false"
+			length="100"
+		/>
+		<property
+			name="PlanCreacion"
+			column="plan_creacion"
+			type="date"
+			not-null="false"
+		/>
+		<property
+			name="PlanResolucion"
+			column="plan_resolucion"
+			type="string"
+			not-null="false"
+			length="20"
+		/>
+		<property
+			name="PlanVigente"
+			column="plan_vigente"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+		<property
+			name="PlanActual"
+			column="plan_actual"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+		<property
+			name="PlanActivo"
+			column="plan_activo"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+		<many-to-one
+			name="Esp"
+			column="esp_id"
+			class="AcEspecialidad"
+			not-null="true"
+		>
+		</many-to-one>
+	
+
+		<set name="AcPlanCursos" inverse="true" where="plancur_activo='1'" cascade="all" order-by="plancur_ciclo">
+			<key column="plan_id"/>
+			<one-to-many class="AcPlanCurso"/>
+		</set>
+
+
+	</class>	
+</hibernate-mapping>

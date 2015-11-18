@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcSemestre"
+        table="ac_semestre"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="sem_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="SemCodigo"
+            column="sem_codigo"
+            type="string"
+            not-null="false"
+            length="20"
+            />
+        <property
+            name="SemNombre"
+            column="sem_nombre"
+            type="string"
+            not-null="false"
+            length="50"
+            />
+        <property
+            name="SemFechaInicio"
+            column="sem_fecha_inicio"
+            type="date"
+            not-null="false"
+            />
+        <property
+            name="SemFechaFin"
+            column="sem_fecha_fin"
+            type="date"
+            not-null="false"
+            />
+            <property
+            name="SemFechaRetInc"
+            column="sem_fecha_ret_inc"
+            type="date"
+            not-null="false"
+            />
+        <property
+            name="SemVigente"
+            column="sem_vigente"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="SemNumSemanas"
+            column="sem_num_semanas"
+            type="integer"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="SemActivo"
+            column="sem_activo"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="SemCreacion"
+            column="sem_creacion"
+            type="date"
+            not-null="false"
+            />
+        <property
+            name="SemPensiones"
+            column="sem_pensiones"
+            type="string"
+            not-null="false"
+            length="2"
+            />
+        <property
+            name="SemActual"
+            column="sem_actual"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+            
+            <property
+            name="SemAcademico"
+            column="sem_academico"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+
+
+        <set name="AcCursoAperturados" inverse="true">
+            <key column="sem_id"/>
+            <one-to-many class="AcCursoAperturado"/>
+        </set>
+
+        <set name="AdEstructuraPagos" inverse="true">
+            <key column="sem_id"/>
+            <one-to-many class="AdEstructuraPagos"/>
+        </set>
+
+
+    </class>
+</hibernate-mapping>

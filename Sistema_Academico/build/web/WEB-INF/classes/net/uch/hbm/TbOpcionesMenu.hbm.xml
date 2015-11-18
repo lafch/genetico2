@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="TbOpcionesMenu"
+		table="tb_opciones_menu"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="men_id"
+			type="integer"
+			column="men_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="men_cod"
+			column="men_cod"
+			type="string"
+			not-null="false"
+			length="20"
+		/>
+		<property
+			name="men_descripcion"
+			column="men_descripcion"
+			type="string"
+			not-null="false"
+			length="255"
+		/>
+		<property
+			name="men_activo"
+			column="men_activo"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+		<property
+			name="men_opcion"
+			column="men_opcion"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+		<property
+			name="men_tipo"
+			column="men_tipo"
+			type="string"
+			not-null="false"
+			length="6"
+		/>
+		<many-to-one
+			name="Rol"
+			column="rol_id"
+			class="TbRoles"
+			not-null="false"
+                        lazy="false"
+		>
+		</many-to-one>
+	</class>	
+</hibernate-mapping>

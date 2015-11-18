@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="AdEstructuraPagosAfecta"
+		table="ad_estructura_pagos_afecta"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="estpagdetafe_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="EstpagdetafeTipo"
+			column="estpagdetafe_tipo"
+			type="string"
+			not-null="false"
+			length="6"
+		/>
+		<property
+			name="EstpagdetafeDes"
+			column="estpagdetafe_des"
+			type="string"
+			not-null="false"
+			length="6"
+		/>
+		<property
+			name="EstpagdetafeActivo"
+			column="estpagdetafe_activo"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+		<many-to-one
+			name="Estpag"
+			column="estpag_id"
+			class="AdEstructuraPagos"
+			not-null="false"
+		>
+		</many-to-one>
+
+
+	</class>	
+</hibernate-mapping>

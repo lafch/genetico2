@@ -1,0 +1,61 @@
+package net.uch.tablaSistema.hibernateSpringDao;
+
+import java.util.List;
+import net.uch.mapping.AcAula;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.dao.DataAccessException;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+public class HSAulaDAOImpl extends HibernateDaoSupport implements HSAulaDAO {
+
+    @Override
+    public void insertarAula(AcAula aula) throws DataAccessException {
+        getHibernateTemplate().save(aula);
+    }
+
+    @Override
+    public List seleccionarAula(String nombre, int pabellon) throws DataAccessException, java.sql.SQLException {
+        Criteria c = this.getSession().createCriteria(AcAula.class).
+                add(Restrictions.like("AulDes", "%" + nombre + "%")).
+                add(Restrictions.eq("AulActivo", "1"));
+        if (pabellon != 0) {
+            c.add(Restrictions.eq("Pab.Id", pabellon));
+        }
+        c.addOrder(Order.asc("Id"));
+        return c.list();
+    }
+
+    @Override
+    public void eliminarAula(String id) throws DataAccessException {
+        String hqlUpdate = "update AcAula set AulActivo = :activo where Id = :id";
+        this.getSession().createQuery(hqlUpdate).setString("activo", "0").setString("id", id).executeUpdate();
+    }
+
+    @Override
+    public void actualizarAula(AcAula aula)
+            throws DataAccessException {
+        getHibernateTemplate().update(aula);
+    }
+
+    @Override
+    public List seleccionarAula() throws Exception {
+        return this.getSession().createCriteria(AcAula.class).add(Restrictions.eq("AulActivo", "1")).list();
+    }
+
+    @Override
+    public AcAula buscarAula(int aul_id) {
+        return (AcAula) this.getSession().get(AcAula.class, aul_id);
+    }
+
+    @Override
+    public List seleccionarAula(int pab_id) throws Exception {
+         Criteria c = this.getSession().createCriteria(AcAula.class).
+                add(Restrictions.eq("AulActivo", "1")).
+                add(Restrictions.eq("Pab.Id", pab_id));
+               // addOrder(Order.asc("aulDes"));
+
+         return c.list();
+    }
+}

@@ -1,0 +1,30 @@
+package net.uch.academica.hibernateSpringDao;
+
+import java.util.List;
+import net.uch.mapping.AcDocente;
+import org.springframework.dao.DataAccessException;
+
+public interface HSDocenteDAO {
+
+    public void insertarDocente(AcDocente doc) throws DataAccessException;
+
+    public List seleccionarDocente(String codigo, String nombre) throws DataAccessException, java.sql.SQLException;
+
+    public void eliminarDocente(String id) throws DataAccessException;
+
+    public void actualizarDocente(AcDocente doc) throws DataAccessException;
+
+    public List seleccionarDocente() throws Exception;
+
+    public void InsertarDisponibilidad(AcDocente doc) throws DataAccessException;
+
+    public AcDocente seleccionarDocente(int id);
+
+    public AcDocente buscarDocente(String dni) throws DataAccessException;
+    
+    public List listarDocentesCursosLibreActivo();
+
+    public AcDocente seleccionarDocentePorSecId( int iSecId );
+    
+    public String LocalSeleccionado(int iLocId);
+}

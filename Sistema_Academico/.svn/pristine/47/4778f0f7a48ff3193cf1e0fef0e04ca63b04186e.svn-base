@@ -1,0 +1,178 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.asistenciaDocente.hibernateSpringDao;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import net.uch.mapping.AcArea;
+import net.uch.mapping.AcDocente;
+import net.uch.mapping.AcEspecialidad;
+import net.uch.mapping.AcSesionAsistencia;
+import net.uch.mapping.AcSesionEfectivaAsisDoc;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+/**
+ * 
+ * @author cesardl
+ */
+public class HSAsistenciaDocenteDAOImpl extends HibernateDaoSupport implements HSAsistenciaDocenteDAO {
+
+    @Override
+    public List buscarDocente_x_dato(String dato) {
+        List docente = new ArrayList();
+        docente = this.getSession().createCriteria(AcDocente.class).
+                add(Restrictions.like("DocNombre", "%" + dato + "%")).
+                add(Restrictions.eq("DocActivo", "1")).list();
+
+        return docente;
+    }
+    
+    @Override
+    public List<AcDocente> buscarDocente_x_dato1(String dato) {
+        List lista;
+        List myList = new ArrayList();
+        String hqlSelect="select DocNombre, DocDni, DocCodigo, Id from AcDocente where DocNombre like concat('%',:v_dato,'%') and DocActivo= :v_activo";
+        lista=this.getSession().createQuery(hqlSelect).setString("v_dato", dato).setString("v_activo", "1").list();
+        
+        for (int i = 0; i < lista.size(); i++) {
+            AcDocente d = new AcDocente();
+            Object[] objs = (Object[]) lista.get(i);
+            d.setDocNombre(objs[0].toString());
+            d.setDocDni(objs[1].toString());
+            d.setDocCodigo(objs[2].toString());
+            d.setId((Integer)objs[3]);
+            myList.add(d);
+        }
+        return myList;
+    }
+    
+    @Override
+    public List buscarDocente_x_dato2(String dato) {
+        
+                Criteria criteria = this.getSession().createCriteria(AcDocente.class).add(Restrictions.eq("DocActivo", "1")).add(Restrictions.like("DocNombre", "%" + dato + "%"));
+                ProjectionList projectionList = Projections.projectionList();
+                projectionList.add(Projections.property("DocNombre"));
+                projectionList.add(Projections.property("DocDni"));
+                projectionList.add(Projections.property("DocCodigo"));
+                projectionList.add(Projections.property("Id"));
+                
+                criteria.setProjection(Projections.distinct(projectionList));
+                List myList = new ArrayList();
+                List list = criteria.list();
+                Iterator iterator = list.iterator();
+                while (iterator.hasNext()) {
+                        System.out.println("");
+                        Object[] objects = (Object[]) iterator.next();
+                        for (int i = 0; i < objects.length; i++) {
+                            AcDocente d = new AcDocente();
+                                System.out.print("|\t" + objects[i] + "\t");
+                                d.setDocNombre((String)objects[0]);
+                                d.setDocDni((String)objects[1]);
+                                d.setDocCodigo((String)objects[2]);
+                                d.setId((Integer)objects[3]);
+                                myList.add(d);
+                        }
+                }
+        return myList;
+    }
+
+    @Override
+    public List<AcSesionAsistencia> listarSessionAsistencia_x_docenteFecha(int doc_id, Date fecha_ini, Date fecha_fin, String tipasis) {
+
+        Criteria c = this.getSession().createCriteria(AcSesionAsistencia.class).
+                add(Restrictions.between("sesFechaRegistro", fecha_ini, fecha_fin)).
+                add(Restrictions.eq("sesActivo", "1")).
+                add(Restrictions.eq("sesTipoAsistencia", tipasis));
+
+        if (doc_id != 0) {
+            c.add(Restrictions.eq("docId", doc_id));
+        }
+        c.addOrder(Order.desc("sesFechaInicio"));
+
+        return c.list();
+    }
+
+    @Override
+    public AcArea seleccionarArea(int sec_id) {
+        Criteria c = this.getSession().createCriteria(AcArea.class).
+                add(Restrictions.and(Restrictions.eq("areActivo", "1"),
+                Restrictions.eq("areId", sec_id)));
+
+        return (AcArea) c.uniqueResult();
+    }
+
+    @Override
+    public AcSesionEfectivaAsisDoc listaMarcadoDeAsistencia_x_Docente(int ses_id) {
+        List<AcSesionEfectivaAsisDoc> l = this.getSession().createCriteria(AcSesionEfectivaAsisDoc.class).
+                add(Restrictions.eq("sesefeasisdocActivo", "1")).
+                add(Restrictions.eq("acSesionAsistencia.sesId", ses_id)).list();
+
+        if (l.size() == 0) {
+            return null;
+        } else {
+            return l.get(0);
+        }
+    }
+
+    @Override
+    public void ingresarAsisteanDocente(AcSesionEfectivaAsisDoc acSesionEfectivaAsisDoc) {
+        this.getHibernateTemplate().saveOrUpdate(acSesionEfectivaAsisDoc);
+    }
+
+    @Override
+    public AcSesionAsistencia listarSessionAsistencia_x_sesid(int ses_id) {
+        List<AcSesionAsistencia> l = this.getSession().createCriteria(AcSesionAsistencia.class).
+                add(Restrictions.eq("sesId", ses_id)).list();
+
+        return l.get(0);
+    }
+
+    @Override
+    public List listarEspecialidad() {
+        List listar = this.getSession().createCriteria(AcEspecialidad.class).
+                add(Restrictions.eq("EspActivo", "1")).
+                addOrder(Order.asc("EspNombre")).list();
+        return listar;
+    }
+
+    @Override
+    public void actualizarSesionDocente(int ses_id, int doc_id, Date hora_ini, Date hora_fin, String ses_tipo) {
+        String hqlUpdate = "UPDATE AcSesionAsistencia SET docId = :v_doc_id, "
+                + " sesFechaInicio = :v_hora_ini, "
+                + " sesFechaFin = :v_hora_fin, "
+                + " sesTipo = :v_ses_tipo "
+                + " WHERE sesId = :v_id";
+
+        this.getSession().createQuery(hqlUpdate).
+                setInteger("v_doc_id", doc_id).
+                setTimestamp("v_hora_ini", hora_ini).
+                setTimestamp("v_hora_fin", hora_fin).
+                setString("v_ses_tipo", ses_tipo).
+                setInteger("v_id", ses_id).
+                executeUpdate();
+    }
+
+    @Override
+    public void ingresarSesionAsistencia(AcSesionAsistencia sesasis) {
+        this.getHibernateTemplate().save(sesasis);
+    }
+
+    @Override
+    public void eliminarSesionDocente(String ses_id) {
+        System.out.println("Entro a eliminarSesionDocente");
+        String hqlUpdate = "UPDATE AcSesionAsistencia SET sesActivo = 0 "
+                + " WHERE sesId = :v_id";
+        this.getSession().createQuery(hqlUpdate).
+                setString("v_id", ses_id).
+                executeUpdate();
+    }
+}

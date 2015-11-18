@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AdEstructuraPagos"
+        table="ad_estructura_pagos"
+        >
+        <meta attribute="sync-DAO">false</meta>
+
+        <meta attribute="sync-DAO">false</meta>
+
+        <id
+            name="Id"
+            type="integer"
+            column="estpag_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="EstpagoNombre"
+            column="estpago_nombre"
+            type="string"
+            not-null="false"
+            length="100"
+            />
+        <property
+            name="EstpagoPublicado"
+            column="estpago_publicado"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="EstpagActivo"
+            column="estpag_activo"
+            type="string"
+            not-null="false"
+            length="10"
+            />
+        <many-to-one
+            name="Esp"
+            column="esp_id"
+            class="AcEspecialidad"
+            not-null="false"
+            fetch="join"
+            >
+        </many-to-one>
+        <many-to-one
+            name="Sem"
+            column="sem_id"
+            class="AcSemestre"
+            not-null="true"
+            fetch="join"
+            lazy="false"
+            >
+
+        </many-to-one>
+        <many-to-one
+            name="SemIn"
+            column="sem_id_ingreso"
+            class="AcSemestre"
+            not-null="true"
+            fetch="join"
+            >
+
+        </many-to-one>
+
+        <set inverse="true" name="AdEstructuraPagosAfectas">
+            <key column="estpag_id" />
+            <one-to-many class="AdEstructuraPagosAfecta" />
+        </set>
+
+        <set name="AdEstructuraPagosDetalles" where="estpagdet_activo='1'" cascade="all" inverse="true" lazy="false">
+            <key column="estpag_id" />
+            <one-to-many class="AdEstructuraPagosDetalle" />
+        </set>
+
+
+
+    </class>
+</hibernate-mapping>

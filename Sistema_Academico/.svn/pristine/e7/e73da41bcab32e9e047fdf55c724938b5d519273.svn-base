@@ -1,0 +1,18 @@
+package net.uch.academica.hibernateSpringDao;
+
+import java.util.List;
+import net.uch.mapping.AcHorario;
+import org.springframework.dao.DataAccessException;
+
+public interface HSHorarioDAO {
+
+    public void insertarHorarios(List<AcHorario> cur) throws DataAccessException;
+
+    public List seleccionarHorario(int sec) throws DataAccessException;
+
+    public AcHorario seleccionarUnHorario(int id_hor) throws DataAccessException;
+
+    public List duplicidadHoraria(String sec_ids) throws DataAccessException;
+
+    public int SeleccionarHorarioPorDocente(int doc_id, int sem_id) throws DataAccessException;
+}

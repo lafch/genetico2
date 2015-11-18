@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="AdEstructuraPagosDetalle"
+		table="ad_estructura_pagos_detalle"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="estpagdet_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="EstpagdetNombre"
+			column="estpagdet_nombre"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+		<property
+			name="ConpagId"
+			column="conpag_id"
+			type="integer"
+			not-null="false"
+			length="10"
+		/>
+		<property
+			name="EstpagdetFechaPago"
+			column="estpagdet_fecha_pago"
+			type="date"
+			not-null="false"
+		/>
+		<property
+			name="EstpagdetMonto"
+			column="estpagdet_monto"
+			type="java.lang.Float"
+			not-null="false"
+			length="12"
+		/>
+		<property
+			name="EstpagdetActivo"
+			column="estpagdet_activo"
+			type="string"
+			not-null="false"
+			length="10"
+		/>
+		<many-to-one
+			name="Estpag"
+			column="estpag_id"
+			class="AdEstructuraPagos"
+			not-null="true" lazy="false"
+		>
+		</many-to-one>
+	
+
+		<set name="AdAlumnoTarifas" inverse="true">
+			<key column="estpagdet_id"/>
+			<one-to-many class="AdAlumnoTarifa"/>
+		</set>
+
+
+	</class>	
+</hibernate-mapping>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="net.uch.mapping">
+  <class name="net.uch.mapping.Sp_listarPublicoAlumno">
+    <id column="publico_id" name="publico_id">
+      <generator class="native"/>
+    </id>
+    <property column="datos" name="datos" not-null="true"/>
+    <property column="alu_cod" name="alu_cod" not-null="true"/>
+  </class>
+  <sql-query callable="true" name="sp_listarPublicoAlumno">
+        <return alias="listarPublicoAlumno" class="net.uch.mapping.Sp_listarPublicoAlumno" lock-mode="read ">
+      <return-property column="publico_id" name="publico_id"/>
+      <return-property column="datos" name="datos"/>
+      <return-property column="alu_cod" name="alu_cod"/>
+    </return>
+        { call sp_listarPublicoAlumno(:p_dato) }
+    </sql-query>
+</hibernate-mapping>

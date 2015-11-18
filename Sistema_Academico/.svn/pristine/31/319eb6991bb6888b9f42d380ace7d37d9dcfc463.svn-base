@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcActa"
+        table="ac_acta"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="act_id"
+            unsaved-value="0"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="ActCodigo"
+            column="act_codigo"
+            type="string"
+            not-null="false"
+            length="20"
+            />
+        <property
+            name="ActNombre"
+            column="act_nombre"
+            type="string"
+            not-null="false"
+            length="100"
+            />
+        <property
+            name="ActNumero"
+            column="act_numero"
+            type="string"
+            not-null="false"
+            length="20"
+            />
+        <property
+            name="ActCreacion"
+            column="act_creacion"
+            type="date"
+            not-null="false"
+            />
+        <property
+            name="ActActivo"
+            column="act_activo"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="ActTipo"
+            column="act_tipo"
+            type="string"
+            not-null="false"
+            length="6"
+            />
+        <many-to-one
+            name="Sec"
+            column="sec_id"
+            class="AcSeccion"
+            not-null="false"
+            >
+        </many-to-one>
+
+
+        <set name="AcActaDetalles" inverse="true" fetch="join" cascade="all" table="ac_acta_detalle">
+            <key column="act_id" update="true"  on-delete="cascade"/>
+            <one-to-many class="AcActaDetalle"/>
+        </set>
+
+
+    </class>
+</hibernate-mapping>

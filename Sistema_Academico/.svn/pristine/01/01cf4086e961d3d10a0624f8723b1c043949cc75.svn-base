@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14/02/2011 09:38:02 AM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping package="net.uch.mapping">
+  <class   name="TbReporteRol" table="tb_reporte_rol">
+    <id name="reporRolId" type="java.lang.Integer">
+      <column name="repor_rol_id"/>
+      <generator class="identity"/>
+    </id>
+    <many-to-one class="TbRoles" fetch="select" name="tbRoles">
+      <column name="rol_id"/>
+    </many-to-one>
+    <many-to-one class="TbReporte" fetch="join" name="tbReporte">
+      <column name="rep_id"/>
+    </many-to-one>
+    <property name="reporRolActivo" type="java.lang.Character">
+      <column length="1" name="repor_rol_activo"/>
+    </property>
+    <property name="usuId" type="java.lang.Integer">
+    <column name="usu_id" />
+    </property>
+  </class>
+</hibernate-mapping>

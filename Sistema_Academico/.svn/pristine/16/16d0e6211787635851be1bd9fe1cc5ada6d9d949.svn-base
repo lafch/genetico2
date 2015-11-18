@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="AcEquivalencia"
+		table="ac_equivalencia"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="equ_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="EquCursoEquivalente"
+			column="equ_curso_equivalente"
+			type="string"
+			not-null="false"
+			length="100"
+		/>
+		<property
+			name="EquObservacion"
+			column="equ_observacion"
+			type="string"
+			not-null="false"
+			length="100"
+		/>
+		<property
+			name="EquCreacion"
+			column="equ_creacion"
+			type="date"
+			not-null="false"
+		/>
+		<property
+			name="EquActivo"
+			column="equ_activo"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+		<many-to-one
+			name="Plancur"
+			column="plancur_Id"
+			class="AcPlanCurso"
+			not-null="true"
+		>
+		</many-to-one>
+
+
+	</class>	
+</hibernate-mapping>

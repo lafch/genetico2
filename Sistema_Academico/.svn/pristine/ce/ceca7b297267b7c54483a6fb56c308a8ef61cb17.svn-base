@@ -1,0 +1,21 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.tablaSistema.hibernateSpringDao;
+
+import java.util.List;
+import net.uch.mapping.TbRoles;
+
+/**
+ *
+ * @author LUIS
+ */
+public interface HSRolDAO {
+    
+    /*public String getListarRolPorId(int rol_id);*/
+    public List<TbRoles> getListarRolPorId2(int rol_id);
+    public List<TbRoles> getListarRol();
+    public TbRoles traerRolPorId( int iRolId );
+    
+}

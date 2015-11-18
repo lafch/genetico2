@@ -1,0 +1,130 @@
+package net.uch.academica.hibernateSpringDao;
+
+import java.util.ArrayList;
+import java.util.List;
+import net.uch.mapping.AcDocente;
+import net.uch.mapping.AcLocal;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.dao.DataAccessException;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+public class HSDocenteDAOImpl extends HibernateDaoSupport implements HSDocenteDAO {
+
+    @Override
+    public void insertarDocente( AcDocente cur ) throws DataAccessException {
+        getHibernateTemplate().save( cur );
+    }
+
+    @Override
+    public List seleccionarDocente( String codigo, String nombre ) throws DataAccessException, java.sql.SQLException {
+        List lista;
+        String hqlUpdate = "select DOC.Id,DOC.DocCodigo,DOC.DocNombre,DOC.DocCorreo,DOC.DocTelefono,DOC.DocNacimiento,DOC.DocResidencia, "
+                + "DOC.DocPeriodoInicio,DOC.DocSituacion,DOC.DocSexo, DOC.DocDni,DOC.DocAppaterno,DOC.DocApmaterno, DOC.DocNombres,DOC.DocTipo "
+                + "from "
+                + "AcDocente DOC "
+                + "where DOC.DocNombre like :nombre "
+                + "and DOC.DocCodigo like :codigo "
+                + "and DOC.DocActivo= :activo order by DOC.Id";
+        lista = this.getSession().createQuery( hqlUpdate ).setString( "codigo", "%" + codigo + "%" ).setString( "nombre", "%" + nombre + "%" ).setString( "activo", "1" ).list();
+        return lista;
+    }
+
+    @Override
+    public void eliminarDocente( String id ) throws DataAccessException {
+        String hqlUpdate = "update AcDocente set DocActivo = :v_activo where Id = :v_id";
+        this.getSession().createQuery( hqlUpdate ).setString( "v_activo", "0" ).setString( "v_id", id ).executeUpdate();
+    }
+
+    @Override
+    public void actualizarDocente( AcDocente doc ) throws DataAccessException {
+        getHibernateTemplate().update( doc );
+    }
+
+    @Override
+    public List seleccionarDocente() throws Exception {
+        return this.getSession().createCriteria( AcDocente.class ).add( Restrictions.eq( "DocActivo", "1" ) ).addOrder( Order.asc( "DocNombre" ) ).list();
+    }
+
+    @Override
+    public AcDocente seleccionarDocente( int id ) {
+        return (AcDocente)this.getSession().createCriteria( AcDocente.class ).
+                add( Restrictions.eq( "DocActivo", "1" ) ).
+                add( Restrictions.eq( "Id", id ) ).uniqueResult();
+    }
+
+    @Override
+    public void InsertarDisponibilidad( AcDocente doc ) throws DataAccessException {
+        this.getHibernateTemplate().saveOrUpdate( doc );
+    }
+
+    @Override
+    public AcDocente buscarDocente( String dni ) throws DataAccessException {
+        return (AcDocente)this.getSession().createCriteria( AcDocente.class ).
+                add( Restrictions.eq( "DocActivo", "1" ) ).
+                add( Restrictions.eq( AcDocente.PROP_DOC_DNI, dni ) ).uniqueResult();
+    }
+
+    @Override
+    public List listarDocentesCursosLibreActivo() {
+        List lista;
+        String hqlQuery = "select acDocente.Id, acDocente.DocNombre, acDocente.DocDni "
+                + "from ClHoraria as clHoraria "
+                + "inner join clHoraria.acDocente as acDocente "
+                + "inner join clHoraria.clSeccion as clSeccion "
+                + "inner join clSeccion.clArbolAcademico as clArbolAcademico "
+                + "where clHoraria.horActivo='1' "
+                + "and clSeccion.secActivo='1' "
+                + "and clArbolAcademico.arbActivo='1' "
+                + "group by acDocente.Id order by acDocente.DocNombre";
+        lista = this.getSession().createQuery( hqlQuery ).list();
+        return lista;
+    }
+
+    @Override
+    public AcDocente seleccionarDocentePorSecId( int iSecId ) {
+        String sQuery;
+        AcDocente docente;
+        Query query;
+        List lstObjDocs;
+        Object[] aobjDoc;
+        List<AcDocente> lstDocentes;
+        sQuery = "SELECT d.doc_id,d.doc_nombre FROM cl_seccion s INNER JOIN cl_horaria h ON(s.sec_id=h.sec_id) INNER JOIN ac_docente d ON(h.doc_id=d.doc_id) "
+                + "WHERE s.sec_id=:sec_id AND h.hor_activo=1";
+        query = this.getSession().createSQLQuery( sQuery );
+        query.setInteger( "sec_id", iSecId );
+        lstObjDocs = query.list();
+        lstDocentes = new ArrayList<AcDocente>();
+        if ( lstObjDocs != null && !lstObjDocs.isEmpty() ) {
+            for ( Object obj : lstObjDocs ) {
+                aobjDoc = (Object[])obj;
+                docente = new AcDocente();
+                docente.setId( Integer.parseInt( aobjDoc[0] + "" ) );
+                docente.setDocNombre( aobjDoc[1] + "" );
+                lstDocentes.add( docente );
+            }
+        }
+        if ( !lstDocentes.isEmpty() ) {
+            return lstDocentes.get( 0 );
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public String LocalSeleccionado( int sem_id ) throws DataAccessException {
+        SQLQuery sqlQuery;
+        String reporte = "";
+        String sql = "select loc_des from ac_local l  where l.loc_id=:sem_id";
+        sqlQuery= this.getSession().createSQLQuery( sql );
+        sqlQuery.setInteger( "sem_id", sem_id );
+        reporte = ( sqlQuery.uniqueResult().toString() );
+        return reporte;
+    }
+}

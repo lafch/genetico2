@@ -1,0 +1,1753 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definition for MyFaces, Hibernate and Spring Integration application.
+-->
+<beans>
+
+    <!-- ========================= RESOURCE DEFINITIONS ========================= -->
+
+        <!-- Configurer that replaces ${...} placeholders with values from a properties file -->
+        <!-- (in this case, JDBC-related settings for the dataSource definition below) -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location"><value>/WEB-INF/hibernate.properties</value></property>
+    </bean>
+
+    <!-- Local DataSource that works in any environment -->
+        <!-- Note that DriverManagerDataSource does not pool; it is not intended for production -->
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName"><value>${jdbc.driverClassName}</value></property>
+        <property name="url"><value>${jdbc.url}</value></property>
+        <property name="username"><value>${jdbc.username}</value></property>
+        <property name="password"><value>${jdbc.password}</value></property>
+    </bean>
+
+    <!-- JNDI DataSource for J2EE environments -->
+        <!--
+        <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+                <property name="jndiName"><value>java:comp/env/jdbc/roseindiaDB_local</value></property>
+        </bean>
+        -->
+        <!-- Hibernate SessionFactory -->
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="hibernateProperties"><ref local="hibernateProperties"/></property>
+        <property name="dataSource"><ref local="dataSource"/></property>
+        <property name="mappingResources">
+            <list>
+                <value>/net/uch/hbm/AcActa.hbm.xml</value>
+                <value>/net/uch/hbm/AcActaDetalle.hbm.xml</value>
+                <value>/net/uch/hbm/AcAlumno.hbm.xml</value>
+                <value>/net/uch/hbm/AcAlumnoDato.hbm.xml</value>
+                <value>/net/uch/hbm/AcAmpliaciones.hbm.xml</value>
+                <value>/net/uch/hbm/AcAsistencia.hbm.xml</value>
+                <value>/net/uch/hbm/AcAula.hbm.xml</value>
+                <value>/net/uch/hbm/AcPagina.hbm.xml</value>
+                <value>/net/uch/hbm/AcParametro.hbm.xml</value>
+                <value>/net/uch/hbm/AcCurso.hbm.xml</value>
+                <value>/net/uch/hbm/AcCursoAperturado.hbm.xml</value>
+                <value>/net/uch/hbm/AcDisponibilidad.hbm.xml</value>
+                <value>/net/uch/hbm/AcDocente.hbm.xml</value>
+                <value>/net/uch/hbm/AcDocenteCurso.hbm.xml</value>
+                <value>/net/uch/hbm/AcEquivalencia.hbm.xml</value>
+                <value>/net/uch/hbm/AcEspecialidad.hbm.xml</value>
+                <value>/net/uch/hbm/AcFacultad.hbm.xml</value>
+                <value>/net/uch/hbm/AcHorario.hbm.xml</value>
+                <value>/net/uch/hbm/AcHorarioGen.hbm.xml</value>
+                <value>/net/uch/hbm/AcImportacionNotas.hbm.xml</value>
+                <value>/net/uch/hbm/AcLocal.hbm.xml</value>
+                <value>/net/uch/hbm/AcMatricula.hbm.xml</value>
+                <value>/net/uch/hbm/AcMatriculaCurso.hbm.xml</value>
+                <value>/net/uch/hbm/AcNota.hbm.xml</value>
+                <value>/net/uch/hbm/AcNotasTemporales.hbm.xml</value>
+                <value>/net/uch/hbm/AcPabellon.hbm.xml</value>
+                <value>/net/uch/hbm/AcPlancurricular.hbm.xml</value>
+                <value>/net/uch/hbm/AcPlanCurso.hbm.xml</value>
+                <value>/net/uch/hbm/AcPreRequisitos.hbm.xml</value>
+                <value>/net/uch/hbm/AcSeccion.hbm.xml</value>
+                <value>/net/uch/hbm/AcSemestre.hbm.xml</value>
+                <!--Mantenimiento de Actividad-->
+                <value>/net/uch/hbm/AcActividadAlcance.hbm.xml</value>
+                <value>/net/uch/hbm/AcCalendario.hbm.xml</value>
+                <value>/net/uch/hbm/AcCalendarioActividades.hbm.xml</value>
+
+                <value>/net/uch/hbm/AcSesionAsistencia.hbm.xml</value>
+                <value>/net/uch/hbm/AcSesionEfectivaAsisDet.hbm.xml</value>
+                <value>/net/uch/hbm/AcSesionEfectivaAsisDoc.hbm.xml</value>
+                <value>/net/uch/hbm/AcSesionEfectivaAsistencia.hbm.xml</value>
+
+                <value>/net/uch/hbm/AcSisEvaDetalle.hbm.xml</value>
+                <value>/net/uch/hbm/AcSisEvaluacion.hbm.xml</value>
+                <value>/net/uch/hbm/AcSisEvaPersonalizado.hbm.xml</value>
+                <value>/net/uch/hbm/AcTurno.hbm.xml</value>
+                <value>/net/uch/hbm/AcTurnoDetalle.hbm.xml</value>
+                <value>/net/uch/hbm/AcVidaDocente.hbm.xml</value>
+                <value>/net/uch/hbm/AdAlumnoTarifa.hbm.xml</value>
+                <value>/net/uch/hbm/AdClientes.hbm.xml</value>
+                <value>/net/uch/hbm/AdComprobantePago.hbm.xml</value>
+                <value>/net/uch/hbm/AdConceptoPago.hbm.xml</value>
+                <value>/net/uch/hbm/AdConceptoPagoDetalle.hbm.xml</value>
+                <value>/net/uch/hbm/AdPago.hbm.xml</value>
+                <value>/net/uch/hbm/AdProrroga.hbm.xml</value>
+                <value>/net/uch/hbm/AdSaldo.hbm.xml</value>
+                <value>/net/uch/hbm/TbCatalogo.hbm.xml</value>
+                <value>/net/uch/hbm/TbDistrito.hbm.xml</value>
+                <value>/net/uch/hbm/TbPaises.hbm.xml</value>
+                <value>/net/uch/hbm/TbUsuario.hbm.xml</value>
+                <value>/net/uch/hbm/TbRoles.hbm.xml</value>
+                <value>/net/uch/hbm/AdEstructuraPagos.hbm.xml</value>
+                <value>/net/uch/hbm/AdEstructuraPagosAfecta.hbm.xml</value>
+                <value>/net/uch/hbm/AdEstructuraPagosDetalle.hbm.xml</value>
+                <value>/net/uch/hbm/AcContenidoTematico.hbm.xml</value>
+                <value>/net/uch/hbm/AcContenidoDetalle.hbm.xml</value>
+                <value>/net/uch/hbm/AcAlumnoDocumento.hbm.xml</value>
+                <value>/net/uch/hbm/TbAsistencia.hbm.xml</value>
+                <value>/net/uch/hbm/TbBloqueoWeb.hbm.xml</value>
+
+                <value>/net/uch/hbm/TbMenu.hbm.xml</value>
+                <value>/net/uch/hbm/TbMenuRol.hbm.xml</value>
+
+                <value>/net/uch/hbm/ClAlumno.hbm.xml</value>
+                <value>/net/uch/hbm/ClAlumnoDesertor.hbm.xml</value>
+                <value>/net/uch/hbm/ClAlumnoTarifa.hbm.xml</value>
+                <value>/net/uch/hbm/ClArea.hbm.xml</value>
+                <value>/net/uch/hbm/ClCurso.hbm.xml</value>
+                <value>/net/uch/hbm/ClEstructuraPagos.hbm.xml</value>
+                <value>/net/uch/hbm/ClEstructuraPagosDetalle.hbm.xml</value>
+                <value>/net/uch/hbm/ClHoraria.hbm.xml</value>
+                <value>/net/uch/hbm/AcHorarioDispDocente.hbm.xml</value>
+                 <value>/net/uch/hbm/AcHorarioDispAula.hbm.xml</value>
+                <value>/net/uch/hbm/ClMatricula.hbm.xml</value>
+                <value>/net/uch/hbm/ClMatriculaTaller.hbm.xml</value>
+                <value>/net/uch/hbm/ClModulo.hbm.xml</value>
+                <value>/net/uch/hbm/ClNota.hbm.xml</value>
+                <value>/net/uch/hbm/ClObservacionDesercion.hbm.xml</value>
+                <value>/net/uch/hbm/ClPlancurricular.hbm.xml</value>
+                <value>/net/uch/hbm/ClPreRequisitos.hbm.xml</value>
+                <value>/net/uch/hbm/ClSeccion.hbm.xml</value>
+                <value>/net/uch/hbm/ClSeccionGrupo.hbm.xml</value>
+                <value>/net/uch/hbm/ClTaller.hbm.xml</value>
+                <value>/net/uch/hbm/ClTallerAperturado.hbm.xml</value>
+                <value>/net/uch/hbm/ClSisEvaDetalle.hbm.xml</value>
+                <value>/net/uch/hbm/ClSisEvaluacion.hbm.xml</value>
+                <value>/net/uch/hbm/ClSisEvaPersonalizado.hbm.xml</value>
+
+                <value>/net/uch/hbm/AcArea.hbm.xml</value>
+                <value>/net/uch/hbm/AcHorarioArea.hbm.xml</value>
+                <value>/net/uch/hbm/TbBanco.hbm.xml</value>
+                <value>/net/uch/hbm/TbBancoEntrada.hbm.xml</value>
+                <value>/net/uch/hbm/TbPagoBanco.hbm.xml</value>
+                <value>/net/uch/hbm/AcApoderado.hbm.xml</value>
+                <value>/net/uch/hbm/AcApoderadoAlumno.hbm.xml</value>
+                 <value>/net/uch/hbm/AcTemporal.hbm.xml</value>
+
+                <!--begin reports-->
+                <value>/net/uch/hbm/TbParametroReportes.hbm.xml</value>
+                <value>/net/uch/hbm/TbReporte.hbm.xml</value>
+                <value>/net/uch/hbm/TbReporteRol.hbm.xml</value>
+               <!-- <value>/net/uch/hbm/TbRoles.hbm.xml</value> -->
+                <!--fin reports-->
+
+                <!--Informes cursos Libres-->
+                <value>/net/uch/hbm/ClMedioPublicidad.hbm.xml</value>
+                <value>/net/uch/hbm/ClMedioPublicidadDet.hbm.xml</value>
+                <value>/net/uch/hbm/ClPublicoAlumno.hbm.xml</value>
+                <value>/net/uch/hbm/ClPublicoConsulta.hbm.xml</value>
+                <value>/net/uch/hbm/ClPublicoConsultaDetalle.hbm.xml</value>
+                <value>/net/uch/hbm/ClPlantillaHorario.hbm.xml</value>
+                <value>/net/uch/hbm/ClPlantillaHorarioDet.hbm.xml</value>
+                <value>/net/uch/hbm/TbAlumnoFicha.hbm.xml</value>
+
+                <value>/net/uch/hbm/ClConsultaPublico.hbm.xml</value>
+                <value>/net/uch/hbm/ClInformacionReferencial.hbm.xml</value>
+                
+                
+                <value>/net/uch/hbm/AdAreaInstitucion.hbm.xml</value>                
+                <value>/net/uch/hbm/TsRequisito.hbm.xml</value>                
+                <value>/net/uch/hbm/TsSolicitud.hbm.xml</value>                
+                <value>/net/uch/hbm/TsRequisitoSolicitud.hbm.xml</value>
+                <value>/net/uch/hbm/TsSolicitudPersona.hbm.xml</value>
+                <value>/net/uch/hbm/TsFut.hbm.xml</value>
+                <value>/net/uch/hbm/TsResponsable.hbm.xml</value>
+                <value>/net/uch/hbm/TbIncidenciaLab.hbm.xml</value>
+                <value>/net/uch/hbm/AcAlumnoEstado.hbm.xml</value>
+                <value>/net/uch/hbm/AcEstadoSemestre.hbm.xml</value>
+                <value>/net/uch/hbm/AcSeccionEspecialidad.hbm.xml</value>
+                <!--fin informes-->
+				<value>/net/uch/hbm/ClInicio.hbm.xml</value>
+                <value>/net/uch/hbm/ClArbolAcademico.hbm.xml</value>
+                <value>/net/uch/hbm/ClArbolAperturado.hbm.xml</value>
+
+
+                <!-- Procedimientos almacenados -->
+                <value>/net/uch/hbm/FConceptosBanco.hbm.xml</value>
+                <value>/net/uch/hbm/FConvalidacionCursos.hbm.xml</value>
+                <value>/net/uch/hbm/FDataBanco.hbm.xml</value>
+                <value>/net/uch/hbm/FGenerarCodigo.hbm.xml</value>
+                <value>/net/uch/hbm/FListarPublicoAlumno.hbm.xml</value>
+                <value>/net/uch/hbm/Sp_creditosPorCicloByAluId.hbm.xml</value>
+                <value>/net/uch/hbm/Sp_cursosPorAlumno.hbm.xml</value>
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="hibernateProperties"  class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.cache.provider_class">org.hibernate.cache.NoCacheProvider</prop>
+                <!--<prop key="hibernate.cglib.use_reflection_optimizer">true</prop>-->
+                <prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
+                <prop key="hibernate.current_session_context_class">thread</prop>
+                <prop key="hibernate.c3p0.min_size">10</prop>
+                <prop key="hibernate.c3p0.max_size">100</prop>
+                <prop key="hibernate.c3p0.timeout">1500</prop>
+                <prop key="hibernate.c3p0.max_elements">100</prop>
+                <prop key="hibernate.c3p0.idle_test_period">3000</prop>
+                <prop key="hibernate.connection.release_mode">auto</prop>
+            </props>
+        </property>
+    </bean>
+    
+    
+	
+	
+	
+    <!-- Transaction manager for a single Hibernate SessionFactory (alternative to JTA) -->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+
+    <!-- ========================= BUSINESS OBJECT DEFINITIONS ========================= -->
+
+        <!--
+         Data access object: Hibernate implementation.
+        -->
+
+    <bean id="HibernateSpringDaoTargetPlanCurricular" class="net.uch.academica.hibernateSpringDao.HSPlanCurricularDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetPlanCurricularCurso" class="net.uch.academica.hibernateSpringDao.HSPlanCurricularCursoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetFacultad" class="net.uch.tablaSistema.hibernateSpringDao.HSFacultadDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetEspecialidad" class="net.uch.tablaSistema.hibernateSpringDao.HSEspecialidadDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetAula" class="net.uch.tablaSistema.hibernateSpringDao.HSAulaDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetPagina" class="net.uch.tablaSistema.hibernateSpringDao.HSPaginaDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetParametro" class="net.uch.tablaSistema.hibernateSpringDao.HSParametroDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetLocal" class="net.uch.tablaSistema.hibernateSpringDao.HSLocalDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetCurso" class="net.uch.academica.hibernateSpringDao.HSCursoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetCatalogo" class="net.uch.tablaSistema.hibernateSpringDao.HSCatalogoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetDocente" class="net.uch.academica.hibernateSpringDao.HSDocenteDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetDocenteCurso" class="net.uch.academica.hibernateSpringDao.HSDocenteCursoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetUbigeo" class="net.uch.tablaSistema.hibernateSpringDao.HSUbigeoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetSemestre" class="net.uch.tablaSistema.hibernateSpringDao.HSSemestreDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetTurno" class="net.uch.academica.hibernateSpringDao.HSTurnoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetTurnoDetalle" class="net.uch.academica.hibernateSpringDao.HSTurnoDetalleDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetPabellon" class="net.uch.tablaSistema.hibernateSpringDao.HSPabellonDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetMenu" class="net.uch.tablaSistema.hibernateSpringDao.HSMenuDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetConceptoPago" class="net.uch.administrativa.hibernateSpringDao.HSConceptoPagoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetConceptoPagoDetalle" class="net.uch.administrativa.hibernateSpringDao.HSConceptoPagoDetalleDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetAlumno" class="net.uch.academica.hibernateSpringDao.HSAlumnoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetAlumnoDato" class="net.uch.academica.hibernateSpringDao.HSAlumnoDatoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetSistemaEvaluacion" class="net.uch.academica.hibernateSpringDao.HSSistemaEvaluacionDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetPreRequisitos" class="net.uch.academica.hibernateSpringDao.HSPreRequisitosDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetCursoAperturado" class="net.uch.academica.hibernateSpringDao.HSAperturaCursosDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetSeccion" class="net.uch.academica.hibernateSpringDao.HSSeccionDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetEdicionEstructura" class="net.uch.administrativa.hibernateSpringDao.HSEdicionEstructPagoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetEstructuraPagos" class="net.uch.administrativa.hibernateSpringDao.HSEstructuraPagoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetHorario" class="net.uch.academica.hibernateSpringDao.HSHorarioDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetHorarioGen" class="net.uch.academica.hibernateSpringDao.HSHorarioGenDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetUsuario" class="net.uch.tablaSistema.hibernateSpringDao.HSUsuarioDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetDisponibilidad" class="net.uch.academica.hibernateSpringDao.HSDisponibilidadDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetPago" class="net.uch.administrativa.hibernateSpringDao.HSPagoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetAlumnoTarifa" class="net.uch.administrativa.hibernateSpringDao.HSAlumnoTarifaDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetContenidoTematico" class="net.uch.academica.hibernateSpringDao.HSContenidoTematicoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetCliente" class="net.uch.administrativa.hibernateSpringDao.HSClienteDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetMatricula" class="net.uch.academica.hibernateSpringDao.HSMatriculaDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetAlumnoNota" class="net.uch.academica.hibernateSpringDao.HSAlumnoNotaDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetNota" class="net.uch.academica.hibernateSpringDao.HSNotaDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetAsistencia" class="net.uch.academica.hibernateSpringDao.HSAsistenciaDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetActa" class="net.uch.academica.hibernateSpringDao.HSActaDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetActividad" class="net.uch.tablaSistema.hibernateSpringDao.HSActividadDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoReporte" class="net.uch.tablaSistema.hibernateSpringDao.HSReporteDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="HibernateSpringDaoRol" class="net.uch.tablaSistema.hibernateSpringDao.HSRolDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+
+    <bean id="HibernateSpringDaoTargetCLArea" class="net.uch.cursoLibre.hibernateSpringDao.HSAreaDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLAlumno" class="net.uch.cursoLibre.hibernateSpringDao.HSAlumnoCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="HibernateSpringDaoTargetCLAlumnoDesertor" class="net.uch.cursoLibre.hibernateSpringDao.HSAlumnoDesertorCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLAlumnoTarifa" class="net.uch.cursoLibre.hibernateSpringDao.HSAlumnoTarifaCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoTargetClAsistencia" class="net.uch.cursoLibre.hibernateSpringDao.HSAsisteciaCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLMatricula" class="net.uch.cursoLibre.hibernateSpringDao.HSMatriculaCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLModulo" class="net.uch.cursoLibre.hibernateSpringDao.HSModuloDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLCurso" class="net.uch.cursoLibre.hibernateSpringDao.HSCursoCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLPlanCurricular" class="net.uch.cursoLibre.hibernateSpringDao.HSPlanCurricularDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLTaller" class="net.uch.cursoLibre.hibernateSpringDao.HSTallerDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLTallerAperturado" class="net.uch.cursoLibre.hibernateSpringDao.HSTallerAperturadoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLHorario" class="net.uch.cursoLibre.hibernateSpringDao.HSHorarioDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLEstructuraPago" class="net.uch.cursoLibre.hibernateSpringDao.HSEstructuraPagoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLNotas" class="net.uch.cursoLibre.hibernateSpringDao.HSNotasCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLSeccion" class="net.uch.cursoLibre.hibernateSpringDao.HSSeccionCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetCLSistemaEvaluacion" class="net.uch.cursoLibre.hibernateSpringDao.HSSistemaEvaluacionCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetAsistenciaDocente" class="net.uch.asistenciaDocente.hibernateSpringDao.HSAsistenciaDocenteDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTargetHorarioArea" class="net.uch.administrativa.hibernateSpringDao.HSHorarioAreaDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoNotasTemporales" class="net.uch.academica.hibernateSpringDao.HSNotasTemporalesDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoImportacionNotas" class="net.uch.academica.hibernateSpringDao.HSImportacionNotasDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoBanco" class="net.uch.banco.hibernateSpringDao.HSBancoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoApoderado" class="net.uch.academica.hibernateSpringDao.HSApoderadoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoMedioPublicidad" class="net.uch.cursoLibre.hibernateSpringDao.HSMedioPublicidadCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoPublicoAlumno" class="net.uch.cursoLibre.hibernateSpringDao.HSPublicoAlumnoCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <bean id="HibernateSpringDaoPublicoConsulta" class="net.uch.cursoLibre.hibernateSpringDao.HSPublicoConsultaCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoPublicoConsultaDetalle" class="net.uch.cursoLibre.hibernateSpringDao.HSPublicoConsultaDetalleCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoReportesCL" class="net.uch.cursoLibre.hibernateSpringDao.HSReportesRolCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoParametroReporteCL" class="net.uch.cursoLibre.hibernateSpringDao.HSParametroReporteCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoPlantillaHorarioCL" class="net.uch.cursoLibre.hibernateSpringDao.HSPlantillaHorarioCLDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+     <bean id="HibernateSpringDaoConsultaPublico" class="net.uch.cursoLibre.hibernateSpringDao.HSConsultaPublicoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="HibernateSpringDaoInformacionReferencial" class="net.uch.cursoLibre.hibernateSpringDao.HSInformacionReferencialDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+
+    <bean id="HibernateSpringDaoClArbolAcademico" class="net.uch.cursoLibre.hibernateSpringDao.HSArbolAcademicoClDaoImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+	
+	<bean id="HibernateSpringDaoClArbolAperturado" class="net.uch.cursoLibre.hibernateSpringDao.HSArbolAperturadoClDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    <!--
+                - Transactional proxy for Application's central data access object.
+                -
+                - Defines specific transaction attributes with "readOnly" markers,
+                - which is an optimization that is particularly valuable with Hibernate
+                - (to suppress unnecessary flush attempts for read-only operations).
+                -
+                - Note that in a real-life app with multiple transaction proxies,
+                - you will probably want to use parent and child bean definitions
+                - as described in the manual, to reduce duplication.
+    -->
+
+   <bean id="SpringHibernateDaoReporteCL" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoReportesCL"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+   <bean id="SpringHibernateDaoParametroReporteCL" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoParametroReporteCL"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+
+
+
+
+    <bean id="SpringHibernateDaoHorarioArea" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetHorarioArea"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoPlanCurricular" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetPlanCurricular"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoPlanCurricularCurso" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetPlanCurricularCurso"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoFacultad" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetFacultad"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoEspecialidad" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetEspecialidad"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoAula" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetAula"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoPagina" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetPagina"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoParametro" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetParametro"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoLocal" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetLocal"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoCurso" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCurso"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoCatalogo" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCatalogo"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoDocente" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetDocente"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="SpringHibernateDaoDocenteCurso" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetDocenteCurso"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="SpringHibernateDaoReporte" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoReporte"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="SpringHibernateDaoRol" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoRol"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="SpringHibernateDaoHorario" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetHorario"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoHorarioGen" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetHorarioGen"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoUbigeo" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetUbigeo"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoSemestre" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetSemestre"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTurno" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetTurno"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="HibernateSpringDaoTurnoDetalle" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetTurnoDetalle"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoPabellon" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetPabellon"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoMenu" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetMenu"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoConceptoPago" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetConceptoPago"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="SpringHibernateDaoConceptoPagoDetalle" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetConceptoPagoDetalle"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoAlumno" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetAlumno"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoAlumnoDato" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetAlumnoDato"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoSistemaEvaluacion" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetSistemaEvaluacion"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoPreRequisitos" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetPreRequisitos"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCursoAperturado" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCursoAperturado"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="HibernateSpringDaoSeccion" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetSeccion"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoEdicionEstructura" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetEdicionEstructura"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoEstructuraPagos" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetEstructuraPagos"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoUsuario" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetUsuario"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="HibernateSpringDaoDisponibilidad" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetDisponibilidad"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoPago" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetPago"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoAlumnoTarifa" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetAlumnoTarifa"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="HibernateSpringDaoContenidoTematico" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetContenidoTematico"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoCliente" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCliente"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoMatricula" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetMatricula"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoAlumnoNota" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetAlumnoNota"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="SpringHibernateDaoNota" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetNota"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoAsistencia" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetAsistencia"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoActa" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetActa"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoActividad" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetActividad"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+
+
+
+    <bean id="SpringHibernateDaoCLArea" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLArea"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCLAlumno" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLAlumno"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoCLAlumnoDesertor" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLAlumnoDesertor"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCLAlumnoTarifa" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLAlumnoTarifa"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoClAsistencia" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetClAsistencia"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCLMatricula" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLMatricula"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCLModulo" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLModulo"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCLCurso" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLCurso"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCLPlanCurricular" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLPlanCurricular"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCLTaller" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLTaller"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCLTallerAperturado" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLTallerAperturado"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+	<bean id="SpringHibernateDaoClArbolAperturado" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager"><ref local="transactionManager"/></property>
+		<property name="target"><ref local="HibernateSpringDaoClArbolAperturado"/></property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+				<prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+				<prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+				<prop key="store*">PROPAGATION_REQUIRED</prop>
+				<prop key="add*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+    </bean>
+	
+    <bean id="SpringHibernateDaoCLHorario" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLHorario"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCLEstructuraPago" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLEstructuraPago"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCLNotas" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLNotas"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCLSeccion" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLSeccion"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoCLSistemaEvaluacion" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetCLSistemaEvaluacion"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoAsistenciaDocente" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoTargetAsistenciaDocente"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoNotasTemporales" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoNotasTemporales"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoImportacionNotas" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoImportacionNotas"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoBanco" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoBanco"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoApoderado" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoApoderado"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateMedioPublicidad" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoMedioPublicidad"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoPublicoAlumno" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoPublicoAlumno"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="SpringHibernateDaoPublicoConsulta" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoPublicoConsulta"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+        <bean id="SpringHibernateDaoPublicoConsultaDetalle" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoPublicoConsultaDetalle"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoPlantillaHorario" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoPlantillaHorarioCL"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="SpringHibernateDaoConsultaPublico" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoConsultaPublico"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="SpringHibernateDaoInformacionReferencial" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoInformacionReferencial"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="HibernateSpringDaoSeccionEspecialidad" class="net.uch.academica.hibernateSpringDao.HSSeccionEspecialidadDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="SpringHibernateDaoSeccionEspecialidad" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoSeccionEspecialidad"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+
+<bean id="HSTsFutDAO" class="net.uch.solicitud.hibernateSpringDao.TsFutDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="TsFutDAOHS" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HSTsFutDAO"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="HSAdAreaInstitucionDAO" class="net.uch.solicitud.hibernateSpringDao.AdAreaInstitucionDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="AdAreaInstitucionDAOHS" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HSAdAreaInstitucionDAO"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="HSTsRequisitoDAO" class="net.uch.solicitud.hibernateSpringDao.TsRequisitoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="TsRequisitoDAOHS" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HSTsRequisitoDAO"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="HSTsRequisitoSolicitudDAO" class="net.uch.solicitud.hibernateSpringDao.TsRequisitoSolicitudDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="TsRequisitoSolicitudDAOHS" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HSTsRequisitoSolicitudDAO"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="HSTsSolicitudDAO" class="net.uch.solicitud.hibernateSpringDao.TsSolicitudDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="TsSolicitudDAOHS" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HSTsSolicitudDAO"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="HSTsSolicitudPersonaDAO" class="net.uch.solicitud.hibernateSpringDao.TsSolicitudPersonaDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="TsSolicitudPersonaDAOHS" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HSTsSolicitudPersonaDAO"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="HSTbIncidenciaLabDAO" class="net.uch.laboratorio.hibernateSpringDao.TbIncidenciaLabDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="TbIncidenciaLabDAOHS" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HSTbIncidenciaLabDAO"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="HSTsResponsableDAO" class="net.uch.solicitud.hibernateSpringDao.TsResponsableDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="TsResponsableDAOHS" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HSTsResponsableDAO"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    
+    <bean id="HSAcAlumnoEstadoDAO" class="net.uch.academica.hibernateSpringDao.AcAlumnoEstadoDAOImpl">
+        <property name="sessionFactory"><ref local="sessionFactory"/></property>
+    </bean>
+    
+    <bean id="AcAlumnoEstadoDAOHS" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HSAcAlumnoEstadoDAO"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+	
+	<bean id="SpringHibernateDaoClArbolAcademico" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager"><ref local="transactionManager"/></property>
+        <property name="target"><ref local="HibernateSpringDaoClArbolAcademico"/></property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+	
+</beans>

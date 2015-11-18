@@ -1,0 +1,251 @@
+<%@ taglib uri="http://richfaces.org/rich" prefix="rich"%> 
+<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
+<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
+<%@ taglib uri="http://richfaces.org/a4j" prefix="a4j" %>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <link type="text/css" href="../css/formulario.css" rel="stylesheet" media="screen"/>
+        <title>Mantenimiento de Aulas</title>
+        <script type="text/javascript">
+            function getRightTop(ref) {
+                var position = new Object();
+                position.top = 0; //ref.offsetTop;
+                position.left =0; // ref.offsetLeft+ref.clientWidth+6;
+                return position;
+            }
+        </script> 
+    </head>
+    <body>
+        <f:view >
+            <jsp:include page="../TablaSistema/Menu.jsp"></jsp:include>
+            <rich:panel style=" width : 100%;" >
+                <f:facet name="FACULTADES">
+                </f:facet>
+                <h:form id="form1" style="width:100%">
+                    <table width="100%" style="font-size:10px; font-family:verdana">
+                        <tr >
+                            <td width="20%" colspan="2"><strong>MANTENIMIENTO DE AULAS</strong>
+                            </td>
+                            <td width="30%"></td>
+                            <td width="30%" align="right">
+                                <h:graphicImage value="/Imagenes/actions/filenew.png" style="border-width: 0px;cursor: pointer;">
+                                    <a4j:support oncomplete="javascript:Richfaces.showModalPanel('mp',{width:450, top:130})" 
+                                                 event="onclick" action="#{managerAula.Nuevo}" 
+                                                 reRender="descripcion_i,capacidad_i,local_i,pabellon_i" />
+                                </h:graphicImage>
+                            </td>
+                            <td width="30%"></td>
+                            <td width="30%" align="right">
+                                <h:graphicImage value="/Imagenes/actions/fileprint.png" title="Imprimir Listado"/>
+                            </td>
+                            <td align=right width="50%">
+                                <a4j:commandButton type="button" id="buscar" title="Buscar"
+                                                   action="#{managerAula.Seleccionar}"
+                                                   image="/Imagenes/actions/viewmag.png"
+                                                   reRender="tablaMaster, barra"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="7" width="100%">
+                                <hr width="100%" size="1"></td>
+                        </tr>
+                        <tr>
+                            <td width="20%" colspan="2">
+                            </td>
+                            <td width="30%"></td>
+                            <td width="50%"></td>
+                        </tr>
+                        <tr>
+                        </tr>
+                        <tr>
+                            <td width="10%">Nombre de Aula:
+                            </td>
+                            <td width="30%">
+                                <h:inputText value="#{managerAula.b_des}" style="width : 180px;"/></td>
+                            <td width="50%"></td>
+                        </tr>
+                        <tr>
+                            <td width="10%">Local:
+                            </td>
+                            <td width="30%">
+                                <h:selectOneMenu value="#{managerAula.b_id_local_f}">
+                                    <f:selectItems value="#{managerAula.comboLocales_f}" />
+                                    <a4j:support event="onchange" reRender="pabellon_f"/>
+                                </h:selectOneMenu></td>
+                            <td width="50%"></td>
+                        </tr>
+                        <tr>
+                            <td width="10%">Pabellon:
+                            </td>
+                            <td width="30%">
+                                <h:selectOneMenu id="pabellon_f" value="#{managerAula.b_id_pabellon_f}">
+                                    <f:selectItems value="#{managerAula.comboPabellones_f}" />
+                                </h:selectOneMenu></td>
+                            <td width="50%"></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="7" width="100%">
+                                <hr width="100%" size="1">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                        </tr>
+                    </table>
+                </h:form>
+                <table width="100%">
+                    <tr>
+                        <td align="center">
+                            <h:form>
+                                <rich:datascroller id="barra" align="right"  for="tablaMaster"
+                                                   maxPages="8"  style=" width : 70%;"/>
+                                <rich:spacer height="20px"/>
+                                <rich:dataTable id="tablaMaster" rows="10"
+                                                onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+                                                onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+                                                cellpadding="0" cellspacing="0" border="0"
+                                                width="70%" value="#{managerAula.listaAula}" var="aula">
+                                    <rich:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Id" />
+                                        </f:facet>
+                                        <h:outputText value="#{aula.b_id}"/>
+                                    </rich:column>
+
+                                    <rich:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Descripcion" />
+                                        </f:facet>
+                                        <h:outputText value="#{aula.b_des}" rendered="#{aula.view}" />
+                                        <h:inputText value="#{aula.b_des}" rendered="#{aula.editable}" maxlength="45"/>
+                                    </rich:column>
+
+                                    <rich:column style="text-align: center;">
+                                        <f:facet name="header">
+                                            <h:outputText value="Capacidad" />
+                                        </f:facet>
+                                        <h:outputText value="#{aula.b_cap}" rendered="#{aula.view}"/>
+                                        <h:inputText value="#{aula.b_cap}" rendered="#{aula.editable}"/>
+                                    </rich:column>
+
+                                    <rich:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Local" />
+                                        </f:facet>
+                                        <h:outputText value="#{aula.b_desc_local}" rendered="#{aula.view}" />
+
+                                        <h:selectOneMenu value="#{aula.b_id_local}" rendered="#{aula.editable}">
+                                            <f:selectItems value="#{aula.comboLocales}" />
+                                            <a4j:support event="onchange" reRender="pabellon_s"/>
+                                        </h:selectOneMenu>
+                                    </rich:column>
+
+                                    <rich:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Pabellon" />
+                                        </f:facet>
+                                        <h:outputText  value="#{aula.b_desc_pabellon}" rendered="#{aula.view}"/>
+
+                                        <h:selectOneMenu id="pabellon_s" value="#{aula.b_id_pabellon}" rendered="#{aula.editable}">
+                                            <f:selectItems value="#{aula.comboPabellones}" />
+                                        </h:selectOneMenu>
+                                    </rich:column>
+
+                                    <rich:column style="text-align: center;">
+                                        <f:facet name="header">
+                                            <h:outputText value="Edit" />
+                                        </f:facet>
+                                        <h:commandButton actionListener="#{aula.EditarFila}" value="" image="/Imagenes/actions/klipper_dock.png" title="Editar" rendered="#{aula.view}"/>
+
+                                        <f:param id="id" value="#{aula.b_id}" />
+                                        <f:param id="descripcion" value="#{aula.b_des}" />
+                                        <f:param id="capacidad"   value="#{aula.b_cap}" />
+                                        <f:param id="pabellon"   value="#{aula.b_id_pabellon}" />
+
+                                        <a4j:commandButton actionListener="#{aula.Editar}"  image="/Imagenes/actions/filesave.png" value=""  title="Guardar" rendered="#{aula.editable2}" reRender="tablaMaster, barra" oncomplete="#{aula.oncomplete}"/>
+                                        <h:commandButton actionListener="#{aula.Cancelar}"  value="" image="/Imagenes/actions/fileclose.png" title="Cancelar" rendered="#{aula.editable}"/>
+                                    </rich:column>
+
+                                    <rich:column style="text-align: center;">
+                                        <f:facet name="header" >
+                                            <h:outputText value="Delete" />
+                                        </f:facet>
+                                        <h:commandButton  image="/Imagenes/actions/delete.gif"  title="Eliminar"
+                                                          actionListener="#{managerAula.EliminarFila}"
+                                                          action="#{managerAula.Seleccionar}"  
+                                                          onclick="javascript:return (confirm('¿Esta realmente seguro de Eliminar?'));"/>
+                                        <f:param id="delete"  value="#{aula.b_id}" />
+                                    </rich:column>
+                                </rich:dataTable>
+                            </h:form>
+                        </td>
+                    </tr>
+                </table>
+            </rich:panel>
+
+            <rich:modalPanel  id="mp" minHeight="170" minWidth="450" height="200" width="500" zindex="2000">
+                <f:facet name="header">
+                    <h:outputText value="Registro de Aulas" />
+                </f:facet>
+                <f:facet name="controls">
+                    <h:graphicImage value="/Imagenes/actions/stop.png" style="cursor:pointer"
+                                    onclick="Richfaces.hideModalPanel('mp')" title="Cerrar"/>
+                </f:facet>
+
+                <h:form>
+                    <table width="100%" style="font-size:10px; font-family:verdana">
+                        <tr >
+                            <td align="right" colspan="2">
+                                <a4j:commandButton   image="/Imagenes/actions/filesave.png"  title="Guardar" 
+                                                     actionListener="#{managerAula.Enviar1}"
+                                                     reRender="tablaMaster, barra"
+                                                     oncomplete="#{managerAula.oncomplete}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><hr size="1"></td>
+                        </tr>
+                        <tr>
+                            <td class="tdLabel" width="22%">*Descripcion:</td>
+                            <td>
+                                <h:inputText label="Descripcion" id="descripcion_i"  style=" width : 180px;" value="#{managerAula.b_des_i}"  maxlength="45"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tdLabel">*Capacidad:</td>
+                            <td>
+                                <h:inputText id="capacidad_i" label="Capacidad" value="#{managerAula.b_cap}" style="width : 180px;"/>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="tdLabel">Local:</td>
+                            <td>
+                                <h:selectOneMenu id="local_i" value="#{managerAula.b_id_local}">
+                                    <f:selectItems value="#{managerAula.comboLocales}" />
+                                    <a4j:support event="onchange" reRender="pabellon_i"/>
+                                </h:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tdLabel">*Pabellon:</td>
+                            <td>
+                                <h:selectOneMenu id="pabellon_i" value="#{managerAula.b_id_pabellon}">
+                                    <f:selectItems value="#{managerAula.comboPabellones}" />
+                                </h:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><hr size="1"></td>
+                        </tr>
+                    </table>
+                </h:form>
+            </rich:modalPanel>
+        </f:view>
+    </body>
+</html>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="net.uch.mapping">
+  <class name="net.uch.mapping.Sp_conceptos_banco">
+    <id column="reg_concepto" name="reg_concepto">
+      <generator class="native"/>
+    </id>
+    <property column="reg_descripcion" name="reg_descripcion" not-null="true"/>
+  </class>
+  <sql-query callable="true" name="sp_conceptos_banco">
+        <return alias="reg_concepto" class="net.uch.mapping.Sp_conceptos_banco" lock-mode="read ">
+      <return-property column="reg_concepto" name="reg_concepto"/>
+      <return-property column="reg_descripcion" name="reg_descripcion"/>
+    </return>
+        {call sp_conceptos_banco()}
+    </sql-query>
+</hibernate-mapping>

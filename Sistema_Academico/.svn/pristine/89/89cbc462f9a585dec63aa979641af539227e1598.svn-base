@@ -1,0 +1,95 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.util;
+
+/**
+ *
+ * @author USUARIO
+ */
+public class ConstantesWeb {
+
+    //-----CODIGOS CATALOGO
+    public static final String COD_SES_ASIST_CL = "050003";
+    //-----FIN CODIGOS CATALOGO
+    public static final int COD_PARSE_INT_ERROR = -1000;
+    public static final String COD_PARSE_STR_ERROR = "-";
+    public static final String COD_PARSE_STR_ERROR2 = "";
+    public static final int ID_AREA_PROG_AUX = 19;
+
+    public static final int SUCCESS = 0;
+    public static final int ERROR = -1;
+    //----INDICES TABLA CL_ARBOL_ACADEMICO
+    public static final int INDX_ARB_ID = 0;
+    public static final int INDX_ARB_OPCION = 1;
+    public static final int INDX_ARB_CODIGO = 2;
+    public static final int INDX_ARB_DESCRIPCION = 3;
+    public static final int INDX_ARB_TIPO = 4;
+    public static final int INDX_ARB_NIVEL = 5;
+    public static final int INDX_ARB_ACTIVO = 6;
+    public static final int INDX_ARB_ID_PADRE = 7;
+    public static final int INDX_ARB_FLAG = 8;
+    public static final int INDX_ARB_IDBAK = 9;
+    public static final int INDX_ARB_MOD_ID = 10;
+    //----FIN INDICES TABLA CL_ARBOL_ACADEMICO
+    //INDICES QUERY [HSArbolAcademicoClDaoImpl/listarSeccionesxAlumnoModulo(int, int)]
+    public static final int INDX_OBJ_SEC_ID = 0;
+    public static final int INDX_OBJ_ARB_TALL_ID = 1;
+    public static final int INDX_OBJ_SEC_NOMBRE = 2;
+    public static final int INDX_OBJ_SEC_FINICIO = 3;
+    public static final int INDX_OBJ_SEC_FFIN = 4;
+    public static final int INDX_OBJ_LOC_ID = 5;
+    //FIN INDICES QUERY [HSArbolAcademicoClDaoImpl/listarSeccionesxAlumnoModulo(int, int)]
+    //---DAOS
+    public static final String SHDAO_AC_ASISTENCIA_DOCENTE = "SpringHibernateDaoAsistenciaDocente";
+    public static final String SHDAO_AC_DOCENTE = "SpringHibernateDaoDocente";
+    public static final String SHDAO_AC_ALUMNO = "SpringHibernateDaoAlumno";
+    public static final String SHDAO_AC_LOCAL = "SpringHibernateDaoLocal";
+    public static final String SHDAO_AC_ESPECIALIDAD = "SpringHibernateDaoEspecialidad";
+    public static final String SHDAO_CL_ALUMNO = "SpringHibernateDaoCLAlumno";
+    public static final String SHDAO_CL_ALUMNO_DESERTOR = "SpringHibernateDaoCLAlumnoDesertor";
+    public static final String SHDAO_CL_ALUMNO_TARIFA = "SpringHibernateDaoCLAlumnoTarifa";
+    public static final String SHDAO_CL_ARBOL_ACADEMICO = "SpringHibernateDaoClArbolAcademico";
+    public static final String SHDAO_CL_ARBOL_APERTURADO = "SpringHibernateDaoClArbolAperturado";
+    public static final String SHDAO_CL_ASISTENCIA = "SpringHibernateDaoClAsistencia";
+    public static final String SHDAO_CL_CONSULTA_PUBLICO = "SpringHibernateDaoConsultaPublico";
+    public static final String SHDAO_CL_INFORMACION_REFERENCIAL = "SpringHibernateDaoInformacionReferencial";
+    public static final String SHDAO_CL_ESTRUCTURA_PAGO = "SpringHibernateDaoCLEstructuraPago";
+    public static final String SHDAO_CL_HORARIO = "SpringHibernateDaoCLHorario";
+    public static final String SHDAO_CL_MATRICULA = "SpringHibernateDaoCLMatricula";
+    public static final String SHDAO_CL_MEDIO_PUBL = "SpringHibernateMedioPublicidad";
+    public static final String SHDAO_CL_NOTAS = "SpringHibernateDaoCLNotas";
+    public static final String SHDAO_CL_PLANTILLA_HORARIO = "SpringHibernateDaoPlantillaHorario";
+    public static final String SHDAO_CL_PUBLICO_ALUMNO = "SpringHibernateDaoPublicoAlumno";
+    public static final String SHDAO_CL_PUBLICO_CONSULTA = "SpringHibernateDaoPublicoConsulta";
+    public static final String SHDAO_CL_SECCION = "SpringHibernateDaoCLSeccion";
+    public static final String SHDAO_CL_SISTEMA_EVALUACION = "SpringHibernateDaoCLSistemaEvaluacion";
+    public static final String SHDAO_SISTEMA_EVALUACION = "SpringHibernateDaoSistemaEvaluacion";
+    public static final String SHDAO_AC_CURSO ="SpringHibernateDaoCurso";
+    public static final String SHDAO_TB_CATALOGO = "SpringHibernateDaoCatalogo";
+    public static final String SHDAO_TB_USUARIO = "SpringHibernateDaoUsuario";
+    public static final String SHDAO_TB_UBIGEO = "SpringHibernateDaoUbigeo";
+    //---FIN DAOS
+    //--OPCIONES DE REPORTES
+    public static final int RPT_BOLETA_NOTAS = 1;
+    public static final int RPT_CERT_EST_MODULAR = 2;
+    public static final int RPT_CONST_ESTUDIOS = 3;
+    public static final int RPT_CERT_EST_POR_CURSO = 4;
+    public static final int RPT_CERTIF_BLOQUE = 5;
+    public static final int RPT_DOC_ADEUDAN_NOTA = 6;
+    public static final int RPT_FICHA_MATRICULA = 186;
+    //--FIN OPCIONES DE REPORTES
+    //-- IDS REPORTES NECESARIOS
+    public static final int ID_RPT_DOC_DEBEN_NOTAS = 164;
+    //-- FIN IDS REPORTES NECESARIOS
+    //NOMBRE MESES
+    public static final String[] asNomMeses = { "Enero", "Febrero", "Marzo",
+        "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Setiembre",
+        "Octubre", "Noviembre", "Diciembre" };
+    //FIN NOMBRE MESES
+    //NOMBRE DIAS
+    public static final String[] asNomDias = { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado", "Domingo" };
+    //FIN NOMBRE MESES
+}

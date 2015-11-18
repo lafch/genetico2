@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcCursoAperturado"
+        table="ac_curso_aperturado"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="curape_Id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="CurapeCodigo"
+            column="curape_codigo"
+            type="string"
+            not-null="false"
+            length="20"
+            />
+        <property
+            name="SisevaId"
+            column="siseva_id"
+            type="integer"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="CurapeCreacion"
+            column="curape_creacion"
+            type="date"
+            not-null="false"
+            />
+        <property
+            name="CurapeAperturado"
+            column="curape_aperturado"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="CurapeActivo"
+            column="curape_activo"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <many-to-one
+            name="Sem"
+            column="sem_id"
+            class="AcSemestre"
+            not-null="true"
+            >
+        </many-to-one>
+        <many-to-one
+            name="Plancur"
+            column="plancur_id"
+            class="AcPlanCurso"
+            not-null="false"
+            >
+        </many-to-one>
+
+
+        <set name="AcSeccions" inverse="true" lazy="false" cascade="all" order-by="sec_id">
+            <key column="curape_Id" update="true"/>
+            <one-to-many class="AcSeccion"/>
+        </set>
+
+        <set name="AcSisEvaPersonalizados" inverse="true" lazy="false" where="siseva_per_activo=1" cascade="all" order-by="siseva_per_orden" >
+            <key column="curape_Id" update="true"/>
+            <one-to-many class="AcSisEvaPersonalizado"/>
+        </set>
+
+
+    </class>
+</hibernate-mapping>

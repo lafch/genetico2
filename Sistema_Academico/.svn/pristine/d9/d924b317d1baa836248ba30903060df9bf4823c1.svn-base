@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="AcActas"
+		table="ac_actas"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="act_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="ActVigente"
+			column="act_vigente"
+			type="string"
+			not-null="false"
+			length="10"
+		/>
+		<property
+			name="ActCreacion"
+			column="act_creacion"
+			type="date"
+			not-null="false"
+		/>
+		<property
+			name="ActDescripcion"
+			column="act_descripcion"
+			type="string"
+			not-null="false"
+			length="100"
+		/>
+		<property
+			name="ActActivo"
+			column="act_activo"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+	
+
+		<set name="AcActaDetalles" inverse="true">
+			<key column="act_id"/>
+			<one-to-many class="AcActaDetalle"/>
+		</set>
+
+
+	</class>	
+</hibernate-mapping>

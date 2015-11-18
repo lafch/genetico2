@@ -1,0 +1,434 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.cursoLibre.hibernateSpringDao;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import net.uch.cursoLibre.managedBeans.beans.BeanReporte;
+import net.uch.mapping.ClAlumnoDesertor;
+import net.uch.mapping.ClObservacionDesercion;
+import net.uch.util.CommonDAO;
+import net.uch.util.CommonWeb;
+import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+/**
+ *
+ * @author USUARIO
+ */
+public class HSAlumnoDesertorCLDAOImpl extends HibernateDaoSupport implements HSAlumnoDesertorCLDAO {
+
+    @Override
+    public List<BeanReporte> listarDesertores( String sNomApeFiltro, String sNumTlfFiltro, int iModuloId,int iCursoId, List<String> lstActivos) {
+        int iSizeResult;
+        String sQuery;
+        BeanReporte bRep;
+        Object obj;
+        Object[] objFila;
+        SQLQuery sqlQuery;
+        List lstResult;
+        List<BeanReporte> lstDesertores;
+
+        try {
+            String sMotLike = "";
+            String sMotWhere= "";
+            if ( !lstActivos.isEmpty() ) {
+                for ( String sMot : lstActivos ) {
+                    if ( !"0".equals( sMot ) ) {
+                        sMotLike = "ad.cancelar_llamadas=1";
+                    } else {
+                        sMotLike = "ad.cancelar_llamadas=0";
+                        sMotWhere= " where cant_reg=1";
+                    }
+                }
+            }else{
+                sMotLike = "ad.cancelar_llamadas=1";
+            }
+            lstDesertores = new ArrayList<BeanReporte>();
+            sQuery = "SELECT t.* FROM\n "
+                    + "(\n "
+                    + "SELECT a.alu_id,a.alu_codigo, CONCAT(a.alu_appaterno,' ', a.alu_apmaterno,', ',a.alu_nombres) alumno,\n "
+                    + "a.alu_mail, a.alu_telefono,a.alu_celular,\n "
+                    + "aCur.arb_descripcion curso,\n "
+                    + "s.sec_ffin fecha_termino,aTal.arb_descripcion, s.sec_id,\n "
+                    + "(SELECT count(*) FROM cl_alumno_desertor ad WHERE ad.alu_id=a.alu_id AND ad.arb_mod_id=aMod.arb_id AND ad.activo=1 ) cant_reg "
+                    + "FROM cl_alumno a\n "
+                    + "INNER JOIN cl_matricula m ON(a.alu_id=m.alu_id)\n "
+                    + "INNER JOIN cl_matricula_taller mt ON(m.mat_id=mt.mat_id)\n "
+                    + "INNER JOIN cl_seccion s ON(mt.sec_id=s.sec_id)\n "
+                    + "INNER JOIN cl_arbol_academico aTal ON(s.arb_id=aTal.arb_id)\n "
+                    + "INNER JOIN cl_arbol_academico aCur ON(aTal.arb_id_padre=aCur.arb_id)\n "
+                    + "INNER JOIN cl_arbol_academico aMod ON(aCur.arb_id_padre=aMod.arb_id)\n "
+                    + "INNER JOIN cl_arbol_academico aArea ON(aMod.arb_id_padre=aArea.arb_id)\n "
+                    + "WHERE a.alu_activo=1 AND m.mat_activo=1 AND mt.mattal_activo=1 AND m.mat_tipo='022001' \n "
+                    + "AND s.sec_activo=1 AND aTal.arb_activo=1 AND aCur.arb_activo=1\n "
+                    + "AND aMod.arb_activo=1 AND aArea.arb_activo=1\n "
+                    + "AND aMod.arb_id=:mod_id AND aCur.arb_id=:cur_id  AND s.sec_ffin <=DATE_ADD(NOW(),INTERVAL -2 MONTH)\n "
+                    + "AND a.alu_id NOT IN (\n "
+                    + "SELECT  a2.alu_id FROM cl_alumno a2\n "
+                    + "INNER JOIN cl_matricula m2 ON(a2.alu_id=m2.alu_id)\n "
+                    + "INNER JOIN cl_matricula_taller mt2 ON(mt2.mat_id=m2.mat_id)\n "
+                    + "INNER JOIN cl_seccion s2 ON(mt2.sec_id=s2.sec_id)\n "
+                    + "INNER JOIN cl_arbol_academico aTal2 ON(s2.arb_id=aTal2.arb_id)\n "
+                    + "INNER JOIN cl_arbol_academico aCur2 ON(aTal2.arb_id_padre=aCur2.arb_id)\n "
+                    + "INNER JOIN cl_arbol_academico aMod2 ON(aCur2.arb_id_padre=aMod2.arb_id)\n "
+                    + "INNER JOIN cl_arbol_academico aArea2 ON(aMod2.arb_id_padre=aArea2.arb_id)\n "
+                    + "WHERE a2.alu_activo=1 AND m2.mat_activo=1 AND mt2.mattal_activo=1\n "
+                    + "AND s2.sec_activo=1 AND s2.sec_ffin>=DATE_ADD(NOW(),INTERVAL -2 MONTH) AND aMod2.arb_id=:mod_id and aCur2.arb_id=:cur_id\n "
+                    + ") AND a.alu_id NOT IN(SELECT DISTINCT ad.alu_id FROM cl_alumno_desertor ad  WHERE "+sMotLike+"  AND ad.activo=1) \n ";
+
+            if ( sNumTlfFiltro != null && !sNumTlfFiltro.trim().isEmpty() ) {
+                sQuery += "AND (a.alu_telefono LIKE :fijo OR a.alu_celular LIKE :celular) \n";
+            }
+            if ( sNomApeFiltro != null && !sNomApeFiltro.trim().isEmpty() ) {
+                sNomApeFiltro = sNomApeFiltro.trim();
+                sQuery += "AND (a.alu_nombres LIKE :nom OR a.alu_appaterno LIKE :apepat OR a.alu_apmaterno LIKE :apemat "
+                        + "OR CONCAT(a.alu_appaterno,' ',a.alu_apmaterno) LIKE :apepatmat "
+                        + "OR CONCAT(a.alu_apmaterno,' ',a.alu_appaterno) LIKE :apematpat "
+                        + "OR CONCAT(a.alu_nombres,' ',a.alu_appaterno,' ',a.alu_apmaterno) LIKE :nompatmat "
+                        + "OR CONCAT(a.alu_nombres,' ',a.alu_apmaterno,' ',a.alu_appaterno) LIKE :nommatpat ) \n";
+            }
+           
+            sQuery += "ORDER BY a.alu_appaterno, a.alu_apmaterno,a.alu_nombres, aCur.arb_id DESC\n "
+                    + ")t\n ";
+            if(!sMotWhere.equals("")){
+            sQuery +=sMotWhere+"\n";
+            }
+             sQuery += "GROUP BY t.alu_id\n "
+                    + "ORDER BY fecha_termino desc,t.curso,t.alumno";
+            System.out.println( "QUERY : " + sQuery );
+            sqlQuery = this.getSession().createSQLQuery( sQuery );
+            sqlQuery.setInteger( "mod_id", iModuloId );
+            sqlQuery.setInteger( "cur_id", iCursoId );
+            if ( sNumTlfFiltro != null && !sNumTlfFiltro.trim().isEmpty() ) {
+                sNumTlfFiltro = "%" + sNumTlfFiltro + "%";
+                sqlQuery.setString( "fijo", sNumTlfFiltro );
+                sqlQuery.setString( "celular", sNumTlfFiltro );
+            }
+            if ( sNomApeFiltro != null && !sNomApeFiltro.trim().isEmpty() ) {
+                sNomApeFiltro = "%" + sNomApeFiltro + "%";
+                sqlQuery.setString( "nom", sNomApeFiltro );
+                sqlQuery.setString( "apepat", sNomApeFiltro );
+                sqlQuery.setString( "apemat", sNomApeFiltro );
+                sqlQuery.setString( "apepatmat", sNomApeFiltro );
+                sqlQuery.setString( "apematpat", sNomApeFiltro );
+                sqlQuery.setString( "nompatmat", sNomApeFiltro );
+                sqlQuery.setString( "nommatpat", sNomApeFiltro );
+            }
+            lstResult = sqlQuery.list();
+            if ( lstResult != null && !lstResult.isEmpty() ) {
+                iSizeResult = lstResult.size();
+                for ( int i = 0; i < iSizeResult; i++ ) {
+                    obj = lstResult.get( i );
+                    objFila = (Object[])obj;
+                    bRep = new BeanReporte();
+                    bRep.setExpr1( ( i + 1 ) + "" );
+                    bRep.setExpr2( CommonWeb.parseObjToString( objFila[1] ) );//alu_codigo
+                    bRep.setExpr3( CommonWeb.parseObjToString( objFila[2] ) );//nombre completo alumno
+                    bRep.setExpr4( CommonWeb.parseObjToString( objFila[3] ) );//alu_mail
+                    bRep.setExpr5( CommonWeb.parseObjToString( objFila[4] ) );//alu_telefono
+                    bRep.setExpr6( CommonWeb.parseObjToString( objFila[5] ) );//alu_celular
+                    bRep.setExpr7( CommonWeb.parseObjToString( objFila[6] ) );//curso
+                    bRep.setExpr8( CommonWeb.parseObjToString( objFila[7] ) );//fecha_termino
+                    bRep.setExpr9( CommonWeb.parseObjToString( objFila[8] ) );//taller
+                    bRep.setExpr10( CommonWeb.parseObjToString( objFila[9] ) );//sec_id
+                    bRep.setExpr11( CommonWeb.parseObjToString( objFila[0] ) );//alu_id
+                    bRep.setExpr12( CommonWeb.parseObjToInt( objFila[10] ) > 0 ? "SI" : "NO" );//cant_reg: Si es mayor a 1 es que ya lo han llamado
+                    lstDesertores.add( bRep );
+
+                }
+            }
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+            lstDesertores = new ArrayList<BeanReporte>();
+        }
+        return lstDesertores;
+    }
+
+    /**
+     *
+     * @param iModuloId ID del Módulo del cual se listarán los desertores
+     * @param iCaptados 0: Por captar / 1: Captados / 2: Todos
+     * @return List<BeanReporte> lista de desertores
+     */
+    @Override
+    public List<BeanReporte> listarDesertoresCaptadosPorCaptar( String sRpt, int iModuloId, int iCondicion, List<String> lstMotivos ) {
+        int iSizeResult;
+        String sMotivos;
+        String sQuery;
+        BeanReporte bRep;
+        Object obj;
+        String[] asMotivos;
+        Object[] objFila;
+        SQLQuery sqlQuery;
+        List lstResult;
+        List<BeanReporte> lstDesertores;
+
+        try {
+            String sMotLike = "";
+            if ( !lstMotivos.isEmpty() ) {
+                sMotLike += " AND (";
+                for ( String sMot : lstMotivos ) {
+                    if ( !"0".equals( sMot ) ) {
+                        sMotLike += " lst_motivos LIKE '%" + sMot + "%' OR";
+                    } else {
+                        sMotLike += " lst_motivos = '' OR";
+                    }
+                }
+                sMotLike = sMotLike.substring( 0, sMotLike.length() - 2 );
+                sMotLike += ") ";
+            }
+
+
+            lstDesertores = new ArrayList<BeanReporte>();
+            sQuery = "SELECT t2.* FROM (SELECT t.* FROM \n"
+                    + "(SELECT \n"
+                    + "a.alu_id,\n"//0
+                    + "a.alu_codigo,\n"//1
+                    + "CONCAT(a.alu_appaterno,' ',a.alu_apmaterno,', ',a.alu_nombres) alumno, \n"//2
+                    + "a.alu_mail,\n"//3
+                    + "a.alu_telefono,\n"//4
+                    + "a.alu_celular,\n"//5
+                    + "(\n"
+                    + "SELECT aCur.arb_descripcion \n"
+                    + "FROM cl_arbol_academico aCur \n"
+                    + "INNER JOIN cl_arbol_academico aTal ON(aCur.arb_id=aTal.arb_id_padre) \n"
+                    + "INNER JOIN cl_seccion s ON(aTal.arb_id=s.arb_id) \n"
+                    + "WHERE s.sec_id=ad.sec_id_ult \n"
+                    + ") curso,\n"//6
+                    + "(SELECT s.sec_ffin FROM cl_seccion s WHERE s.sec_id=ad.sec_id_ult)fecha_termino, \n"//7
+                    + "od.fecha_contacto, \n"//8
+                    + "ad.sec_id_ult, \n"//9
+                    + "ad.id_alumno_desertor, \n"//10
+                    + "ad.captado, \n"//11
+                    + "ad.lst_motivos, \n"//12
+                    + "ad.desc_motivo \n"//13
+                    + "FROM cl_alumno_desertor ad \n"
+                    + "INNER JOIN cl_alumno a ON(ad.alu_id=a.alu_id) \n"
+                    + "INNER JOIN cl_observacion_desercion od ON(ad.id_alumno_desertor=od.id_alumno_desertor) \n"
+                    + "WHERE ad.cancelar_llamadas=0 \n ";
+            sQuery += ( iModuloId != 0 ? "AND ad.arb_mod_id=:mod_id \n" : "" )
+                    + "AND ad.captado=:captado " + sMotLike + " \n "
+                    + "ORDER BY curso,ad.sec_id_ult, fecha_registro  DESC )t \n"
+                    + "GROUP BY t.id_alumno_desertor) t2 ";
+            System.out.println( "QUERY : " + sQuery );
+            sqlQuery = this.getSession().createSQLQuery( sQuery );
+            if ( iModuloId != 0 ) {
+                sqlQuery.setInteger( "mod_id", iModuloId );
+            }
+            sqlQuery.setInteger( "captado", iCondicion );
+            lstResult = sqlQuery.list();
+            if ( lstResult != null && !lstResult.isEmpty() ) {
+                iSizeResult = lstResult.size();
+                for ( int i = 0; i < iSizeResult; i++ ) {
+                    obj = lstResult.get( i );
+                    objFila = (Object[])obj;
+                    bRep = new BeanReporte();
+                    bRep.setExpr1( ( i + 1 ) + "" );
+                    bRep.setExpr2( CommonWeb.parseObjToString( objFila[1] ) );//alu_codigo
+                    bRep.setExpr3( CommonWeb.parseObjToString( objFila[2] ) );//nombre completo alumno
+                    bRep.setExpr4( CommonWeb.parseObjToString( objFila[3] ) );//alu_mail
+                    bRep.setExpr5( CommonWeb.parseObjToString( objFila[4] ) );//alu_telefono
+                    bRep.setExpr6( CommonWeb.parseObjToString( objFila[5] ) );//alu_celular
+                    bRep.setExpr7( CommonWeb.parseObjToString( objFila[6] ) );//curso
+                    bRep.setExpr8( CommonWeb.parseObjToString( objFila[7] ) );//fecha_termino
+                    bRep.setExpr9( CommonWeb.parseObjToString( objFila[8] ) );//fecha_contacto
+                    bRep.setExpr10( CommonWeb.parseObjToString( objFila[9] ) );//sec_id
+                    bRep.setExpr11( CommonWeb.parseObjToString( objFila[0] ) );//id_alumno
+                    bRep.setExpr12( CommonWeb.parseObjToInt( objFila[11] ) == 1 ? "Captado" : "Por captar" );//captado
+                    bRep.setExpr13( CommonWeb.parseObjToInt( objFila[11] ) == 1 ? "#DBE9FA" : "#FFE8E8" );//COLOR FONDO captado
+
+                    sMotivos = CommonWeb.parseObjToString( objFila[12] );
+                    if ( !sMotivos.isEmpty() ) {
+                        asMotivos = sMotivos.split( "," );
+                        sMotivos = "";
+                        for ( String sMot : asMotivos ) {
+                            sMotivos += "- " + CommonDAO.getTbCatalogoDAO().seleccionarDescripcion( sMot ) + ( sRpt.isEmpty() ? "<br />" : "\n" );
+                        }
+                        sMotivos = sMotivos.substring( 0, sMotivos.length() - ( sRpt.isEmpty() ? 6 : 0 ) );
+                    }
+                    bRep.setExpr14( sMotivos );//Motivos
+
+                    bRep.setExpr15( CommonWeb.parseObjToString( objFila[13] ) );//Desc. Motivos
+                    lstDesertores.add( bRep );
+
+                }
+            }
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+            lstDesertores = new ArrayList<BeanReporte>();
+        }
+        return lstDesertores;
+    }
+
+    @Override
+    public List<BeanReporte> listarDesertoresPorFechaContacto( int iModuloId, Date fechaInicio, Date fechaFin, String sNomApeFiltro, String sNumTlfFiltro ) {
+        int iSizeResult;
+        String sQuery;
+        BeanReporte bRep;
+        Object obj;
+        Object[] objFila;
+        String[] sNomApe;
+        SQLQuery sqlQuery;
+        List lstResult;
+        List<BeanReporte> lstDesertores;
+
+        try {
+            lstDesertores = new ArrayList<BeanReporte>();
+            sQuery = "SELECT t2.* FROM (SELECT t.* FROM \n"
+                    + "(SELECT \n"
+                    + "a.alu_id,\n"//1
+                    + "a.alu_codigo,\n"//2
+                    + "CONCAT(a.alu_appaterno,' ',a.alu_apmaterno,', ',a.alu_nombres) alumno, \n"//3
+                    + "a.alu_mail,\n"//4
+                    + "a.alu_telefono,\n"//5
+                    + "a.alu_celular,\n"//6
+                    + "(\n"
+                    + "SELECT aCur.arb_descripcion \n"
+                    + "FROM cl_arbol_academico aCur \n"
+                    + "INNER JOIN cl_arbol_academico aTal ON(aCur.arb_id=aTal.arb_id_padre) \n"
+                    + "INNER JOIN cl_seccion s ON(aTal.arb_id=s.arb_id) \n"
+                    + "WHERE s.sec_id=ad.sec_id_ult \n"
+                    + ") curso,\n"//7
+                    + "(SELECT s.sec_ffin FROM cl_seccion s WHERE s.sec_id=ad.sec_id_ult)fecha_termino, \n"//7
+                    + "od.fecha_contacto, \n"//8
+                    + "ad.sec_id_ult, \n"//9
+                    + "ad.id_alumno_desertor, \n"//10
+                    + "ad.captado \n"//11
+                    + "FROM cl_alumno_desertor ad \n"
+                    + "INNER JOIN cl_alumno a ON(ad.alu_id=a.alu_id) \n"
+                    + "INNER JOIN cl_observacion_desercion od ON(ad.id_alumno_desertor=od.id_alumno_desertor) \n"
+                    + "WHERE ad.arb_mod_id=:mod_id \n"
+                    //                    + "AND od.fecha_contacto>=:fecha_inicio \n"
+                    //                    + "AND od.fecha_contacto<=:fecha_fin "
+                    + "AND ad.cancelar_llamadas=0 \n";
+            if ( sNumTlfFiltro != null && !sNumTlfFiltro.trim().isEmpty() ) {
+                sQuery += "AND (a.alu_telefono LIKE :fijo OR a.alu_celular LIKE :celular) \n";
+            }
+            if ( sNomApeFiltro != null && !sNomApeFiltro.trim().isEmpty() ) {
+                sNomApeFiltro = sNomApeFiltro.trim();
+                sQuery += "AND (a.alu_nombres LIKE :nom OR a.alu_appaterno LIKE :apepat OR a.alu_apmaterno LIKE :apemat "
+                        + "OR CONCAT(a.alu_appaterno,' ',a.alu_apmaterno) LIKE :apepatmat "
+                        + "OR CONCAT(a.alu_apmaterno,' ',a.alu_appaterno) LIKE :apematpat "
+                        + "OR CONCAT(a.alu_nombres,' ',a.alu_appaterno,' ',a.alu_apmaterno) LIKE :nompatmat "
+                        + "OR CONCAT(a.alu_nombres,' ',a.alu_apmaterno,' ',a.alu_appaterno) LIKE :nommatpat ) \n";
+            }
+            sQuery += "ORDER BY curso,ad.sec_id_ult, fecha_registro  DESC )t \n"
+                    + "GROUP BY t.id_alumno_desertor) t2 "
+                    + "WHERE t2.fecha_contacto>=:fecha_inicio AND t2.fecha_contacto<=:fecha_fin ";
+            System.out.println( "QUERY : " + sQuery );
+            sqlQuery = this.getSession().createSQLQuery( sQuery );
+            sqlQuery.setInteger( "mod_id", iModuloId );
+            sqlQuery.setDate( "fecha_inicio", fechaInicio );
+            sqlQuery.setDate( "fecha_fin", fechaFin );
+            if ( sNumTlfFiltro != null && !sNumTlfFiltro.trim().isEmpty() ) {
+                sNumTlfFiltro = "%" + sNumTlfFiltro + "%";
+                sqlQuery.setString( "fijo", sNumTlfFiltro );
+                sqlQuery.setString( "celular", sNumTlfFiltro );
+            }
+            if ( sNomApeFiltro != null && !sNomApeFiltro.trim().isEmpty() ) {
+                sNomApeFiltro = "%" + sNomApeFiltro + "%";
+                sqlQuery.setString( "nom", sNomApeFiltro );
+                sqlQuery.setString( "apepat", sNomApeFiltro );
+                sqlQuery.setString( "apemat", sNomApeFiltro );
+                sqlQuery.setString( "apepatmat", sNomApeFiltro );
+                sqlQuery.setString( "apematpat", sNomApeFiltro );
+                sqlQuery.setString( "nompatmat", sNomApeFiltro );
+                sqlQuery.setString( "nommatpat", sNomApeFiltro );
+            }
+            lstResult = sqlQuery.list();
+            if ( lstResult != null && !lstResult.isEmpty() ) {
+                iSizeResult = lstResult.size();
+                for ( int i = 0; i < iSizeResult; i++ ) {
+                    obj = lstResult.get( i );
+                    objFila = (Object[])obj;
+                    bRep = new BeanReporte();
+                    bRep.setExpr1( ( i + 1 ) + "" );
+                    bRep.setExpr2( CommonWeb.parseObjToString( objFila[1] ) );//alu_codigo
+                    bRep.setExpr3( CommonWeb.parseObjToString( objFila[2] ) );//nombre completo alumno
+                    bRep.setExpr4( CommonWeb.parseObjToString( objFila[3] ) );//alu_mail
+                    bRep.setExpr5( CommonWeb.parseObjToString( objFila[4] ) );//alu_telefono
+                    bRep.setExpr6( CommonWeb.parseObjToString( objFila[5] ) );//alu_celular
+                    bRep.setExpr7( CommonWeb.parseObjToString( objFila[6] ) );//curso
+                    bRep.setExpr8( CommonWeb.parseObjToString( objFila[7] ) );//fecha_termino
+                    bRep.setExpr9( CommonWeb.parseObjToString( objFila[8] ) );//fecha_contacto
+                    bRep.setExpr10( CommonWeb.parseObjToString( objFila[9] ) );//sec_id
+                    bRep.setExpr11( CommonWeb.parseObjToString( objFila[0] ) );//id_alumno
+                    bRep.setExpr12( CommonWeb.parseObjToInt( objFila[11] ) == 1 ? "Captado" : "Por captar" );//captado
+                    bRep.setExpr13( CommonWeb.parseObjToInt( objFila[11] ) == 1 ? "#DBE9FA" : "#FFE8E8" );//COLOR FONDO captado
+                    lstDesertores.add( bRep );
+
+                }
+            }
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+            lstDesertores = new ArrayList<BeanReporte>();
+        }
+        return lstDesertores;
+    }
+
+    @Override
+    public int guardarAlumnoDesertor( ClAlumnoDesertor bAluDesert ) {
+        int iRet;
+        try {
+            this.getHibernateTemplate().saveOrUpdate( bAluDesert );
+            iRet = 1;
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+            iRet = -1;
+        }
+        return iRet;
+    }
+
+    @Override
+    public int guardarObservacionDesercion( ClObservacionDesercion obsDesBean ) {
+        int iRet;
+
+        try {
+            this.getSession().saveOrUpdate( obsDesBean );
+            iRet = 1;
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+            iRet = -1;
+        }
+        return iRet;
+    }
+
+    @Override
+    public ClAlumnoDesertor buscarAlumnoDesertor( int iIdAlu, int iModuloId ) {
+        ClAlumnoDesertor alumDeser;
+        Criteria criteria;
+        alumDeser = null;
+        try {
+            criteria = this.getSession().createCriteria( ClAlumnoDesertor.class );
+            alumDeser = (ClAlumnoDesertor)criteria.add( Restrictions.eq( "activo", 1 ) ).
+                    add( Restrictions.eq( "clAlumno.aluId", iIdAlu ) ).
+                    add( Restrictions.eq( "arbModulo.arbId", iModuloId ) ).
+                    addOrder( Order.desc( "id" ) ).
+                    list().get( 0 );
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+        }
+        return alumDeser;
+    }
+
+    @Override
+    public ClAlumnoDesertor buscarAlumnoDesertorPorId( Integer id ) {
+        ClAlumnoDesertor alumDeser;
+        Criteria criteria;
+        alumDeser = null;
+        try {
+            criteria = this.getSession().createCriteria( ClAlumnoDesertor.class );
+            alumDeser = (ClAlumnoDesertor)criteria.add( Restrictions.eq( "activo", 1 ) ).add( Restrictions.eq( "id", id ) ).uniqueResult();
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+        }
+        return alumDeser;
+    }
+}

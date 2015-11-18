@@ -1,0 +1,460 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.academica.managedBeans;
+
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.sql.SQLException;
+import java.util.*;
+import javax.faces.component.UIParameter;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+import javax.imageio.ImageIO;
+import javax.servlet.ServletContext;
+import net.uch.academica.hibernateSpringDao.AcAlumnoEstadoDAO;
+import net.uch.academica.hibernateSpringDao.HSAlumnoDAO;
+import net.uch.academica.hibernateSpringDao.HSMatriculaDAO;
+import net.uch.academica.managedBeans.beans.BeanAlumno;
+import net.uch.academica.managedBeans.beans.BeanCursosMatricular;
+import net.uch.administrativa.hibernateSpringDao.HSAlumnoTarifaDAO;
+import net.uch.administrativa.hibernateSpringDao.HSEstructuraPagoDAO;
+import net.uch.commonService.ServiceFinder;
+import net.uch.mapping.*;
+import net.uch.tablaSistema.hibernateSpringDao.HSCatalogoDAO;
+import net.uch.tablaSistema.hibernateSpringDao.HSEspecialidadDAO;
+import net.uch.tablaSistema.hibernateSpringDao.HSFacultadDAO;
+import net.uch.tablaSistema.hibernateSpringDao.HSSemestreDAO;
+import net.uch.util.BeanParametros;
+import net.uch.util.Print;
+import org.hibernate.loader.custom.Return;
+import org.springframework.dao.DataAccessException;
+
+/**
+ *
+ * @author richard rondinel 965660333
+ */
+public class MBMatricula {
+
+    private String w_codigo;
+    private String w_paterno;
+    private String w_materno;
+    private String w_nombres;
+    private int w_facId;
+    private int w_espId;
+    private int w_semId;
+    private String oncomplete;
+    private List<BeanAlumno> listaAlumnos;
+    private AcAlumno objAlumno;
+    private int p_indice_alumno;
+    private SelectItem[] cboFacultad;
+    private SelectItem[] cboEspecialidad;
+    private SelectItem[] cboSemestre;
+    private BeanAlumno objBeanAlumno;
+    private List<BeanCursosMatricular> listaCursosMatriculars;
+    private List<AdAlumnoTarifa> listarDeudas;
+    private AdAlumnoTarifa tarifa;
+    // private String w_tipo_Estado;
+
+    public AdAlumnoTarifa getTarifa() {
+        return tarifa;
+    }
+
+    public void setTarifa(AdAlumnoTarifa tarifa) {
+        this.tarifa = tarifa;
+    }
+
+    public MBMatricula() {
+        this.listaAlumnos = new ArrayList<BeanAlumno>();
+        this.objAlumno = new AcAlumno();
+        this.listaCursosMatriculars = new ArrayList<BeanCursosMatricular>();
+        this.listarDeudas = new ArrayList<AdAlumnoTarifa>();
+    }
+
+    public BeanAlumno getObjBeanAlumno() {
+        return objBeanAlumno;
+    }
+
+    public void setObjBeanAlumno(BeanAlumno objBeanAlumno) {
+        this.objBeanAlumno = objBeanAlumno;
+    }
+
+    public List<BeanAlumno> getListaAlumnos() {
+        return listaAlumnos;
+    }
+
+    public void setListaAlumnos(List<BeanAlumno> listaAlumnos) {
+        this.listaAlumnos = listaAlumnos;
+    }
+
+    public AcAlumno getObjAlumno() {
+        return objAlumno;
+    }
+
+    public void setObjAlumno(AcAlumno objAlumno) {
+        this.objAlumno = objAlumno;
+    }
+
+    public String getOncomplete() {
+        return oncomplete;
+    }
+
+    public void setOncomplete(String oncomplete) {
+        this.oncomplete = oncomplete;
+    }
+
+    public String getW_codigo() {
+        return w_codigo;
+    }
+
+    public void setW_codigo(String w_codigo) {
+        this.w_codigo = w_codigo;
+    }
+
+    public int getW_espId() {
+        return w_espId;
+    }
+
+    public void setW_espId(int w_espId) {
+        this.w_espId = w_espId;
+    }
+
+    public int getW_facId() {
+        return w_facId;
+    }
+
+    public void setW_facId(int w_facId) {
+        this.w_facId = w_facId;
+    }
+
+    public String getW_materno() {
+        return w_materno;
+    }
+
+    public void setW_materno(String w_materno) {
+        this.w_materno = w_materno;
+    }
+
+    public String getW_nombres() {
+        return w_nombres;
+    }
+
+    public void setW_nombres(String w_nombres) {
+        this.w_nombres = w_nombres;
+    }
+
+    public String getW_paterno() {
+        return w_paterno;
+    }
+
+    public void setW_paterno(String w_paterno) {
+        this.w_paterno = w_paterno;
+    }
+
+    public int getW_semId() {
+        return w_semId;
+    }
+
+    public void setW_semId(int w_semId) {
+        this.w_semId = w_semId;
+    }
+
+    public int getP_indice_alumno() {
+        return p_indice_alumno;
+    }
+
+    public void setP_indice_alumno(int p_indice_alumno) {
+        this.p_indice_alumno = p_indice_alumno;
+    }
+
+    public List<BeanCursosMatricular> getListaCursosMatriculars() {
+        return listaCursosMatriculars;
+    }
+
+    public void setListaCursosMatriculars(List<BeanCursosMatricular> listaCursosMatriculars) {
+        this.listaCursosMatriculars = listaCursosMatriculars;
+    }
+
+    public List<AdAlumnoTarifa> getListarDeudas() {
+        return listarDeudas;
+    }
+
+    public void setListarDeudas(List<AdAlumnoTarifa> listarDeudas) {
+        this.listarDeudas = listarDeudas;
+    }
+
+    public SelectItem[] getCboEspecialidad() throws DataAccessException, SQLException {
+        HSEspecialidadDAO dao = (HSEspecialidadDAO) ServiceFinder.findBean("SpringHibernateDaoEspecialidad");
+        List<AcEspecialidad> lista = dao.seleccionarEspecialidad(this.w_facId);
+        this.cboEspecialidad = new SelectItem[lista.size() + 1];
+        this.cboEspecialidad[0] = new SelectItem(0, "[-Todas-]");
+        for (int i = 0; i < (this.cboEspecialidad.length - 1); i++) {
+            this.cboEspecialidad[i + 1] = new SelectItem(lista.get(i).getId(), lista.get(i).getEspNombre());
+        }
+        return cboEspecialidad;
+    }
+
+    public void setCboEspecialidad(SelectItem[] cboEspecialidad) {
+        this.cboEspecialidad = cboEspecialidad;
+    }
+
+    public SelectItem[] getCboFacultad() {
+        HSFacultadDAO dao = (HSFacultadDAO) ServiceFinder.findBean("SpringHibernateDaoFacultad");
+        List<AcFacultad> lista = dao.getListarTodas();
+        this.cboFacultad = new SelectItem[lista.size() + 1];
+        this.cboFacultad[0] = new SelectItem(0, "[-Todas-]");
+        for (int i = 0; i < (this.cboFacultad.length - 1); i++) {
+            this.cboFacultad[i + 1] = new SelectItem(lista.get(i).getId(), lista.get(i).getFacNombre());
+        }
+        return cboFacultad;
+    }
+
+    public void setCboFacultad(SelectItem[] cboFacultad) {
+        this.cboFacultad = cboFacultad;
+    }
+
+    public SelectItem[] getCboSemestre() {
+        HSSemestreDAO dao = (HSSemestreDAO) ServiceFinder.findBean("SpringHibernateDaoSemestre");
+        List<AcSemestre> lista = dao.seleccionarSemestreVigente();
+        this.cboSemestre = new SelectItem[lista.size()];
+        for (int i = 0; i < this.cboSemestre.length; i++) {
+            this.cboSemestre[i] = new SelectItem(lista.get(i).getId(), lista.get(i).getSemNombre());
+        }
+        return cboSemestre;
+    }
+
+    public void setCboSemestre(SelectItem[] cboSemestre) {
+        this.cboSemestre = cboSemestre;
+    }
+
+    public void buscarEstudiantes() throws SQLException {
+        this.listaAlumnos = new ArrayList<BeanAlumno>();
+        HSAlumnoDAO dao = (HSAlumnoDAO) ServiceFinder.findBean("SpringHibernateDaoAlumno");
+        HSCatalogoDAO daoCa = (HSCatalogoDAO) ServiceFinder.findBean("SpringHibernateDaoCatalogo");
+        HSSemestreDAO daoSe = (HSSemestreDAO) ServiceFinder.findBean("SpringHibernateDaoSemestre");
+        HSAlumnoTarifaDAO daoTa = (HSAlumnoTarifaDAO) ServiceFinder.findBean("SpringHibernateDaoAlumnoTarifa");
+        HSMatriculaDAO daoMa = (HSMatriculaDAO) ServiceFinder.findBean("SpringHibernateDaoMatricula");
+        List<AcAlumno> lista = dao.seleccionarAlumno(this.w_codigo, this.w_paterno, this.w_materno, this.w_nombres, this.w_facId, this.w_espId);
+        Calendar fecActual = Calendar.getInstance();
+        fecActual.setTime(new Date());
+        for (AcAlumno acAlumno : lista) {
+            BeanAlumno alumno = new BeanAlumno();
+            alumno.setAcAlumno(acAlumno);
+            alumno.setW_tipo_alumno(daoCa.seleccionarDescripcion(acAlumno.getAluTipo()));
+            alumno.setW_semestre(daoSe.getSemestre(acAlumno.getSemId()).getSemNombre());
+            alumno.setW_estado(getEstadoMatricula(acAlumno.getId()));
+            if(alumno.getW_estado().length()>2){
+                alumno.setW_visualizar(true);
+            }
+            List<AdAlumnoTarifa> listaTa = daoTa.seleccionarAlumnoTarifa(acAlumno.getId());
+            for (AdAlumnoTarifa adAlumnoTarifa : listaTa) {
+                Calendar fecPro = Calendar.getInstance();
+                fecPro.setTime(adAlumnoTarifa.getAlutarFechaProrroga());
+                if (!adAlumnoTarifa.getAlutarEstado().equals("2") && fecActual.getTimeInMillis() > fecPro.getTimeInMillis()) {
+                    alumno.setW_ver_deuda(true);
+                    break;
+                }
+            }
+            // alumno.set
+            if (daoMa.seleccionarMatricularRegular(acAlumno.getId(), w_semId).size() > 0) {
+                alumno.setW_imagen("/Imagenes/actions/rectificacion.gif");
+                alumno.setW_ver_reporte(true);
+                daoMa.seleccionarMatricularRegular(acAlumno.getId(), w_semId).get(0);
+                alumno.setAcMatricula((AcMatricula) daoMa.seleccionarMatricularRegular(acAlumno.getId(), w_semId).get(0));
+            }
+            this.getListaAlumnos().add(alumno);
+        }
+    }
+
+    public synchronized void abrirMatricula() {
+        this.setOncomplete("");
+        this.setListaCursosMatriculars(new ArrayList<BeanCursosMatricular>());
+        this.getListaCursosMatriculars().clear();
+        HSMatriculaDAO dao = (HSMatriculaDAO) ServiceFinder.findBean("SpringHibernateDaoMatricula");
+        this.setObjBeanAlumno(new BeanAlumno());
+        this.objBeanAlumno = this.getListaAlumnos().get(this.p_indice_alumno);
+        List<BeanCursosMatricular> lista = dao.listarCursosAmatricular(this.getObjBeanAlumno().getAcAlumno().getId(), w_semId);
+        for (int i = 0; i < lista.size(); i++) {
+            BeanCursosMatricular matricular = lista.get(i);
+            matricular.setCboSecciones(matricular.llenarSecciones(lista.get(i).getCurapeId(), lista.get(i).getSemId()));
+            this.listaCursosMatriculars.add(matricular);
+        }
+        //this.setListaCursosMatriculars();
+        this.setOncomplete("Richfaces.showModalPanel('mpMatricula')");
+    }
+    private String tituloReporte;
+    private String valorRep;
+    private int p_mat_id;
+
+    public int getP_mat_id() {
+        return p_mat_id;
+    }
+
+    public void setP_mat_id(int p_mat_id) {
+        this.p_mat_id = p_mat_id;
+    }
+
+    public String getTituloReporte() {
+        return tituloReporte;
+    }
+
+    public void setTituloReporte(String tituloReporte) {
+        this.tituloReporte = tituloReporte;
+    }
+
+    public String getValorRep() {
+        return valorRep;
+    }
+
+    public void setValorRep(String valorRep) {
+        this.valorRep = valorRep;
+    }
+
+    public void ImprimirFicha() throws Exception {
+        this.oncomplete = "";
+        this.setTituloReporte("Ficha de Matricula");
+        this.setValorRep("ficha");
+        this.setOncomplete("javascript:Richfaces.showModalPanel('mp7')");
+    }
+
+    public void ImprimirConsolidado(ActionEvent event) throws Exception {
+        this.oncomplete = "";
+        this.setTituloReporte("Consolidado de Matricula");
+        this.setValorRep("consolidado");
+        this.setOncomplete("javascript:Richfaces.showModalPanel('mp7')");
+    }
+
+    public void cargarReporte(OutputStream out, Object data) throws IOException, Exception, EOFException {
+        if (data.toString().equalsIgnoreCase("ficha")) {
+            FacesContext context = FacesContext.getCurrentInstance();
+
+            HashMap parametros = new HashMap();
+            parametros.put("logo", context.getExternalContext().getResource("/Imagenes/actions/logo_p.jpg"));
+            parametros.put("mat_id", this.getP_mat_id());
+
+            String jasper = "/WEB-INF/Reportes/ficha_matricula.jasper";
+
+            Print print = new Print();
+
+            ByteArrayOutputStream buffer = print.cargar_reporte(jasper, parametros);
+            byte[] bytes = buffer.toByteArray();
+
+            InputStream input = new ByteArrayInputStream(bytes);
+
+            int size = input.available();
+            byte[] pdf = new byte[size];
+            input.read(pdf);
+            out.write(pdf);
+
+            buffer.flush();
+            buffer.close();
+            input.close();
+            out.flush();
+            out.close();
+        } else if (data.toString().equalsIgnoreCase("consolidado")) {
+            FacesContext context = FacesContext.getCurrentInstance();
+
+            HashMap parametros = new HashMap();
+            parametros.put("logo", context.getExternalContext().getResource("/Imagenes/actions/logo_p.jpg"));
+            parametros.put("mat_id", this.getP_mat_id());
+            parametros.put("subreport", ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/") + "/WEB-INF/Reportes/sub_consolidado_matricula.jasper");
+
+            String jasper = "/WEB-INF/Reportes/consolidado_matricula.jasper";
+
+            Print print = new Print();
+
+            ByteArrayOutputStream buffer = print.cargar_reporte(jasper, parametros);
+
+            byte[] bytes = buffer.toByteArray();
+
+            InputStream input = new ByteArrayInputStream(bytes);
+
+            int size = input.available();
+            byte[] pdf = new byte[size];
+            input.read(pdf);
+            out.write(pdf);
+
+            buffer.flush();
+            buffer.close();
+            input.close();
+            out.flush();
+            out.close();
+        }
+    }
+
+    public void imagen(OutputStream out, Object data) throws IOException, Exception {
+        HSAlumnoDAO dao = (HSAlumnoDAO) ServiceFinder.findBean("SpringHibernateDaoAlumno");
+
+        AcAlumno alu = dao.seleccionarAlumno((Integer) data);
+        if (alu != null) {
+            java.sql.Blob alu_foto = alu.getAluFoto();
+            BufferedImage bufferedImage = ImageIO.read(alu_foto.getBinaryStream());
+            ImageIO.write(bufferedImage, "jpeg", out);
+        }
+    }
+
+    public void VerDetalleDeuda() throws Exception {
+        HSAlumnoTarifaDAO dao = (HSAlumnoTarifaDAO) ServiceFinder.findBean("SpringHibernateDaoAlumnoTarifa");
+        // HSEstructuraPagoDAO dao2 = (HSEstructuraPagoDAO) ServiceFinder.findBean("SpringHibernateDaoEstructuraPagos");
+        this.objBeanAlumno = this.listaAlumnos.get(this.p_indice_alumno);
+        List<AdAlumnoTarifa> listAlu = dao.seleccionarAlumnoTarifa(this.getObjBeanAlumno().getAcAlumno().getId());
+        Calendar fecActual = Calendar.getInstance();
+        fecActual.setTime(new Date());
+        List<AdAlumnoTarifa> detalle;
+        bMatricula bA;
+        if (listAlu.size() > 0) {
+            listarDeudas = new ArrayList<AdAlumnoTarifa>();
+            detalle = new ArrayList<AdAlumnoTarifa>();
+
+            for (int k = 0; k < listAlu.size(); k++) {
+                Calendar fecPro = Calendar.getInstance();
+                fecPro.setTime((listAlu.get(k)).getAlutarFechaProrroga());
+
+                if (!((listAlu.get(k)).getAlutarEstado().equals("2"))
+                        && fecActual.getTimeInMillis() > fecPro.getTimeInMillis()) {
+                    detalle.add(listAlu.get(k));
+                }
+            }
+            this.setListarDeudas(detalle);
+            this.setOncomplete("javascript:Richfaces.showModalPanel('mpDeuda')");
+        }
+    }
+
+    public String getEstadoMatricula(int alu_id) {
+        String estado = "0";
+        List<BeanParametros> listaParametro = new ArrayList<BeanParametros>();
+        AcAlumnoEstadoDAO dao = (AcAlumnoEstadoDAO) ServiceFinder.findBean("AcAlumnoEstadoDAOHS");
+        HSSemestreDAO daoSem = (HSSemestreDAO) ServiceFinder.findBean("SpringHibernateDaoSemestre");
+        listaParametro.add(new BeanParametros("aluestActivo", "1", " and "));
+        listaParametro.add(new BeanParametros("acAlumno.id", alu_id, " "));
+        if (dao.findByProperties(listaParametro).size() > 0) {
+
+
+            AcAlumnoEstado aluEstado = (AcAlumnoEstado) dao.findByProperties(listaParametro).get(0);
+            if (aluEstado != null) {
+
+
+                List<AcAlumnoEstado> lAluEstado = new ArrayList<AcAlumnoEstado>();
+                List<AcSemestre> semestre = daoSem.seleccionarSemestreVigente();
+                int valor = 1;
+                System.out.println("aluEstado-> " + aluEstado.getAcSemestre().getSemNombre() + "\t -> " + aluEstado.getAluestPeriodos());
+                for (int i = 0; i < semestre.size(); i++) {
+                    if (aluEstado.getAcSemestre().getId() <= semestre.get(i).getId() && valor <= Integer.parseInt(aluEstado.getAluestPeriodos().toString())) {
+                        AcAlumnoEstado acAlumnoEstado = new AcAlumnoEstado();
+                        acAlumnoEstado.setAcSemestre(aluEstado.getAcSemestre());
+                        acAlumnoEstado.setAcSemestreBak(semestre.get(i));
+                        lAluEstado.add(acAlumnoEstado);
+
+                        valor++;
+                    }
+                }
+                if (lAluEstado.size() > 0) {
+                    estado = aluEstado.getAluestEstado();
+                }
+            }
+        }
+        return estado;
+    }
+}

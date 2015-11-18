@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="AcDocente"
+		table="ac_docente"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="doc_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="DocCodigo"
+			column="doc_codigo"
+			type="string"
+			not-null="false"
+			length="20"
+		/>
+
+                <property
+			name="DocTipo"
+			column="doc_tipo"
+			type="string"
+			not-null="false"
+			length="6"
+		/>
+
+		<property
+			name="DocNombre"
+			column="doc_nombre"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+                <property
+			name="DocNombres"
+			column="doc_nombres"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+                <property
+			name="DocAppaterno"
+			column="doc_appaterno"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+                <property
+			name="DocApmaterno"
+			column="doc_apmaterno"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+                 <property
+			name="DocDni"
+			column="doc_dni"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+                 <property
+			name="DocPassword"
+			column="doc_password"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+		<property
+			name="DocFoto"
+			column="doc_foto"
+			type="binary"
+			not-null="false"
+		/>
+		<property
+			name="DocSituacion"
+			column="doc_situacion"
+			type="string"
+			not-null="false"
+			length="6"
+		/>
+		<property
+			name="DocPeriodoInicio"
+			column="doc_periodo_inicio"
+			type="date"
+			not-null="false"
+		/>
+		<property
+			name="DocNacimiento"
+			column="doc_nacimiento"
+			type="string"
+			not-null="false"
+			length="6"
+		/>
+		<property
+			name="DocResidencia"
+			column="doc_residencia"
+			type="string"
+			not-null="false"
+			length="6"
+		/>
+		<property
+			name="DocTelefono"
+			column="doc_telefono"
+			type="string"
+			not-null="false"
+			length="20"
+		/>
+		<property
+			name="DocSexo"
+			column="doc_sexo"
+			type="string"
+			not-null="false"
+			length="6"
+		/>
+		<property
+			name="DocCorreo"
+			column="doc_correo"
+			type="string"
+			not-null="false"
+			length="40"
+		/>
+		<property
+			name="DocActivo"
+			column="doc_activo"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+                
+                <property
+			name="DocFacId"
+			column="doc_fac_id"
+			type="integer"
+			not-null="false"
+			length="11"
+		/>
+	
+
+		<set name="AcDisponibilidads"  inverse="true" cascade="all">
+			<key column="doc_id" update="true"/>
+			<one-to-many class="AcDisponibilidad"/>
+		</set>
+
+		<set name="AcHorarios" inverse="true">
+			<key column="doc_id"/>
+			<one-to-many class="AcHorario"/>
+		</set>
+
+		<set name="AcVidaDocentes" inverse="true">
+			<key column="doc_id"/>
+			<one-to-many class="AcVidaDocente"/>
+		</set>
+
+
+	</class>	
+</hibernate-mapping>

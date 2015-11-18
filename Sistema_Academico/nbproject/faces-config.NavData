@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scene Scope="Project" version="2">
+    <Scope Scope="Faces Configuration Only"/>
+    <Scope Scope="Project">
+        <Node id="CursoLibre/informes.jsp" x="1400" y="600" zoom="true"/>
+        <Node id="TablaSistema/Actividades.jsp" x="650" y="750" zoom="true"/>
+        <Node id="Solicitud/UI_RevisarSoli.jsp" x="2650" y="450" zoom="true"/>
+        <Node id="CursoLibre/SistemaEvaluacionCL.jsp" x="400" y="300" zoom="true"/>
+        <Node id="CursoLibre/DevolucionPagoCL.jsp" x="150" y="1350" zoom="true"/>
+        <Node id="Academica/PlanCurricularCurso.jsp" x="1150" y="600" zoom="true"/>
+        <Node id="CursoLibre/Secciones.jsp" x="650" y="150" zoom="true"/>
+        <Node id="Academica/PreRequisitos.jsp" x="1400" y="450" zoom="true"/>
+        <Node id="CursoLibre/fecha_contacto2.jsp" x="1400" y="900" zoom="true"/>
+        <Node id="CursoLibre/Areas.jsp" x="650" y="1050" zoom="true"/>
+        <Node id="CursoLibre/NotasCL.jsp" x="2400" y="300" zoom="true"/>
+        <Node id="CursoLibre/mantenimientoEstructura.jsp" x="3150" y="150" zoom="true"/>
+        <Node id="blank.html" x="900" y="750" zoom="true"/>
+        <Node id="Academica/ContenidoTematico.jsp" x="900" y="1050" zoom="true"/>
+        <Node id="Academica/Notas.jsp" x="400" y="1350" zoom="true"/>
+        <Node id="TablaSistema/Semestres.jsp" x="650" y="450" zoom="true"/>
+        <Node id="CursoLibre/EdicionEstructPagoCLBloque.jsp" x="1900" y="600" zoom="true"/>
+        <Node id="CursoLibre/Modulos.jsp" x="150" y="600" zoom="true"/>
+        <Node id="index1.jsp" x="1650" y="150" zoom="true"/>
+        <Node id="TablaSistema/Locales.jsp" x="900" y="600" zoom="true"/>
+        <Node id="Solicitud/UI_Requisito.jsp" x="400" y="1650" zoom="true"/>
+        <Node id="CursoLibre/EdicionPagoBloque.jsp" x="2650" y="300" zoom="true"/>
+        <Node id="CursoLibre/EstructuraPagosCL.jsp" x="900" y="300" zoom="true"/>
+        <Node id="CursoLibre/fecha_contacto.jsp" x="1650" y="750" zoom="true"/>
+        <Node id="CursoLibre/consultaAcademicaCurso.jsp" x="400" y="1500" zoom="true"/>
+        <Node id="Academica/Alumnos_doc.jsp" x="650" y="1350" zoom="true"/>
+        <Node id="Imagenes/actions/Alumnos.jsp" x="650" y="1500" zoom="true"/>
+        <Node id="Administrativa/EdicionEstructPago.jsp" x="1400" y="150" zoom="true"/>
+        <Node id="Autenticacion/Bienvenida.jsp" x="400" y="1050" zoom="true"/>
+        <Node id="Academica/Alumnos.jsp" x="1150" y="750" zoom="true"/>
+        <Node id="Laboratorio/UI_Incidencia.jsp" x="1150" y="1200" zoom="true"/>
+        <Node id="*" x="150" y="750" zoom="true"/>
+        <Node id="Autenticacion/Login.jsp" x="1150" y="300" zoom="true"/>
+        <Node id="CursoLibre/Taller.jsp" x="900" y="450" zoom="true"/>
+        <Node id="Solicitud/UI_Demo.jsp" x="2400" y="450" zoom="true"/>
+        <Node id="Academica/Convalidacion.jsp" x="900" y="150" zoom="true"/>
+        <Node id="CursoLibre/ModeloHorario.jsp" x="900" y="1200" zoom="true"/>
+        <Node id="CursoLibre/consultaAcademica.jsp" x="2900" y="300" zoom="true"/>
+        <Node id="CursoLibre/ReporteCL.jsp" x="2400" y="150" zoom="true"/>
+        <Node id="Academica/PlanCurricular.jsp" x="1900" y="450" zoom="true"/>
+        <Node id="CursoLibre/MatriculaSeccionCL.jsp" x="900" y="900" zoom="true"/>
+        <Node id="CursoLibre/EdicionPagoCL.jsp" x="650" y="1200" zoom="true"/>
+        <Node id="Academica/UI_Matricula.jsp" x="150" y="1650" zoom="true"/>
+        <Node id="Administrativa/Pagos.jsp" x="2150" y="150" zoom="true"/>
+        <Node id="Academica/SistemaEvaluacion.jsp" x="1900" y="150" zoom="true"/>
+        <Node id="TablaSistema/Paginas.jsp" x="400" y="450" zoom="true"/>
+        <Node id="TablaSistema/Pabellon.jsp" x="1150" y="900" zoom="true"/>
+        <Node id="TablaSistema/Facultades.jsp" x="1150" y="150" zoom="true"/>
+        <Node id="Administrativa/ConceptoPago.jsp" x="400" y="150" zoom="true"/>
+        <Node id="TablaSistema/Aulas.jsp" x="400" y="450" zoom="true"/>
+        <Node id="Solicitud/UI_Solicitu.jsp" x="2900" y="150" zoom="true"/>
+        <Node id="Academica/AperturaCursos.jsp" x="400" y="750" zoom="true"/>
+        <Node id="Academica/Docentes.jsp" x="400" y="900" zoom="true"/>
+        <Node id="Administrativa/EdicionEstructPagoBloque.jsp" x="150" y="900" zoom="true"/>
+        <Node id="CursoLibre/infoMatriculados.jsp" x="2650" y="150" zoom="true"/>
+        <Node id="CursoLibre/consultaSeccion.jsp" x="2400" y="600" zoom="true"/>
+        <Node id="CursoLibre/MantenimientoMedio.jsp" x="1150" y="1050" zoom="true"/>
+        <Node id="Academica/Horario.jsp" x="1650" y="600" zoom="true"/>
+        <Node id="TablaSistema/Parametro.jsp" x="400" y="450" zoom="true"/>
+        <Node id="Banco/ProcesoBanco.jsp" x="650" y="600" zoom="true"/>
+        <Node id="CursoLibre/consultaAcademicaInicio.jsp" x="150" y="1800" zoom="true"/>
+        <Node id="Academica/Matricula.jsp" x="2150" y="300" zoom="true"/>
+        <Node id="Autenticacion/Error.jsp" x="150" y="1200" zoom="true"/>
+        <Node id="CursoLibre/PlanCurricular.jsp" x="1150" y="450" zoom="true"/>
+        <Node id="CursoLibre/consultaAcademicaModulo.jsp" x="1400" y="1050" zoom="true"/>
+        <Node id="index.jsp" x="150" y="150" zoom="true"/>
+        <Node id="Laboratorio/UI_Incidencia_bibli.jsp" x="900" y="1350" zoom="true"/>
+        <Node id="Academica/Cursos.jsp" x="650" y="300" zoom="true"/>
+        <Node id="TablaSiste&#10;                ma/Construccion.jsp&#10;            " x="1900" y="750" zoom="true"/>
+        <Node id="TablaSistema/Usuarios.jsp" x="1650" y="450" zoom="true"/>
+        <Node id="Academica/Apoderado.jsp" x="1900" y="300" zoom="true"/>
+        <Node id="Administrativa/HorarioArea.jsp" x="400" y="600" zoom="true"/>
+        <Node id="CursoLibre/MatriculaCL.jsp" x="150" y="1350" zoom="true"/>
+        <Node id="CursoLibre/Inicios.jsp" x="2150" y="600" zoom="true"/>
+        <Node id="Academica/Turno.jsp" x="1400" y="300" zoom="true"/>
+        <Node id="CursoLibre/modal/ModalAlumno.jsp" x="150" y="1050" zoom="true"/>
+        <Node id="CursoLibre/TallerAperturado.jsp" x="1650" y="300" zoom="true"/>
+        <Node id="Asistencia/AsistenciaDocente.jsp" x="150" y="1500" zoom="true"/>
+        <Node id="CursoLibre/AlumnosCl.jsp" x="150" y="450" zoom="true"/>
+        <Node id="TablaSistema/Menu.jsp" x="650" y="900" zoom="true"/>
+        <Node id="Administrativa/EstructuraPago.jsp" x="400" y="1200" zoom="true"/>
+        <Node id="TablaSistema/Construccion.jsp" x="150" y="300" zoom="true"/>
+        <Node id="CursoLibre/fecha_registro.jsp" x="1650" y="900" zoom="true"/>
+        <Node id="TablaSistema/Especialidad.jsp" x="1400" y="750" zoom="true"/>
+        <Node id="CursoLibre/EdicionEstructPagoCL.jsp" x="2150" y="450" zoom="true"/>
+    </Scope>
+    <Scope Scope="All Faces Configurations"/>
+</Scene>

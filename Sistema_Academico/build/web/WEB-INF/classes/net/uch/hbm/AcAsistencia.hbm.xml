@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="AcAsistencia"
+		table="ac_asistencia"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="asi_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="AsiDia"
+			column="asi_dia"
+			type="string"
+			not-null="false"
+			length="10"
+		/>
+		<property
+			name="SemId"
+			column="sem_id"
+			type="integer"
+			not-null="false"
+			length="10"
+		/>
+		<property
+			name="CurapeId"
+			column="curape_id"
+			type="integer"
+			not-null="false"
+			length="10"
+		/>
+		<property
+			name="AsiActivo"
+			column="asi_activo"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+		<many-to-one
+			name="Alu"
+			column="alu_id"
+			class="AcAlumno"
+			not-null="true"
+		>
+		</many-to-one>
+
+
+	</class>	
+</hibernate-mapping>

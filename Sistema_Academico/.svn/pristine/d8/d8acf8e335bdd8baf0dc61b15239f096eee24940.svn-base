@@ -1,0 +1,99 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.tablaSistema.hibernateSpringDao;
+
+import java.util.ArrayList;
+import java.util.List;
+import net.uch.commonService.ServiceFinder;
+import net.uch.mapping.TbRoles;
+import net.uch.mapping.TbUsuario;
+import net.uch.tablaSistema.managedBeans.bRol;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+/**
+ *
+ * @author LUIS
+ */
+public class HSRolDAOImpl extends HibernateDaoSupport implements HSRolDAO{
+    
+    
+    @Override
+    public List<TbRoles> getListarRolPorId2(int rol_id){       
+    String hql = "select rol.Id, rol.RolTipo "
+                + "from TbRoles rol "
+                + " where rol.Id= "+rol_id
+                + " order by rol.RolTipo";
+
+        Query q = this.getSession().createQuery( hql );
+
+        List tmp = q.list();
+        List roles = new ArrayList();
+        for ( int i = 0; i < tmp.size(); i++ ) {
+            Object[] objs = (Object[]) tmp.get( i );
+            TbRoles rol = new TbRoles();
+            rol.setId(Integer.valueOf( objs[0].toString() ));
+            rol.setRolTipo(objs[1].toString().toUpperCase());
+            roles.add( i, rol );
+        }
+        return roles;
+    
+    }
+    
+    
+    /*@Override
+    public String getListarRolPorId(int rol_id){
+    String sQuery;
+        SQLQuery sqlQuery;
+        String reporte = "";
+
+        sQuery = "SELECT rol.rol_tipo FROM tb_roles rol "
+                + "WHERE rol.rol_id= :rol_id";
+        sqlQuery = this.getSession().createSQLQuery( sQuery );
+        sqlQuery.setInteger( "rol_id", rol_id );
+        reporte = ( sqlQuery.uniqueResult().toString() );
+        return reporte;
+        }*/
+    
+    @Override
+    public List<TbRoles> getListarRol(){       
+    String hql = "select rol.Id, rol.RolTipo "
+                + "from TbRoles rol "
+                + " order by rol.RolTipo";
+
+        Query q = this.getSession().createQuery( hql );
+
+        List tmp = q.list();
+        List roles = new ArrayList();
+        for ( int i = 0; i < tmp.size(); i++ ) {
+            Object[] objs = (Object[]) tmp.get( i );
+            TbRoles rol = new TbRoles();
+            rol.setId(Integer.valueOf( objs[0].toString() ));
+            rol.setRolTipo(objs[1].toString().toUpperCase());
+            roles.add( i, rol );
+        }
+        return roles;
+    
+    }
+    
+    
+     @Override
+    public TbRoles traerRolPorId( int iRolId ) {
+        TbRoles tbRoles;
+        try {
+            tbRoles = (TbRoles) this.getSession().
+                    createCriteria( TbRoles.class ).
+                    add( Restrictions.eq( "Id", iRolId ) ).
+                    uniqueResult();
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+            tbRoles = null;
+        }
+        return tbRoles;
+    }
+     
+}

@@ -1,0 +1,43 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.tablaSistema.managedBeans;
+
+/**
+ *
+ * @author LUIS
+ */
+public class bRol {
+    
+    private int rol_id;
+    private String rol_tipo;
+    private String rol_activo;
+
+    public String getRol_activo() {
+        return rol_activo;
+    }
+
+    public void setRol_activo(String rol_activo) {
+        this.rol_activo = rol_activo;
+    }
+
+    public int getRol_id() {
+        return rol_id;
+    }
+
+    public void setRol_id(int rol_id) {
+        this.rol_id = rol_id;
+    }
+
+    public String getRol_tipo() {
+        return rol_tipo;
+    }
+
+    public void setRol_tipo(String rol_tipo) {
+        this.rol_tipo = rol_tipo;
+    }
+    
+    
+    
+}

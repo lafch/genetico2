@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcPlanCurso"
+        table="ac_plan_curso"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="plancur_Id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="PlancurCiclo"
+            column="plancur_ciclo"
+            type="string"
+            not-null="false"
+            length="6"
+            />
+        <property
+            name="PlancurCredito"
+            column="plancur_credito"
+            type="string"
+            not-null="false"
+            length="2"
+            />
+        <property
+            name="PlancurTipo"
+            column="plancur_tipo"
+            type="string"
+            not-null="false"
+            length="6"
+            />
+        <property
+            name="PlancurActivo"
+            column="plancur_activo"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="PlancurCodigo"
+            column="plancur_codigo"
+            type="string"
+            not-null="false"
+            length="10"
+            />
+        <many-to-one
+            name="Cur"
+            column="cur_id"
+            class="AcCurso"
+            not-null="true"
+            fetch="join"
+            >
+        </many-to-one>
+        <many-to-one
+            name="Plan"
+            column="plan_id"
+            class="AcPlancurricular"
+            not-null="true"
+            fetch="join"
+            >
+        </many-to-one>
+
+
+        <set name="AcEquivalencias" inverse="true">
+            <key column="plancur_Id"/>
+            <one-to-many class="AcEquivalencia"/>
+        </set>
+
+        <set name="AcContenidoTematicos" inverse="true">
+            <key column="plancur_Id"/>
+            <one-to-many class="AcContenidoTematico"/>
+        </set>
+
+        <set name="AcCursoAperturados" inverse="true" cascade="all" order-by="curape_Id">
+            <key column="plancur_Id"/>
+            <one-to-many class="AcCursoAperturado"/>
+        </set>
+
+        <set name="AcPreRequisitosByPlancur" inverse="true" fetch="join" cascade="all" where="pre_req_activo='1'">
+            <key column="plancur_Id"/>
+            <one-to-many class="AcPreRequisitos"/>
+        </set>
+
+        <set name="AcPreRequisitosByPlancurIdRequisito" inverse="true" fetch="join" cascade="all" where="pre_req_activo='1'">
+            <key column="plancur_Id"/>
+            <one-to-many class="AcPreRequisitos"/>
+        </set>
+
+
+    </class>
+</hibernate-mapping>

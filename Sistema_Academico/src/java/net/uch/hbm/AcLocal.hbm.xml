@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="AcLocal"
+		table="ac_local"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="loc_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="LocDes"
+			column="loc_des"
+			type="string"
+			not-null="false"
+			length="45"
+		/>
+		<property
+			name="LocActivo"
+			column="loc_activo"
+			type="string"
+			not-null="true"
+			length="1"
+		/>
+	
+
+		<set name="AcPabellons" inverse="true">
+			<key column="loc_id"/>
+			<one-to-many class="AcPabellon"/>
+		</set>
+
+
+	</class>	
+</hibernate-mapping>

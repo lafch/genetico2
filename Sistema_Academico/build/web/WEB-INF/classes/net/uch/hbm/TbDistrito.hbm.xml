@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="TbDistrito"
+		table="tb_distrito"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="string"
+			column="dis_cod"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="DisDes"
+			column="dis_des"
+			type="string"
+			not-null="false"
+			length="36"
+		/>
+		<property
+			name="ProCod"
+			column="pro_cod"
+			type="string"
+			not-null="false"
+			length="4"
+		/>
+		<property
+			name="DepCod"
+			column="dep_cod"
+			type="string"
+			not-null="true"
+			length="2"
+		/>
+
+
+	</class>	
+</hibernate-mapping>

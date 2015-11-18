@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="net.uch.mapping">
+  <class name="net.uch.mapping.Sp_data_banco">
+    <id column="reg_numero_rec" name="reg_numero_rec">
+      <generator class="native"/>
+    </id>
+    <property column="reg_codigo_alu" name="reg_codigo_alu" not-null="true"/>
+    <property column="reg_situacion" name="reg_situacion" not-null="true"/>
+    <property column="reg_moneda" name="reg_moneda" not-null="true"/>
+    <property column="reg_nombre_usu" name="reg_nombre_usu" not-null="true"/>
+    <property column="reg_referencia_rec" name="reg_referencia_rec" not-null="true"/>
+    <property column="reg_concepto_cob1" name="reg_concepto_cob1" not-null="true"/>
+    <property column="reg_total_cobrar" name="reg_total_cobrar" not-null="true"/>
+    <property column="reg_importe_cob1" name="reg_importe_cob1" not-null="true"/>
+    <property column="reg_importe_cob2" name="reg_importe_cob2" not-null="true"/>
+    <property column="reg_concepto_cob2" name="reg_concepto_cob2" not-null="true"/>
+    <property column="reg_importe_cob3" name="reg_importe_cob3" not-null="true"/>
+    <property column="reg_concepto_cob3" name="reg_concepto_cob3" not-null="true"/>
+    <property column="reg_importe_cob4" name="reg_importe_cob4" not-null="true"/>
+    <property column="reg_concepto_cob4" name="reg_concepto_cob4" not-null="true"/>
+    <property column="reg_importe_cob5" name="reg_importe_cob5" not-null="true"/>
+    <property column="reg_concepto_cob5" name="reg_concepto_cob5" not-null="true"/>
+    <property column="reg_importe_cob6" name="reg_importe_cob6" not-null="true"/>
+    <property column="reg_concepto_cob6" name="reg_concepto_cob6" not-null="true"/>
+    <property column="reg_saldo_deuda" name="reg_saldo_deuda" not-null="true"/>
+    <property column="reg_porcentaje_min" name="reg_porcentaje_min" not-null="true"/>
+    <property column="reg_orden_crono" name="reg_orden_crono" not-null="true"/>
+    <property column="reg_fecha_ini" name="reg_fecha_ini" not-null="true"/>
+    <property column="reg_fecha_venci" name="reg_fecha_venci" not-null="true"/>
+    <property column="reg_dias_prorroga" name="reg_dias_prorroga" not-null="true"/>
+    <property column="reg_fecha_vigencia" name="reg_fecha_vigencia" not-null="true"/>
+  </class>
+  <sql-query callable="true" name="sp_data_banco">
+     <return alias="dataBanco" class="net.uch.mapping.Sp_data_banco" lock-mode="read ">
+      <return-property column="reg_codigo_alu" name="reg_codigo_alu"/>
+      <return-property column="reg_numero_rec" name="reg_numero_rec"/>
+      <return-property column="reg_situacion" name="reg_situacion"/>
+      <return-property column="reg_moneda" name="reg_moneda"/>
+      <return-property column="reg_nombre_usu" name="reg_nombre_usu"/>
+      <return-property column="reg_referencia_rec" name="reg_referencia_rec"/>
+      <return-property column="reg_concepto_cob1" name="reg_concepto_cob1"/>
+      <return-property column="reg_total_cobrar" name="reg_total_cobrar"/>
+      <return-property column="reg_importe_cob1" name="reg_importe_cob1"/>
+      <return-property column="reg_importe_cob2" name="reg_importe_cob2"/>
+      <return-property column="reg_concepto_cob2" name="reg_concepto_cob2"/>
+      <return-property column="reg_importe_cob3" name="reg_importe_cob3"/>
+      <return-property column="reg_concepto_cob3" name="reg_concepto_cob3"/>
+      <return-property column="reg_importe_cob4" name="reg_importe_cob4"/>
+      <return-property column="reg_concepto_cob4" name="reg_concepto_cob4"/>
+      <return-property column="reg_importe_cob5" name="reg_importe_cob5"/>
+      <return-property column="reg_concepto_cob5" name="reg_concepto_cob5"/>
+      <return-property column="reg_importe_cob6" name="reg_importe_cob6"/>
+      <return-property column="reg_concepto_cob6" name="reg_concepto_cob6"/>
+      <return-property column="reg_saldo_deuda" name="reg_saldo_deuda"/>
+      <return-property column="reg_porcentaje_min" name="reg_porcentaje_min"/>
+      <return-property column="reg_orden_crono" name="reg_orden_crono"/>
+      <return-property column="reg_fecha_ini" name="reg_fecha_ini"/>
+      <return-property column="reg_fecha_venci" name="reg_fecha_venci"/>
+      <return-property column="reg_dias_prorroga" name="reg_dias_prorroga"/>
+      <return-property column="reg_fecha_vigencia" name="reg_fecha_vigencia"/>
+    </return>
+        {call sp_data_banco()}
+    </sql-query>
+</hibernate-mapping>

@@ -1,0 +1,32 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.cursoLibre.hibernateSpringDao;
+
+import java.util.Date;
+import java.util.List;
+import net.uch.cursoLibre.managedBeans.beans.BeanReporte;
+import net.uch.mapping.ClAlumnoDesertor;
+import net.uch.mapping.ClObservacionDesercion;
+
+/**
+ *
+ * @author USUARIO
+ */
+public interface HSAlumnoDesertorCLDAO {
+
+    public List<BeanReporte> listarDesertores( String sNomApeFiltro, String sNumTlfFiltro, int iModuloId,int iCursoId, List<String> lstActivos);
+
+    public List<BeanReporte> listarDesertoresCaptadosPorCaptar( String sRpt, int iModuloId, int iCondicion, List<String> lstMotivos );
+
+    public List<BeanReporte> listarDesertoresPorFechaContacto( int iModuloId, Date fechaInicio, Date fechaFin, String sNomApeFiltro, String sNumTlfFiltro );
+
+    public int guardarAlumnoDesertor( ClAlumnoDesertor bAluDesert );
+
+    public int guardarObservacionDesercion( ClObservacionDesercion obsDesBean );
+
+    public ClAlumnoDesertor buscarAlumnoDesertor( int iIdAlu, int iModuloId );
+
+    public ClAlumnoDesertor buscarAlumnoDesertorPorId( Integer id );
+}

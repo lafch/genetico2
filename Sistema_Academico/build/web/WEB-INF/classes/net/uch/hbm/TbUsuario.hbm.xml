@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <typedef name="encryptedString" class="org.jasypt.hibernate.type.EncryptedStringType">
+      <param name="encryptorRegisteredName">hibernateStringEncryptor</param>
+  </typedef>
+	<class
+		name="TbUsuario"
+		table="tb_usuario"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="usu_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="UsuUsuario"
+			column="usu_usuario"
+			type="string"
+			not-null="false"
+			length="20"
+		/>
+		<property
+			name="UsuPassword"
+			column="usu_password"
+			type="encryptedString"
+			not-null="false"
+		/>
+		<property
+			name="UsuTipo"
+			column="usu_tipo"
+			type="string"
+			not-null="false"
+			length="6"
+		/>
+		<property
+			name="UsuTipoId"
+			column="usu_tipo_id"
+			type="integer"
+			not-null="false"
+			length="10"
+		/>
+		<property
+			name="UsuVigente"
+			column="usu_vigente"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+		<property
+			name="UsuActivo"
+			column="usu_activo"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+                <property
+			name="UsuNivel"
+			column="usu_nivel"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+                <property
+			name="UsuPsw"
+			column="usu_psw"
+			type="string"
+			not-null="false"
+		/>
+		<many-to-one
+			name="Rol"
+			column="rol_id"
+			class="TbRoles"
+			not-null="false"
+                        lazy="false" 
+		>
+		</many-to-one>
+	</class>	
+</hibernate-mapping>

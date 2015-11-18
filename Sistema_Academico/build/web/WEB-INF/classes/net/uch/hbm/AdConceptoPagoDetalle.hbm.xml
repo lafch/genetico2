@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AdConceptoPagoDetalle"
+        table="ad_pago_detalle"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="conpag_det_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="ConpagMontoDet"
+            column="conpag_monto_det"
+            type="java.lang.Float"
+            not-null="false"
+            length="11"
+            />
+        <property
+            name="ConpagActivoDet"
+            column="conpag_activo_det"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="ConpagVisibleDet"
+            column="conpag_visible_det"
+            type="string"
+            not-null="false"
+            length="1"
+            />    
+        <property
+            name="ConpagFechaDet"
+            column="conpag_fecha_det"
+            type="timestamp"
+            not-null="false"
+            />
+        <property
+            name="ConpagDescDet"
+            column="conpag_desc_det"
+            type="string"
+            not-null="false"
+            /> 
+        
+        
+    </class>
+</hibernate-mapping>

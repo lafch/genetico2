@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="AcTurnoDetalle"
+		table="ac_turno_detalle"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="turdet_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="TurdetHora"
+			column="turdet_hora"
+			type="time"
+			not-null="false"
+		/>
+		<property
+			name="TurdetActivo"
+			column="turdet_activo"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+		<many-to-one
+			name="Tur"
+			column="tur_id"
+			class="AcTurno"
+			not-null="true"
+		>
+		</many-to-one>
+	
+
+		<set name="AcHorarios" inverse="true">
+			<key column="turdet_id"/>
+			<one-to-many class="AcHorario"/>
+		</set>
+                <set name="acHorarioAreas" inverse="true">
+			<key column="turdet_id"/>
+			<one-to-many class="AcHorarioArea"/>
+		</set>
+
+
+	</class>	
+</hibernate-mapping>

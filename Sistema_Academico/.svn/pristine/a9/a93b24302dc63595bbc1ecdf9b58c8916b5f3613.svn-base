@@ -1,0 +1,48 @@
+# Parisonz MyFaces Hibernate Spring Integration Application
+# JDBC Related Settings
+
+#192.168.1.254
+#172.16.5.242
+jdbc.driverClassName=com.mysql.jdbc.Driver
+
+#Servidor real
+#jdbc.url=jdbc:mysql://192.168.40.13:3306/db_sis_academica?noAccessToProcedureBodies=true
+#jdbc.username=sisuch
+#jdbc.password=ee6Waa1P
+
+
+#jdbc.url=jdbc:mysql://localhost:3306/db_sis_academica?noAccessToProcedureBodies=true
+#jdbc.username=sisuch
+#jdbc.password=ee6Waa1P
+
+
+jdbc.url=jdbc:mysql://192.168.40.13:3306/db_sis_academica?noAccessToProcedureBodies=true
+jdbc.username=luis
+jdbc.password=zae3Ahnu
+
+
+#jdbc.url=jdbc:mysql://172.16.15.134:3306/db_sis_academica?noAccessToProcedureBodies=true
+#jdbc.username=sidney
+#jdbc.password=123456
+
+#Servidor antiguo
+#jdbc.url=jdbc:mysql://localhost:3306/db_sis_academica?noAccessToProcedureBodies=true
+#jdbc.username=sisuch
+#jdbc.password=ee6Waa1P
+
+#jdbc.url=jdbc:mysql://192.168.40.2:3306/db_sis_academica?noAccessToProcedureBodies=true
+#jdbc.username=richar
+#jdbc.password=chookuZ9
+
+
+#jdbc.url=jdbc:mysql://localhost:3306/db_sis_academica_2?noAccessToProcedureBodies=true
+#jdbc.username=matricula_uch
+#jdbc.password=ook3as1N
+
+
+#jdbc.url=jdbc:mysql://192.168.40.2:3306/db_sis_academica?noAccessToProcedureBodies=true
+#jdbc.username=richar
+#jdbc.password=feis7Shi
+
+#Property that determines the Hibernate dialect
+hibernate.dialect=org.hibernate.dialect.MySQLDialect

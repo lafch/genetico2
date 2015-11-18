@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="TbCatalogo"
+		table="tb_catalogo"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="cat_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="CatCodigoGrupo"
+			column="cat_codigo_grupo"
+			type="string"
+			not-null="false"
+			length="3"
+		/>
+		<property
+			name="CatCodigoElemento"
+			column="cat_codigo_elemento"
+			type="string"
+			not-null="false"
+			length="3"
+		/>
+		<property
+			name="CatDescripcionElemento"
+			column="cat_descripcion_elemento"
+			type="string"
+			not-null="false"
+			length="30"
+		/>
+		<property
+			name="CatValor"
+			column="cat_valor"
+			type="string"
+			not-null="false"
+			length="10"
+		/>
+		<property
+			name="CatActivo"
+			column="cat_activo"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+
+
+	</class>	
+</hibernate-mapping>

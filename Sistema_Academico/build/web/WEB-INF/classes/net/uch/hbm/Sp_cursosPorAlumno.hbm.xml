@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="net.uch.mapping">
+  <class name="net.uch.mapping.Sp_cursosPorAlumno">
+      <id column="cur_id" name="curId">
+        <generator class="native"/>
+      </id>
+    <property column="cur_nombre" name="curNombre" not-null="true"/>
+    <property column="alu_id" name="aluId" not-null="true"/>
+    <property column="plancur_id" name="plancurId" not-null="true"/>
+    <property column="plancur_ciclo" name="plancurCiclo" not-null="false"/>
+    <property column="plancur_credito" name="plancurCredito" not-null="true"/>
+    <property column="plan_id" name="planId" not-null="true"/>
+    <property column="plancur_tipo" name="plancurTipo" not-null="false"/>
+    <property column="plancur_activo" name="plancurActivo" not-null="true"/>
+    <property column="plancur_codigo" name="plancurCodigo" not-null="true"/>
+    <property column="tur_nombre" name="turNombre" not-null="false"/>
+    <property column="tur_id" name="turId" not-null="false"/>
+    <property column="p_ciclo_des" name="pCicloDes" not-null="false"/>
+    <property column="sec_id" name="secId" not-null="false"/>
+  </class>
+  <sql-query callable="true" name="sp_cursosPorAlumno">
+     <return alias="spCursosPorAlumno" class="net.uch.mapping.Sp_cursosPorAlumno" lock-mode="read">
+      
+        <return-property column="cur_nombre" name="curNombre"/>
+        <return-property column="alu_id" name="aluId"/>
+        <return-property column="plancur_id" name="plancurId"/>
+        <return-property column="plancur_ciclo" name="plancurCiclo"/>
+        <return-property column="plancur_credito" name="plancurCredito"/>
+        <return-property column="plan_id" name="planId"/>
+        <return-property column="cur_id" name="curId"/>
+        <return-property column="plancur_tipo" name="plancurTipo"/>
+        <return-property column="plancur_activo" name="plancurActivo" />
+        <return-property column="plancur_codigo" name="plancurCodigo"/>
+        <return-property column="tur_nombre" name="turNombre"/>
+        <return-property column="tur_id" name="turId"/>
+        <return-property column="p_ciclo_des" name="pCicloDes"/>
+        <return-property column="sec_id" name="secId"/>
+    </return>
+        {call sp_cursosPorAlumno(:p_alu_id)}
+    </sql-query>
+</hibernate-mapping>

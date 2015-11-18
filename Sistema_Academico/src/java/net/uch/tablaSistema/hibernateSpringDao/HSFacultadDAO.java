@@ -1,0 +1,22 @@
+package net.uch.tablaSistema.hibernateSpringDao;
+
+import java.util.List;
+import org.springframework.dao.DataAccessException;
+import net.uch.mapping.AcFacultad;
+
+public interface HSFacultadDAO {
+
+    public void insertarFacultad(AcFacultad fa) throws DataAccessException;
+
+    public List seleccionarFacultad(String codigo, String nombre);
+    
+    public List seleccionarFacultadId(int idFacultad) throws DataAccessException;
+    
+    public List seleccionarFacultadId() throws DataAccessException;
+
+    public void eliminarFacultad(String id) throws DataAccessException;
+
+    public void actualizarFacultad(AcFacultad fa) throws DataAccessException;
+    
+    public List<AcFacultad> getListarTodas();
+}

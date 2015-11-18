@@ -1,0 +1,212 @@
+<%@ taglib uri="http://richfaces.org/rich" prefix="rich"%> 
+<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
+<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
+<%@ taglib uri="http://richfaces.org/a4j" prefix="a4j" %>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <link type="text/css" href="../css/formulario.css" rel="stylesheet" media="screen"/>
+        <title>Reportes UCH</title>
+        <script type="text/javascript">
+            function printObjectsSelected_u(sgcomponent,idAL,nombreAL,codigoAL) {
+                idAL.value=sgcomponent.getSelectedItems().pluck('b_doc_id');
+                nombreAL.innerHTML=sgcomponent.getSelectedItems().pluck('b_doc_nombre');
+                codigoAL.innerHTML=sgcomponent.getSelectedItems().pluck('b_doc_codigo');
+            }
+            /*function printObjectsSelected_ha(sgcomponent2,ha_doc,nombreAL2,codigoAL2) {
+                ha_doc.value=sgcomponent2.getSelectedItems().pluck('b_doc_id');
+                ha_doc.innerHTML=sgcomponent2.getSelectedItems().pluck('b_doc_id');
+                nombreAL2.innerHTML=sgcomponent2.getSelectedItems().pluck('b_doc_nombre');
+                codigoAL2.innerHTML=sgcomponent2.getSelectedItems().pluck('b_doc_codigo');
+            }*/
+        </script>
+    </head>
+    <f:view>
+        <body>
+            <jsp:include page="../TablaSistema/Menu.jsp"></jsp:include>
+            <rich:panel style="width:100%;">
+                <f:facet name="ASIGNAR REPORTES"></f:facet>
+                <h:form id="form1" style="width:100%">
+                    <table style="font-size:13px; font-family:verdana; width: 100%">
+                        <tr>
+                            <td width="100%" colspan="2" ><strong>ASIGNAR REPORTES</strong>
+                            </td>
+                            <td align="rigth">
+                                <a4j:status>
+                                    <f:facet name="start">
+                                        <h:graphicImage  value="/Imagenes/actions/loading.gif"/>
+                                    </f:facet>
+                                </a4j:status>
+                            </td>
+
+                            <td>
+                                <h:graphicImage value="/Imagenes/actions/filenew.png" style="cursor:pointer;" alt="Nueva Sesion" title="Nueva Sesion">
+                                    <a4j:support  event="onclick"
+                                                  oncomplete="Richfaces.showModalPanel('mpNuevoReporte')"
+                                                  action="#{managerSEAsistenciaDocente.limpiar}"
+                                                  reRender="form4, n_usu_id, n_rol_id"/>
+                                </h:graphicImage>
+                            </td>
+
+                            <td>
+                                <a4j:commandButton image="/Imagenes/actions/viewmag.png" title="Buscar"
+                                                   actionListener="#{managerAsignarReportes.mostrarReportesUsuario}"
+                                                   reRender="fromTableAsisDoc, scrollTableAsisDoc, tableAsisDoc" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" width="100%">
+                                <hr width="100%" size="1"></td>
+                        </tr>
+
+                        <tr style=" height : 24px;">
+                            <td width="10%" colspan="1">Usuario</td>
+                            <td colspan="1">
+                                <h:selectOneMenu id="ha_usu_id" value="#{managerAsignarReportes.b_usu_id}" style="width : 180px;">
+                                    <f:selectItems value="#{managerAsignarReportes.b_usu}"/>
+                                    <a4j:support event="onchange"  reRender="ha_rol_id,rol" />
+                                </h:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" width="10%" style="align:left">Rol</td>
+                            <td>
+                                <h:selectOneMenu disabled="true" id="ha_rol_id" value="#{managerAsignarReportes.b_rol_id}" style="width : 180px;display:none">
+                                    <f:selectItems value="#{managerAsignarReportes.b_rol}"/>
+                                </h:selectOneMenu>
+                                <h:outputText id="rol" value="#{managerAsignarReportes.b_rol_des}" ></h:outputText>
+                            </td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="6" width="100%"><hr width="100%" size="1"></td>
+                        </tr>
+                    </table>
+                </h:form>
+                <h:form id="fromTableAsisDoc" style="width: 100%">
+                    <table style="width: 100%">
+                        <tr>
+                            <td align="right">
+                                <rich:datascroller id="scrollTableAsisDoc" for="tableAsisDoc"
+                                                   align="rigth" maxPages="20"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <rich:dataTable id="tableAsisDoc" rows="10"
+                                    onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+                                    onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+                                    cellpadding="0" cellspacing="0"
+                                    width="100%" border="0"
+                                    value="#{managerAsignarReportes.b_listar_reportes}"
+                                    var="rep" >
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Id" />
+                            </f:facet>
+                            <h:outputText value="#{rep.rep_id}" />
+                        </rich:column>
+
+                        <rich:column filterBy="#{rep.rep_descripcion}"  filterEvent="onkeyup" filterValue="#{managerAsignarReportes.rep_descripcion}">
+                            <f:facet name="header">
+                                <h:outputText value="Reporte"/>
+                            </f:facet>
+                            <h:outputText value="#{rep.rep_descripcion}"/>
+                        </rich:column>
+
+                        <rich:column>
+                            <f:facet name="header">
+                                <h:outputText value="Rol de Reporte" />
+                            </f:facet>
+                            <h:outputText value="#{managerAsignarReportes.b_rol_des}"/>
+
+
+                        </rich:column>
+
+                        <rich:column style="text-align: center;">
+                            <f:facet name="header">
+                                <h:outputText value="Activo" />
+                                <%--<a4j:commandLink value="Activo"
+                                                 actionListener="#{managerSeccion.SeleccionMultiple}"
+                                                 reRender="resultados"
+                                                 rendered="#{managerSeccion.totalMatriculados != 0}" style="font-size: 11px;"/>
+                                --%>
+                            </f:facet>
+                            <h:selectBooleanCheckbox value="checked"/>
+                        </rich:column>
+
+                        <rich:column style="text-align: center;">
+                            <f:facet name="header">
+                                <h:outputText value="Eliminar"/>
+                            </f:facet>
+                            <h:commandButton image="/Imagenes/actions/no.png" title="Eliminar"
+
+                                             actionListener="#{managerSEAsistenciaDocente.eliminarSesion}"
+
+                                             onclick="javascript:return (confirm('¿Esta realmente seguro de Eliminar?'));"
+                                             />
+                            <f:param id="delete"  value="#{ses.b_ses_id}" />
+                        </rich:column>
+                    </rich:dataTable>
+                </h:form>
+            </rich:panel>
+
+
+
+            <rich:modalPanel id="mpNuevoReporte" zindex="4000"
+                             autosized="true" minWidth="500">
+                <f:facet name="header">
+                    <h:outputText value="Asignar Reporte"/>
+                </f:facet>
+                <f:facet name="controls">
+                    <h:panelGroup>
+                        <h:graphicImage value="/Imagenes/actions/stop.png"
+                                        style="cursor:pointer"
+                                        onclick="Richfaces.hideModalPanel('mpNuevoReporte')" title="Cerrar"/>
+                    </h:panelGroup>
+                </f:facet>
+                <h:form id="form4">
+                    <table width="100%">
+                        <tr>
+                            <td align=right colspan="2">
+                                <a4j:commandButton image="/Imagenes/actions/filesave.png" title="Guardar"
+                                                   action="#{managerSEAsistenciaDocente.validarNuevaSesion}"
+                                                   oncomplete="#{managerSEAsistenciaDocente.oncomplete}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <hr width="100%" size="1">
+                            </td>
+                        </tr>
+                        
+                        <tr style=" height : 24px;">
+                            <td>
+                                <h:outputText value="Usuario"/>
+                            </td>
+                            <td>
+                                                                
+                                <h:selectOneMenu id="n_usu_id" value="#{managerAsignarReportes.b_usu_id}" style="width : 180px;">
+                                    <f:selectItems value="#{managerAsignarReportes.b_usu}"/>
+                                </h:selectOneMenu>
+
+                            </td>
+                        </tr>
+                        <tr style=" height : 24px;">
+                            <td>
+                                <h:outputText value="Rol"/>
+                            </td>
+                            <td>
+                                <h:selectOneMenu id="n_rol_id" value="#{managerAsignarReportes.b_rol_id}" style="width : 180px;">
+                                    <f:selectItems value="#{managerAsignarReportes.b_listar_rol}"/>
+                                </h:selectOneMenu>
+
+                            </td>
+                        </tr>
+                    </table>
+                </h:form>
+            </rich:modalPanel>
+        </body>
+    </f:view>
+</html>

@@ -1,0 +1,42 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.tablaSistema.hibernateSpringDao;
+
+import java.util.List;
+import net.uch.mapping.TbMenu;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+/**
+ *
+ * @author cesardl
+ */
+public class HSMenuDAOImpl extends HibernateDaoSupport implements HSMenuDAO {
+
+    @Override
+    public List<TbMenu> seleccionToolBar(int rol_id) {
+        return this.getSession().createCriteria(TbMenu.class, "men").
+                createCriteria("men.tbMenuRols", "menrol").
+                add(Restrictions.eq("men.menActivo", "1")).
+                add(Restrictions.eq("menrol.menrolActivo", "1")).
+                add(Restrictions.eq("men.menOpc", "0")).
+                add(Restrictions.eq("menrol.tbRoles.Id", rol_id)).
+                addOrder(Order.asc("men.menCodigo")).
+                list();
+    }
+
+    @Override
+    public List<TbMenu> seleccionHijos(int men_id, int rol_id) {
+        return this.getSession().createCriteria(TbMenu.class, "men").
+                createCriteria("men.tbMenuRols", "menrol").
+                add(Restrictions.eq("men.menActivo", "1")).
+                add(Restrictions.eq("menrol.menrolActivo", "1")).
+                add(Restrictions.eq("menrol.tbRoles.Id", rol_id)).
+                add(Restrictions.eq("men.menIdPadre", men_id)).
+                addOrder(Order.asc("men.menCodigo")).
+                list();
+    }
+}

@@ -1,0 +1,225 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcAlumno"
+        table="ac_alumno"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="alu_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="AluCodigo"
+            column="alu_codigo"
+            type="string"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="AluAppaterno"
+            column="alu_appaterno"
+            type="string"
+            not-null="false"
+            length="50"
+            />
+        <property
+            name="AluApmaterno"
+            column="alu_apmaterno"
+            type="string"
+            not-null="false"
+            length="50"
+            />
+        <property
+            name="AluNombres"
+            column="alu_nombres"
+            type="string"
+            not-null="false"
+            length="50"
+            />
+        <property
+            name="AluDni"
+            column="alu_dni"
+            type="string"
+            not-null="false"
+            length="20"
+            />
+        <property
+            name="AluMail"
+            column="alu_mail"
+            type="string"
+            not-null="false"
+            length="50"
+            />
+        <property
+            name="AluTipo"
+            column="alu_tipo"
+            type="string"
+            not-null="false"
+            length="6"
+            />
+        <property
+            name="AluModalidad"
+            column="alu_modalidad"
+            type="string"
+            not-null="false"
+            length="6"
+            />
+        <property
+            name="AluEstado"
+            column="alu_estado"
+            type="string"
+            not-null="false"
+            length="6"
+            />
+        <property
+            name="AluFoto"
+            column="alu_foto"
+            type="java.sql.Blob"
+            not-null="false"
+            />
+        <property
+            name="EspIdIngreso"
+            column="esp_id_ingreso"
+            type="integer"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="SemId"
+            column="sem_id"
+            type="integer"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="AluActivo"
+            column="alu_activo"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="PlanIdIngreso"
+            column="plan_id_ingreso"
+            type="integer"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="PlanIdActual"
+            column="plan_id_actual"
+            type="integer"
+            not-null="false"
+            length="10"
+            />
+        <!--<property
+                        name="AluDuplicado"
+                        column="alu_duplicado"
+                        type="string"
+                        not-null="false"
+                        length="2"
+                />-->
+        <property
+            name="AluProcedencia"
+            column="alu_procedencia"
+            type="string"
+            not-null="false"
+            length="6"
+            />
+        <property
+            name="AluFamiliar"
+            column="alu_familiar"
+            type="string"
+            not-null="false"
+            length="100"
+            />
+        <property
+            name="AluTipoFamiliar"
+            column="alu_tipo_familiar"
+            type="string"
+            not-null="false"
+            length="6"
+            />
+        <property
+            name="AluFormaPago"
+            column="alu_forma_pago"
+            type="string"
+            not-null="false"
+            length="6"
+            />
+        <property
+            name="AluUnidad"
+            column="alu_unidad"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="AluMontoPago"
+            column="alu_monto_pago"
+            type="java.lang.Float"
+            not-null="false"
+            />
+        <many-to-one
+            name="Esp"
+            column="esp_id"
+            class="AcEspecialidad"
+            not-null="true" lazy="false"
+            >
+        </many-to-one>
+
+
+        <set name="AcNotas" inverse="true">
+            <key column="alu_id"/>
+            <one-to-many class="AcNota"/>
+        </set>
+
+        <set name="AdAlumnoTarifas" inverse="true">
+            <key column="alu_id"/>
+            <one-to-many class="AdAlumnoTarifa"/>
+        </set>
+
+        <set name="AcAlumnoDocumentos" inverse="true">
+            <key column="alu_id"/>
+            <one-to-many class="AcAlumnoDocumento"/>
+        </set>
+
+        <set name="AcAsistencias" inverse="true">
+            <key column="alu_id"/>
+            <one-to-many class="AcAsistencia"/>
+        </set>
+
+        <set name="AcMatriculas" inverse="true">
+            <key column="alu_id"/>
+            <one-to-many class="AcMatricula"/>
+        </set>
+
+        <set name="AdSaldos" inverse="true">
+            <key column="alu_id"/>
+            <one-to-many class="AdSaldo"/>
+        </set>
+
+        <set name="AcAmpliaciones" inverse="true">
+            <key column="alu_id"/>
+            <one-to-many class="AcAmpliaciones"/>
+        </set>
+
+        <set name="acApoderadoAlumno" inverse="true">
+            <key>
+                <column name="alu_id" />
+            </key>
+            <one-to-many class="AcApoderadoAlumno" />
+        </set>
+
+    </class>
+
+</hibernate-mapping>

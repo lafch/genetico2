@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcParametro"
+        table="tb_parametro"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="parametro_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="ParCod"
+            column="parametro_codigo"
+            type="string"
+            not-null="true" 
+            length="255"
+            />
+        <property
+            name="ParVal"
+            column="parametro_valor"
+            type="string"
+            not-null="true"
+            length="255"
+            />
+        <property
+            name="ParDes"
+            column="parametro_descripcion"
+            type="string"
+            not-null="false"
+            length="255"
+            />
+        <property
+            name="ParActivo"
+            column="parametro_activo"
+            type="string"
+            not-null="true"
+            length="1"
+            />
+        <property
+            name="ParUsuario"
+            column="parametro_usuario"
+            type="integer"
+            not-null="false"
+            />
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,367 @@
+<%@ taglib uri="http://richfaces.org/rich" prefix="rich"%> 
+<%@ taglib uri="http://richfaces.org/a4j" prefix="a4j" %>
+<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
+<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="../css/formulario.css" rel="stylesheet" media="screen"/>
+        <title>Mantenimiento de Docentes</title>
+        <script type="text/javascript">
+            function getRightTop(ref) {
+                var position = new Object();
+                position.top = 0; //ref.offsetTop;
+                position.left =0; // ref.offsetLeft+ref.clientWidth+6;
+                return position;
+            }
+        </script> 
+    </head>
+    <body>
+        <f:view >
+            <jsp:include page="../TablaSistema/Menu.jsp"></jsp:include>
+            <rich:panel style=" width : 100%;" >
+                <f:facet name="FACULTADES">
+                </f:facet>
+                <h:form id="form1" style="width:100%">
+                    <table width="100%" style="font-size:10px; font-family:verdana">
+                        <tr >
+                            <td width="20%" colspan="2" ><strong>MANTENIMIENTO DE DOCENTES</strong>
+                            </td>
+                            <td width="30%"></td>
+                            <td width="30%" align="right">
+                                <h:graphicImage value="/Imagenes/actions/filenew.png" style="border-width: 0px;">
+                                    <a4j:support event="onclick" actionListener="#{managedBeanDocente.limpiarData}"
+                                                 oncomplete="#{managedBeanDocente.oncomplete}" reRender="fDocente,iMensaje"/>
+                                </h:graphicImage>                         
+
+                            </td>
+                            <td width="30%"></td>
+                            <td width="30%" align="right"><h:graphicImage value="/Imagenes/actions/fileprint.png" title="Imprimir Listado"/>
+                            </td>
+
+                            <td align=right width="50%">
+                                <h:commandButton type="button" id="buscar" value="" action="#{managedBeanDocente.buscarDocente}" image="/Imagenes/actions/viewmag.png"  title="Buscar" />
+
+
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td colspan="7" width="100%">
+                                <hr width="100%" size="1"></td>
+                        </tr>
+                        <tr>
+                            <td width="20%" colspan="2">
+
+                            </td>
+                            <td width="30%"></td>
+                            <td width="50%"></td>
+                        </tr>
+                        <tr>
+                        </tr>
+                        <tr style=" height : 24px;">
+                            <td width="10%" >Codigo:
+                            </td>
+                            <td width="30%">
+                                <h:inputText id="txtCodigo" value="#{managedBeanDocente.doc_dni_w}" style="width : 180px;" maxlength="10"/></td>
+                            <td width="50%">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="10%">Nombre:
+                            </td>
+                            <td width="30%">
+                                <h:inputText id="txtnombre" value="#{managedBeanDocente.doc_nombre_completo_w}" style="width : 180px;"/></td>
+                            <td width="50%"></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="7" width="100%">
+                                <hr width="100%" size="1">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                        </tr>
+                    </table>
+                </h:form>
+                <h:form style=" width : 100%;">
+                    <table style=" width : 100%;">
+                        <tr>
+                            <td colspan="5" style=" width : 100%">
+                                <p align="right"/>
+                                <rich:datascroller id="barra" align="right"  for="tablaMaster" maxPages="8"  style=" width : 100%;"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <h:outputText value="#{managedBeanDocente.mensaje}" id="iMensaje" style="color:red"/>
+                    <rich:dataTable id="tablaMaster" rows="10"
+                                    onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+                                    onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+                                    cellpadding="0" cellspacing="0"
+                                    width="100%" border="0" value="#{managedBeanDocente.listaDocente}" var="doc">
+
+
+
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Id" />
+                            </f:facet>
+                            <h:outputText value="#{doc.id}"/>
+                            <f:param value="#{doc.id}" id="p_id2"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Codigo" />
+                            </f:facet>
+                            <h:outputText value="#{doc.docDni}"  />
+                        </h:column>
+
+                        <h:column >
+                            <f:facet name="header">
+                                <h:outputText value="Nombre" />
+                            </f:facet>
+
+                            <h:outputText value="#{doc.docNombre}" />
+                        </h:column>
+
+                        <h:column >
+                            <f:facet name="header">
+                                <h:outputText value="Correo"/>
+                            </f:facet>
+
+                            <h:outputText value="#{doc.docCorreo}" >
+
+                            </h:outputText>
+
+
+                        </h:column>
+                        <h:column >
+                            <f:facet name="header">
+                                <h:outputText value="Telefono"/>
+                            </f:facet>
+
+                            <h:outputText value="#{doc.docTelefono}" >
+
+                            </h:outputText>
+
+
+                        </h:column>
+                        <h:column >
+                            <f:facet name="header">
+                                <h:outputText value="Situacion" />
+                            </f:facet>
+
+                            <h:outputText value="#{doc.docSituacion}">
+
+                            </h:outputText>
+                        </h:column>
+                        <h:column >
+                            <f:facet name="header">
+                                <h:outputText value="Periodo de Inicio" />
+                            </f:facet>
+
+                            <h:outputText value="#{doc.docPeriodoInicio}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </h:column>
+
+                        <h:column >
+                            <f:facet name="header">
+                                <h:outputText value="Sexo" />
+                            </f:facet>
+
+                            <h:outputText value="#{doc.docSexo}" >
+
+                            </h:outputText>
+                        </h:column>
+                        <h:column >
+                            <f:facet name="header">
+                                <h:outputText value="Nacimiento" />
+                            </f:facet>
+
+                            <h:outputText value="#{doc.docNacimiento}" >
+
+                            </h:outputText>
+                        </h:column>
+                        <h:column >
+                            <f:facet name="header">
+                                <h:outputText value="Residencia" />
+                            </f:facet>
+
+                            <h:outputText value="#{doc.docResidencia}" >
+
+                            </h:outputText>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Edit" />
+                            </f:facet>
+                            <p align="right">
+
+                                <a4j:commandButton image="/Imagenes/actions/editpaste.png" actionListener="#{managedBeanDocente.buscarDocentes}"
+                                                   oncomplete="#{managedBeanDocente.oncomplete}" reRender="fDocente,p_id,rDistrito,rProvincia,rDepartamento,nDistrito,nProvincia,nDepartamento,iMensaje"/>
+
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Eli" />
+                                </f:facet>
+                            <p align="right">
+                                <h:commandButton  image="/Imagenes/actions/no.png"  title="Eliminar" 
+                                                  actionListener="#{managedBeanDocente.eliminarDocente}"
+                                                  onclick="javascript:return (confirm('¿Esta realmente seguro de Eliminar?'));"/>
+
+                            </h:column>
+                        </rich:dataTable>
+
+                    </h:form>
+
+                    <rich:modalPanel id="mpDocente" width="500" height="400" >
+                        <f:facet name="header">
+                            <h:outputText value="Registro de Docentes" />
+                        </f:facet>
+                        <f:facet name="controls">
+                            <h:graphicImage value="/Imagenes/actions/stop.png" style="cursor:pointer" onclick="Richfaces.hideModalPanel('mpDocente')" title="Cerrar"/>
+                        </f:facet>
+                        <h:form id="fDocente">
+                        <table align="center" width="490">
+                            <tr>
+                                <td align="right" colspan="5">
+                                    <a4j:commandButton   image="/Imagenes/actions/filesave.png" title="Guardar" actionListener="#{managedBeanDocente.guardarDatos}" oncomplete="#{managedBeanDocente.oncomplete}" />
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="DNI"/></td>
+                                <td><h:inputText id="i_dni" value="#{managedBeanDocente.docente.docDni}" /></td>
+
+                                <td> <f:param id="p_id" value="#{managedBeanDocente.docente.id}"/></td>
+                                <td><h:outputText value="Nac. Departamento"/></td>
+                                <td>
+                                    <h:selectOneMenu id="nDepartamento" value="#{managedBeanDocente.w_depa_naci}">
+                                        <f:selectItems value="#{managedBeanDocente.cboDepartamentos_n}" />
+                                        <a4j:support event="onchange" reRender="nProvincia,nDistrito"/>
+                                    </h:selectOneMenu>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="Paterno"/></td>
+                                <td><h:inputText id="i_paterno" value="#{managedBeanDocente.docente.docAppaterno}" /></td>
+                                <td> &nbsp; </td>
+                                <td><h:outputText value="Nac. Provincia"/></td>
+                                <td>
+                                    <h:selectOneMenu  id="nProvincia"  value="#{managedBeanDocente.w_prov_naci}" >
+                                        <f:selectItems value="#{managedBeanDocente.cboProvincia_n}" />
+                                        <a4j:support event="onchange" reRender="nDistrito"/>
+                                    </h:selectOneMenu>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="Materno"/></td>
+                                <td><h:inputText id="i_materno" value="#{managedBeanDocente.docente.docApmaterno}" /></td>
+                                <td> &nbsp; </td>
+                                <td><h:outputText value="Nac. Distrito"/></td>
+                                <td>
+                                    <h:selectOneMenu  id="nDistrito"  value="#{managedBeanDocente.docente.docNacimiento}" >
+                                        <f:selectItems value="#{managedBeanDocente.cboDistrito_n}" />
+                                    </h:selectOneMenu>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="Nombres"/></td>
+                                <td colspan="4">
+                                    <h:inputText id="i_nombres" value="#{managedBeanDocente.docente.docNombres}" />
+                                </td>
+
+                            </tr>
+
+                            <tr>
+                                <td><h:outputText value="Fecha Inicio"/></td>
+                                <td>
+                                    <a4j:outputPanel id="calendar" layout="block">
+                                        <rich:calendar  id="iCreacion"  value="#{managedBeanDocente.docente.docPeriodoInicio}" datePattern="dd/MM/yyyy"  />
+                                    </a4j:outputPanel>
+                                </td>
+                                <td> &nbsp; </td>
+                                <td><h:outputText value="Res. Departamento"/></td>
+                                <td>
+                                    <h:selectOneMenu id="rDepartamento" value="#{managedBeanDocente.w_depa_resi}" >
+                                        <f:selectItems value="#{managedBeanDocente.cboDepartamentos_r}" />
+                                        <a4j:support event="onchange" reRender="rProvincia,rDistrito"/>
+                                    </h:selectOneMenu>
+                                </td>
+
+                            </tr>
+
+                            <tr>
+                                <td><h:outputText value="Telefono"/></td>
+                                <td><h:inputText label="Telefono" id="iTelefono" value="#{managedBeanDocente.docente.docTelefono}" style="width : 180px;" rendered="true"/></td>
+                                <td> &nbsp; </td>
+                                <td><h:outputText value="Res. Provincia"/></td>
+                                <td>
+                                    <h:selectOneMenu  id="rProvincia"  value="#{managedBeanDocente.w_prov_resi}" >
+                                        <f:selectItems value="#{managedBeanDocente.cboProvincia_r}" />
+                                        <a4j:support event="onchange" reRender="rDistrito"/>
+                                    </h:selectOneMenu>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="Correo"/></td>
+                                <td><h:inputText label="E-Mail" id="iCorreo" value="#{managedBeanDocente.docente.docCorreo}" style="width : 180px;" rendered="true"/></td>
+                                <td> &nbsp; </td>
+                                <td><h:outputText value="Res. Distrito"/></td>
+                                <td>
+                                    <h:selectOneMenu  id="rDistrito"  value="#{managedBeanDocente.docente.docResidencia}">
+                                        <f:selectItems value="#{managedBeanDocente.cboDistrito_r}" />
+                                    </h:selectOneMenu>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="Sexo"/></td>
+                                <td>
+                                    <h:selectOneRadio id="iSexo" value="#{managedBeanDocente.docente.docSexo}">
+                                        <f:selectItems value="#{managedBeanDocente.rdoSexo}" />
+                                    </h:selectOneRadio>
+                                </td>
+                                <td> &nbsp; </td>
+                                <td><h:outputText value="Situacion"/></td>
+                                <td>
+                                    <h:selectOneMenu id="iSituacion" value="#{managedBeanDocente.docente.docSituacion}" >
+                                        <f:selectItems value="#{managedBeanDocente.cboSituacion}"/>
+                                    </h:selectOneMenu>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><h:outputText value="Tipo Docente"/></td>
+                                <td>
+                                    <h:selectOneMenu id="iTipoDocente" value="#{managedBeanDocente.docente.docTipo}" >
+                                        <f:selectItems value="#{managedBeanDocente.cboTipoDocente}"/>
+                                    </h:selectOneMenu>
+                                </td>
+                            </tr>
+
+                        </table>
+
+
+
+                    </h:form>
+
+                </rich:modalPanel>
+
+            </rich:panel>
+
+        </f:view>
+    </body>
+</html>  
+
+

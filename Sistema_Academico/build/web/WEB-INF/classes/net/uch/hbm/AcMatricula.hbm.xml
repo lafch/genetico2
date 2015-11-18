@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AcMatricula"
+        table="ac_matricula"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="mat_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="MatCodigo"
+            column="mat_codigo"
+            type="string"
+            not-null="false"
+            length="20"
+            />
+        <property
+            name="MatFecha"
+            column="mat_fecha"
+            type="timestamp"
+            not-null="false"
+            />
+        <property
+            name="MatTipo"
+            column="mat_tipo"
+            type="string"
+            not-null="false"
+            length="6"
+            />
+        <property
+            name="MatActivo"
+            column="mat_activo"
+            type="string"
+            not-null="false"
+            length="10"
+            />
+        <property
+            name="semId"
+            column="sem_id"
+            type="integer"
+            not-null="false"
+            length="11"
+            />
+        <property
+            name="UsuId"
+            column="usu_id"
+            type="integer"
+            not-null="false"
+            length="10"
+            />
+        <many-to-one
+            name="Alu"
+            column="alu_id"
+            class="AcAlumno"
+            not-null="true"
+            >
+        </many-to-one>
+
+        <set name="AcMatriculaCursos" inverse="true" cascade="all" lazy="false">
+            <key column="mat_id" update="true"/>
+            <one-to-many class="AcMatriculaCurso"/>
+        </set>
+
+    </class>
+</hibernate-mapping>

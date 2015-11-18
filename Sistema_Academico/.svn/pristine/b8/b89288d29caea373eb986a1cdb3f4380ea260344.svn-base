@@ -1,0 +1,269 @@
+<%@ taglib uri="http://richfaces.org/rich" prefix="rich"%>
+<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h"%>
+<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f"%>
+<%@ taglib uri="http://richfaces.org/a4j" prefix="a4j"%>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>.:Sistema Academico :.</title>
+        <style type="text/css">
+            .textoNegrita{
+                font-size: 14px;
+                font-family: sans-serif;
+                color: #004080;
+                font-weight: bold;
+            }
+            .texto{
+                font-size: 14px;
+                font-family: sans-serif;
+                color: #004080;
+            }
+            .textoCabecera{
+                font-size: 18px;
+                font-family: sans-serif;
+                font-weight: bold;
+                color: #004080;
+
+            }
+            .alto{
+                height: 25px;
+            }
+            .selector{
+                font-size: 12px;
+                font-family: sans-serif;
+                color: #004080;
+            }
+
+            .textoChiko{
+                font-size: 11px;
+                font-family: sans-serif;
+                color: #004080;
+            }
+            .fuentePagina{
+                color: #004080;
+            }
+
+        </style>
+    </head>
+    <f:view>
+        <body>
+            <jsp:include page="../TablaSistema/Menu.jsp"/>
+            <rich:panel>
+                <h:form>
+                    <div style="width: 100%" align="center">
+                        <table width="100%">
+                            <tr>
+                                <td width="15%"></td>
+                                <td align="center" width="70%">
+                                    <h:outputText value="Consulta Academica - Curso" styleClass="textoCabecera"/>
+                                </td>
+                                <td align="right" width="15%">
+                                    <a4j:status>
+                                        <f:facet name="start">
+                                            <h:graphicImage  value="/Imagenes/actions/loading.gif"/>
+                                        </f:facet>
+                                    </a4j:status>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <rich:spacer height="10"/>
+                        <rich:separator height="2" width="100%" />
+                        <table width="100%" >
+                            <tr>
+                                <td width="40%" valign="top">
+                                    <rich:panel style="width:100%" id="pDatos">
+                                        <table width="100%" border="0" align="center" style="font-size: 14px;">
+                                            <tr class="alto">
+                                                <td><h:outputText value="Sede" styleClass="textoNegrita" /></td>
+                                                <td colspan="2">
+                                                    <h:selectOneMenu id="iSede" style="width:250px" value="#{managerConsulCurso.w_sed_id}" styleClass="selector">
+                                                        <f:selectItems value="#{managerConsulCurso.cboSede}" />
+                                                        <a4j:support event="onchange" actionListener="#{managerConsulCurso.seleccionarSeccion}" reRender="iAno,iArea,iModulo,iCurso,iSeccion,iInicio,iFin,dtAlumno,pDetalle,iHorario"/>
+                                                    </h:selectOneMenu>
+                                                </td>
+                                            </tr>
+                                            <tr class="alto">
+                                                <td><h:outputText value="Año" styleClass="textoNegrita" /></td>
+                                                <td colspan="2">
+                                                    <h:selectOneMenu id="iAno" style="width:250px" value="#{managerConsulCurso.w_ano_id}" styleClass="selector">
+                                                        <f:selectItems value="#{managerConsulCurso.cboAno}" />
+                                                        <a4j:support event="onchange" actionListener="#{managerConsulCurso.seleccionarSeccion}" reRender="iArea,iModulo,iCurso,iSeccion,iInicio,iFin,dtAlumno,pDetalle,iHorario"/>
+                                                    </h:selectOneMenu>
+                                                </td>
+                                            </tr>
+                                            <tr class="alto">
+                                                <td width="20%">
+                                                    <h:outputText value="Institución :"  styleClass="textoNegrita" />
+                                                </td>
+                                                <td colspan="2" align="left">
+                                                    <h:selectOneMenu value="#{managerConsulCurso.instId}" styleClass="selector" style="width:250px" >
+                                                        <f:selectItems value="#{managerConsulCurso.cboInstituciones}" />
+                                                        <a4j:support event="onchange" reRender="iArea,iModulo,iCurso,iSeccion,iInicio,iFin,dtAlumno,pDetalle,iHorario"/>
+                                                    </h:selectOneMenu>
+                                                </td>
+                                            </tr>
+                                            <tr class="alto">
+                                                <td><h:outputText value="Área" styleClass="textoNegrita" /></td>
+                                                <td colspan="2">
+                                                    <h:selectOneMenu id="iArea" style="width:250px" value="#{managerConsulCurso.w_area_id}" styleClass="selector">
+                                                        <f:selectItems value="#{managerConsulCurso.cboArea}" />
+                                                        <a4j:support event="onchange" actionListener="#{managerConsulCurso.cambioArea}" reRender="pglblAsignatura,pgseAsignatura,iModulo,iCurso,iSeccion,iInicio,iFin,dtAlumno,pDetalle,iHorario"/>
+                                                    </h:selectOneMenu>
+                                                </td>
+                                            </tr>
+                                            <tr class="alto">
+                                                <td><h:outputText value="Modulo" styleClass="textoNegrita" /></td>
+                                                <td colspan="2">
+                                                    <h:selectOneMenu id="iModulo" style="width:250px" value="#{managerConsulCurso.w_mod_id}" styleClass="textoChiko">
+                                                        <f:selectItems value="#{managerConsulCurso.cboModulo}" />
+                                                        <a4j:support event="onchange" actionListener="#{managerConsulCurso.cambioModulo}" reRender="iCurso,iSeccion,iInicio,iFin,dtAlumno,pDetalle,iHorario"/>
+                                                    </h:selectOneMenu>
+                                                </td>
+                                            </tr>
+                                            <tr class="alto">
+                                                <td><h:outputText value="Curso" styleClass="textoNegrita" /></td>
+                                                <td colspan="2">
+                                                    <h:selectOneMenu id="iCurso" style="width:250px" value="#{managerConsulCurso.w_cur_id}" styleClass="selector">
+                                                        <f:selectItems value="#{managerConsulCurso.cboCurso}" />
+                                                        <a4j:support event="onchange" actionListener="#{managerConsulCurso.cambioCurso}" reRender="iSeccion,iInicio,iFin,dtAlumno,pDetalle,iHorario"/>
+                                                    </h:selectOneMenu>
+                                                </td>
+                                            </tr>
+                                            <tr class="alto">
+                                                <td><h:outputText value="Seccion" styleClass="textoNegrita" /></td>
+                                                <td colspan="2">
+                                                    <h:selectOneMenu id="iSeccion" style="width:250px" value="#{managerConsulCurso.w_sec_id}" styleClass="selector">
+                                                        <f:selectItems value="#{managerConsulCurso.cboSeccion}" />
+                                                        <a4j:support event="onchange" reRender="iInicio,iFin,dtAlumno,pDetalle,iHorario,seAsignatura"
+                                                                     actionListener="#{managerConsulCurso.seleccionarSeccion}" oncomplete="javascript:changeColor()"/>
+                                                    </h:selectOneMenu>
+                                                </td>
+                                            </tr>
+                                            <tr class="alto">
+                                                <td>
+                                                    <h:panelGroup id="pglblAsignatura">
+                                                        <h:outputText id="lblAsignatura" value="Asignatura" styleClass="textoNegrita" rendered="#{managerConsulCurso.esProgAux}" />
+                                                    </h:panelGroup>
+                                                </td>
+                                                <td colspan="2">
+                                                    <h:panelGroup id="pgseAsignatura">
+                                                        <h:selectOneMenu id="seAsignatura" style="width:250px" value="#{managerConsulCurso.idAsignatura}" rendered="#{managerConsulCurso.esProgAux}" styleClass="selector">
+                                                            <f:selectItems value="#{managerConsulCurso.cboAsignaturas}" />
+                                                            <a4j:support event="onchange" actionListener="#{managerConsulCurso.seleccionarSeccion}" reRender="iInicio,iFin,dtAlumno,pDetalle,iHorario"/>
+                                                        </h:selectOneMenu>
+                                                    </h:panelGroup>
+                                                </td>
+                                            </tr>
+                                            <tr class="alto">
+                                                <td><h:outputText value="" /></td>
+                                                <td colspan="2">
+                                                    <h:outputText value="Inicio"  styleClass="texto" />&nbsp;&nbsp;
+                                                    <h:outputText styleClass="textoChiko" value="#{managerConsulCurso.w_fecha_ini}" id="iInicio">
+                                                        <f:convertDateTime pattern="dd / MM / yyyy" />
+                                                    </h:outputText>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <h:outputText value="Fin"  styleClass="texto" />&nbsp;&nbsp;
+                                                    <h:outputText styleClass="textoChiko" value="#{managerConsulCurso.w_fecha_fin}" id="iFin">
+                                                        <f:convertDateTime pattern="dd / MM / yyyy" />
+                                                    </h:outputText>
+                                                </td>
+                                            </tr>
+                                            <tr class="alto">
+                                                <td><h:outputText value="Horario"  styleClass="textoNegrita" /></td>
+                                                <td colspan="2">
+                                                    <h:outputText value="#{managerConsulCurso.sec_horario}" id="iHorario" escape="false"  styleClass="textoChiko" />
+                                                </td>
+                                            </tr>
+                                            <tr class="alto">
+                                                <td></td>
+                                                <td>
+                                                    <br />
+                                                    <h:selectOneRadio id="radio" layout="pageDirection" value="#{managerConsulCurso.w_rad_id}" styleClass="texto">
+                                                        <f:selectItems value="#{managerConsulCurso.rdoOpciones}" />
+                                                    </h:selectOneRadio>
+                                                </td>
+                                                <td align="left">
+                                                    <h:graphicImage value="/Imagenes/actions/printer.png" alt="Reporte" title="Reporte" width="50" height="50">
+                                                        <a4j:support event="onclick" actionListener="#{managerConsulCurso.ImprimirFicha}" oncomplete="#{managerConsulCurso.oncomplete}" reRender="titulo,reporte"/>
+                                                    </h:graphicImage>
+                                                </td>
+
+                                            </tr>
+
+                                        </table>
+
+                                    </rich:panel>
+                                </td>
+                                <td valign="top">
+                                    <rich:panel style="width:100%" id="pDetalle">
+                                        <div align="center">
+                                            <h:outputText  styleClass="textoNegrita" value="<b>CURSO : </b>&nbsp; #{managerConsulCurso.w_curso} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-     <b>DOCENTE : </B> #{managerConsulCurso.w_docente}" escape="false" /><br />
+                                            <br />
+                                            <h:outputText style="color:#EC1E28;" rendered="#{not managerConsulCurso.contieneSisEva}" value="La sección NO contiene un sistema de evaluación" />
+                                            <br />
+                                        </div>
+                                        <div style="height: 300px ; overflow-x:hidden; overflow-y:scroll;">
+                                            <rich:dataTable id="dtAlumno"
+                                                            value="#{managerConsulCurso.c_dataColumna}"
+                                                            onRowMouseOver="this.style.backgroundColor='#F1F1F1'"
+                                                            onRowMouseOut="this.style.backgroundColor='#F9F9F9'"
+                                                            cellpadding="0" cellspacing="0"
+                                                            width="100%"
+                                                            var="row"
+                                                            style="background-color: #F9F9F9;" styleClass="texto">
+                                                <rich:columns value="#{managerConsulCurso.c_cabeceraColumna}"
+                                                              var="column"
+                                                              index="index"
+                                                              begin="2"
+                                                              sortOrder="#{column.ordering}">
+                                                    <f:facet name="header">
+                                                        <h:outputText value="#{column.name}" styleClass="textoNegrita"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{row[index]}" rendered="#{index <= 2}" styleClass="texto" />
+                                                    <h:inputText value="#{row[index] }" style="width:30px;color:#{row[index]>= 13.0?'blue':'red'} " rendered="#{index > 2}" readonly="#{not managerConsulCurso.esRegistrosAcad}" styleClass="txtNota" />
+                                                </rich:columns>
+                                            </rich:dataTable>
+                                        </div>
+
+
+                                        <div style="margin-top: 20px" align="center">
+                                            <a4j:commandButton value="Guardar" rendered="#{managerConsulCurso.esRegistrosAcad}" actionListener="#{managerConsulCurso.guardarNotas}" reRender="dtAlumno,iInicio,iFin,dtAlumno,pDetalle,iHorario"/> &nbsp;&nbsp;&nbsp;
+                                            <a4j:commandButton value="Cancelar" rendered="#{managerConsulCurso.esRegistrosAcad}" actionListener="#{managerConsulCurso.seleccionarSeccion}" reRender="dtAlumno,iInicio,iFin,dtAlumno,pDetalle,iHorario" />
+                                        </div>
+                                    </rich:panel>
+                                </td>
+
+                            </tr>
+                        </table>
+                    </div>
+                </h:form>
+
+            </rich:panel>
+            <a4j:form>
+                <rich:modalPanel id="mp7" width="830" height="600"  zindex="4500">
+                    <f:facet name="header">
+                        <h:outputText id="titulo" value="Reporte" />
+                    </f:facet>
+                    <f:facet name="controls">
+                        <h:graphicImage value="/Imagenes/actions/title-close.png" style="cursor:pointer" onclick="Richfaces.hideModalPanel('mp7')" title="Cerrar"/>
+                    </f:facet>
+                    <a4j:form>
+                        <table>
+                            <tr>
+                                <td align="center" valign="middle">
+                                    <rich:panel style="width : 790px; height:580px;" >
+                                        <a4j:mediaOutput id="reporte" uriAttribute="data" style="width : 750px; height:550px;"
+                                                         element="object" standby="cargando..."
+                                                         createContent="#{managerConsulCurso.cargarReporte}"
+                                                         mimeType="application/pdf"
+                                                         value="1"/>
+                                    </rich:panel>
+                                </td>
+                            </tr>
+                        </table>
+                    </a4j:form>
+                </rich:modalPanel>
+            </a4j:form>
+        </body>
+    </f:view>
+</html>

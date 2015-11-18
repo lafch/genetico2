@@ -1,0 +1,45 @@
+package net.uch.academica.hibernateSpringDao;
+
+import org.springframework.dao.DataAccessException;
+import java.util.List;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import net.uch.mapping.AcSisEvaluacion;
+import org.hibernate.criterion.Expression;
+
+public class HSSistemaEvaluacionDAOImpl extends HibernateDaoSupport implements HSSistemaEvaluacionDAO {
+
+    @Override
+    public void insertarSistemaEvaluacion(AcSisEvaluacion siseva) throws DataAccessException {
+        getHibernateTemplate().save(siseva);
+    }
+
+    @Override
+    public List seleccionarSistemaEvaluacion(String descripcion) throws DataAccessException {
+        return this.getSession().createCriteria(AcSisEvaluacion.class).
+                add(Expression.like("SisevaNombre", "%" + descripcion + "%")).
+                add(Expression.eq("SisevaActivo", "1")).list();
+    }
+
+    @Override
+    public List seleccionarSistemaEvaluacion(int id) throws DataAccessException {
+        return this.getSession().createCriteria(AcSisEvaluacion.class).
+                add(Expression.eq("Id", id)).list();
+    }
+
+    @Override
+    public void actualizarSistemaEvaluacion(AcSisEvaluacion siseva) throws DataAccessException {
+        getHibernateTemplate().saveOrUpdate(siseva);
+    }
+
+    @Override
+    public void eliminarSistemaEvaluacion(int id) throws DataAccessException {
+        String query = "update AcSisEvaluacion set SisevaActivo=:activo where Id= :id";
+        this.getSession().createQuery(query).setString("id", "" + id).setString("activo", "0").executeUpdate();
+    }
+
+    @Override
+    public List seleccionarComboSistemaEvaluacion() throws DataAccessException {
+        return this.getSession().createCriteria(AcSisEvaluacion.class).
+                add(Expression.eq("SisevaActivo", "1")).list();
+    }
+}

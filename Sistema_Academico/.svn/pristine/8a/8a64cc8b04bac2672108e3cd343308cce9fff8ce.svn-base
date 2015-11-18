@@ -1,0 +1,542 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.uch.academica.managedBeans;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.faces.component.UIParameter;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+import net.uch.academica.hibernateSpringDao.HSDocenteDAO;
+import net.uch.academica.hibernateSpringDao.HSHorarioDAO;
+import net.uch.academica.managedBeans.beans.BeanDocente;
+import net.uch.commonService.ServiceFinder;
+import net.uch.mapping.AcDocente;
+import net.uch.mapping.TbCatalogo;
+import net.uch.mapping.TbDistrito;
+import net.uch.tablaSistema.hibernateSpringDao.HSCatalogoDAO;
+import net.uch.tablaSistema.hibernateSpringDao.HSUbigeoDAO;
+
+/**
+ *
+ * @author richard
+ */
+public class mbDocente {
+
+    /** Creates a new instance of mbDocente */
+    private List<BeanDocente> listaDocente;
+    private SelectItem[] cboDepartamentos_n;
+    private SelectItem[] cboProvincia_n;
+    private SelectItem[] cboDistrito_n;
+    private SelectItem[] cboDepartamentos_r;
+    private SelectItem[] cboProvincia_r;
+    private SelectItem[] cboDistrito_r;
+    private SelectItem[] cboSituacion;
+    private SelectItem[] cboTipoDocente;
+    private SelectItem[] rdoSexo;
+    private String doc_dni_w;
+    private String doc_nombre_completo_w;
+    private BeanDocente docente;
+    private String w_depa_naci = "0000";
+    private String w_prov_naci = "0000";
+    private String w_depa_resi = "0000";
+    private String w_prov_resi = "0000";
+    private String oncomplete;
+    private String mensaje = "";
+
+
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
+    public String getOncomplete() {
+        return oncomplete;
+    }
+
+    public void setOncomplete(String oncomplete) {
+        this.oncomplete = oncomplete;
+    }
+
+    public SelectItem[] getCboSituacion() {
+        HSCatalogoDAO dao = (HSCatalogoDAO) ServiceFinder.findBean("SpringHibernateDaoCatalogo");
+        List lista = dao.seleccionarCatalogo("002");
+        cboSituacion = new SelectItem[lista.size()];
+        for (int i = 0; i < cboSituacion.length; i++) {
+            cboSituacion[i] = new SelectItem(((TbCatalogo) lista.get(i)).getCatCodigoGrupo() + ((TbCatalogo) lista.get(i)).getCatCodigoElemento(), ((TbCatalogo) lista.get(i)).getCatDescripcionElemento());
+        }
+        return cboSituacion;
+    }
+
+    public void setCboSituacion(SelectItem[] cboSituacion) {
+        this.cboSituacion = cboSituacion;
+    }
+
+
+    /*nuevoi codiho 21-02-2012*/
+    public SelectItem[] getCboTipoDocente() {
+        HSCatalogoDAO dao = (HSCatalogoDAO) ServiceFinder.findBean("SpringHibernateDaoCatalogo");
+        List lista = dao.seleccionarCatalogo("071");
+        cboTipoDocente = new SelectItem[lista.size()];
+        for (int i = 0; i < cboTipoDocente.length; i++) {
+            cboTipoDocente[i] = new SelectItem(((TbCatalogo) lista.get(i)).getCatCodigoGrupo() + ((TbCatalogo) lista.get(i)).getCatCodigoElemento(), ((TbCatalogo) lista.get(i)).getCatDescripcionElemento());
+        }
+        return cboTipoDocente;
+    }
+
+    public void setCboTipoDocente(SelectItem[] cboTipoDocente) {
+        this.cboTipoDocente = cboTipoDocente;
+    }
+
+    /**/
+
+    public SelectItem[] getRdoSexo() {
+        HSCatalogoDAO dao = (HSCatalogoDAO) ServiceFinder.findBean("SpringHibernateDaoCatalogo");
+        List lista = dao.seleccionarCatalogo("004");
+        rdoSexo = new SelectItem[lista.size()];
+        for (int i = 0; i < rdoSexo.length; i++) {
+            rdoSexo[i] = new SelectItem(((TbCatalogo) lista.get(i)).getCatCodigoGrupo() + ((TbCatalogo) lista.get(i)).getCatCodigoElemento(), ((TbCatalogo) lista.get(i)).getCatDescripcionElemento());
+        }
+        return rdoSexo;
+    }
+
+    public void setRdoSexo(SelectItem[] rdoSexo) {
+        this.rdoSexo = rdoSexo;
+    }
+
+    public String getW_depa_naci() {
+        return w_depa_naci;
+    }
+
+    public void setW_depa_naci(String w_depa_naci) {
+        this.w_depa_naci = w_depa_naci;
+    }
+
+    public String getW_depa_resi() {
+        return w_depa_resi;
+    }
+
+    public void setW_depa_resi(String w_depa_resi) {
+        this.w_depa_resi = w_depa_resi;
+    }
+
+    public String getW_prov_naci() {
+        return w_prov_naci;
+    }
+
+    public void setW_prov_naci(String w_prov_naci) {
+        this.w_prov_naci = w_prov_naci;
+    }
+
+    public String getW_prov_resi() {
+        return w_prov_resi;
+    }
+
+    public void setW_prov_resi(String w_prov_resi) {
+        this.w_prov_resi = w_prov_resi;
+    }
+
+    public BeanDocente getDocente() {
+        return docente;
+    }
+
+    public void setDocente(BeanDocente docente) {
+        this.docente = docente;
+    }
+
+    public String getDoc_dni_w() {
+        return doc_dni_w;
+    }
+
+    public void setDoc_dni_w(String doc_dni_w) {
+        this.doc_dni_w = doc_dni_w;
+    }
+
+    public String getDoc_nombre_completo_w() {
+        return doc_nombre_completo_w;
+    }
+
+    public void setDoc_nombre_completo_w(String doc_nombre_completo_w) {
+        this.doc_nombre_completo_w = doc_nombre_completo_w;
+    }
+
+    public SelectItem[] getCboDepartamentos_n() {
+        try {
+            HSUbigeoDAO dao = (HSUbigeoDAO) ServiceFinder.findBean("SpringHibernateDaoUbigeo");
+            List lista = dao.seleccionarDepartamento();
+            cboDepartamentos_n = new SelectItem[lista.size() + 1];
+            cboDepartamentos_n[0] = new SelectItem("000000", "[Seleccione]");
+            for (int i = 0; i < (cboDepartamentos_n.length - 1); i++) {
+                cboDepartamentos_n[i + 1] = new SelectItem(((TbDistrito) lista.get(i)).getId(), ((TbDistrito) lista.get(i)).getDisDes());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return cboDepartamentos_n;
+    }
+
+    public void setCboDepartamentos_n(SelectItem[] cboDepartamentos_n) {
+        this.cboDepartamentos_n = cboDepartamentos_n;
+    }
+
+    public SelectItem[] getCboDepartamentos_r() {
+        try {
+            HSUbigeoDAO dao = (HSUbigeoDAO) ServiceFinder.findBean("SpringHibernateDaoUbigeo");
+            List lista = dao.seleccionarDepartamento();
+            cboDepartamentos_r = new SelectItem[lista.size() + 1];
+            cboDepartamentos_r[0] = new SelectItem("000000", "[Seleccione]");
+            for (int i = 0; i < (cboDepartamentos_r.length - 1); i++) {
+                cboDepartamentos_r[i + 1] = new SelectItem(((TbDistrito) lista.get(i)).getId(), ((TbDistrito) lista.get(i)).getDisDes());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cboDepartamentos_r;
+    }
+
+    public void setCboDepartamentos_r(SelectItem[] cboDepartamentos_r) {
+        this.cboDepartamentos_r = cboDepartamentos_r;
+    }
+
+    public SelectItem[] getCboDistrito_n() {
+        try {
+            HSUbigeoDAO dao = (HSUbigeoDAO) ServiceFinder.findBean("SpringHibernateDaoUbigeo");
+            List<TbDistrito> lista = dao.seleccionarDistrito(this.getW_depa_naci(), this.getW_prov_naci());
+            if (lista.size() != 0) {
+                cboDistrito_n = new SelectItem[lista.size() + 1];
+                cboDistrito_n[0] = new SelectItem("000000", "[Seleccione]");
+                for (int i = 0; i < (cboDistrito_n.length - 1); i++) {
+                    cboDistrito_n[i + 1] = new SelectItem(lista.get(i).getId(), lista.get(i).getDisDes());
+                }
+            } else {
+                cboDistrito_n = new SelectItem[1];
+                cboDistrito_n[0] = new SelectItem("000000", "[Seleccione]");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cboDistrito_n;
+    }
+
+    public void setCboDistrito_n(SelectItem[] cboDistrito_n) {
+        this.cboDistrito_n = cboDistrito_n;
+    }
+
+    public SelectItem[] getCboDistrito_r() {
+        try {
+            HSUbigeoDAO dao = (HSUbigeoDAO) ServiceFinder.findBean("SpringHibernateDaoUbigeo");
+            List<TbDistrito> lista = dao.seleccionarDistrito(this.getW_depa_resi(), this.getW_prov_resi());
+            if (lista.size() != 0) {
+                cboDistrito_r = new SelectItem[lista.size() + 1];
+                cboDistrito_r[0] = new SelectItem("000000", "[Seleccione]");
+                for (int i = 0; i < (cboDistrito_r.length - 1); i++) {
+                    cboDistrito_r[i + 1] = new SelectItem(lista.get(i).getId(), lista.get(i).getDisDes());
+                }
+            } else {
+                cboDistrito_r = new SelectItem[1];
+                cboDistrito_r[0] = new SelectItem("000000", "[Seleccione]");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cboDistrito_r;
+    }
+
+    public void setCboDistrito_r(SelectItem[] cboDistrito_r) {
+        this.cboDistrito_r = cboDistrito_r;
+    }
+
+    public SelectItem[] getCboProvincia_n() {
+        try {
+            HSUbigeoDAO dao = (HSUbigeoDAO) ServiceFinder.findBean("SpringHibernateDaoUbigeo");
+            List<TbDistrito> lista = dao.seleccionarProvincia(this.getW_depa_naci());
+            if (lista.size() != 0) {
+                cboProvincia_n = new SelectItem[lista.size() + 1];
+                cboProvincia_n[0] = new SelectItem("000000", "[Seleccione]");
+                for (int i = 0; i < (cboProvincia_n.length - 1); i++) {
+                    cboProvincia_n[i + 1] = new SelectItem(lista.get(i).getId(), lista.get(i).getDisDes());
+                }
+            } else {
+                cboProvincia_n = new SelectItem[1];
+                cboProvincia_n[0] = new SelectItem("000000", "[Seleccione]");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cboProvincia_n;
+    }
+
+    public void setCboProvincia_n(SelectItem[] cboProvincia_n) {
+        this.cboProvincia_n = cboProvincia_n;
+    }
+
+    public SelectItem[] getCboProvincia_r() {
+        try {
+            HSUbigeoDAO dao = (HSUbigeoDAO) ServiceFinder.findBean("SpringHibernateDaoUbigeo");
+            List<TbDistrito> lista = dao.seleccionarProvincia(this.getW_depa_resi());
+            if (lista.size() != 0) {
+                cboProvincia_r = new SelectItem[lista.size() + 1];
+                cboProvincia_r[0] = new SelectItem("000000", "[Seleccione]");
+                for (int i = 0; i < (cboProvincia_r.length - 1); i++) {
+                    cboProvincia_r[i + 1] = new SelectItem(lista.get(i).getId(), lista.get(i).getDisDes());
+                }
+            } else {
+                cboProvincia_r = new SelectItem[1];
+                cboProvincia_r[0] = new SelectItem("000000", "[Seleccione]");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cboProvincia_r;
+    }
+
+    public void setCboProvincia_r(SelectItem[] cboProvincia_r) {
+        this.cboProvincia_r = cboProvincia_r;
+    }
+
+    public List<BeanDocente> getListaDocente() {
+        return listaDocente;
+    }
+
+    public void setListaDocente(List<BeanDocente> listaDocente) {
+        this.listaDocente = listaDocente;
+    }
+
+    public mbDocente() {
+        /* iniciarCombosNaci();
+        iniciarCombosResi();*/
+        docente = new BeanDocente();
+    }
+
+    public void iniciarCombosNaci() {
+        cboDepartamentos_n = new SelectItem[1];
+        cboDepartamentos_n[0] = new SelectItem(0, "[Seleccione]");
+        cboDistrito_n = new SelectItem[1];
+        cboDistrito_n[0] = new SelectItem(0, "[Seleccione]");
+        cboProvincia_n = new SelectItem[1];
+        cboProvincia_n[0] = new SelectItem(0, "[Seleccione]");
+    }
+
+    public void iniciarCombosResi() {
+        cboDepartamentos_r = new SelectItem[1];
+        cboDepartamentos_r[0] = new SelectItem(0, "[Seleccione]");
+        cboDistrito_r = new SelectItem[1];
+        cboDistrito_r[0] = new SelectItem(0, "[Seleccione]");
+        cboProvincia_r = new SelectItem[1];
+        cboProvincia_r[0] = new SelectItem(0, "[Seleccione]");
+
+    }
+
+    public void buscarDocente() {
+        try {
+            HSDocenteDAO dao = (HSDocenteDAO) ServiceFinder.findBean( "SpringHibernateDaoDocente" );
+            List lista = dao.seleccionarDocente( this.getDoc_dni_w(), this.getDoc_nombre_completo_w() );
+            List<BeanDocente> listaT = new ArrayList<BeanDocente>();
+
+            for ( int i = 0; i < lista.size(); i++ ) {
+                BeanDocente bC = new BeanDocente();
+                Object DOC[] = (Object[]) lista.get( i );
+                bC.setId( Integer.parseInt( getValString( DOC[0] ) ) );
+                bC.setDocCodigo( getValString( DOC[1] ) );
+                bC.setDocNombre( getValString( DOC[2] ) );
+                bC.setDocCorreo( getValString( DOC[3] ) );
+                bC.setDocTelefono( getValString( DOC[4] ) );
+                bC.setDocNacimiento( getValString( DOC[5] ) );
+                bC.setDocResidencia( getValString( DOC[6] ) );
+                bC.setDocPeriodoInicio( DOC[7] == null ? new Date() : (Date) DOC[7] );
+                bC.setDocSituacion( getValString( DOC[8] ) );
+                bC.setDocSexo( getValString( DOC[9] ) );
+                bC.setDocDni( getValString( DOC[10] ) );
+                bC.setDocAppaterno( getValString( DOC[11] ) );
+                bC.setDocApmaterno( getValString( DOC[12] ) );
+                bC.setDocNombres( getValString( DOC[13] ) );
+                bC.setDocTipo(getValString(DOC[14]));
+                listaT.add( bC );
+            }
+            this.setListaDocente( listaT );
+
+
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+
+    }
+    private String getValString(Object obj) {
+        String sVal;
+        sVal = obj == null ? "" : obj.toString();
+        return sVal;
+    }
+    public void limpiarData(ActionEvent event) {
+        this.setOncomplete("");
+        iniciarCombosNaci();
+        iniciarCombosResi();
+        BeanDocente doc = new BeanDocente();
+        doc.setId(0);
+        this.setMensaje("");
+        this.setDocente(doc);
+        this.setW_depa_naci("00");
+        this.setW_depa_resi("00");
+        this.setW_prov_naci("0000");
+        this.setW_prov_resi("0000");
+        this.setOncomplete("javascript:Richfaces.showModalPanel('mpDocente');");
+    }
+
+    public void buscarDocentes(ActionEvent event) {
+        try {
+            this.setOncomplete("");
+            this.setMensaje("");
+            HSDocenteDAO dao = (HSDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoDocente");
+            Integer p_id2 = Integer.parseInt(((UIParameter) event.getComponent().findComponent("p_id2")).getValue().toString());
+            AcDocente doc = dao.seleccionarDocente(p_id2);
+            this.getDocente().setId(doc.getId());
+            this.getDocente().setDocActivo(doc.getDocActivo());
+            this.getDocente().setDocApmaterno(doc.getDocApmaterno());
+            this.getDocente().setDocAppaterno(doc.getDocAppaterno());
+            this.getDocente().setDocDni(doc.getDocDni());
+            this.getDocente().setDocCorreo(doc.getDocCorreo());
+            this.getDocente().setDocCodigo(doc.getDocCodigo());
+            this.getDocente().setDocNacimiento(doc.getDocNacimiento());
+            this.getDocente().setDocNombre(doc.getDocNombre());
+            this.getDocente().setDocNombres(doc.getDocNombres());
+            this.getDocente().setDocPassword(doc.getDocPassword());
+            this.getDocente().setDocPeriodoInicio(doc.getDocPeriodoInicio());
+            this.getDocente().setDocResidencia(doc.getDocResidencia());
+            this.getDocente().setDocSexo(doc.getDocSexo());
+            this.getDocente().setDocSituacion(doc.getDocSituacion());
+            this.getDocente().setDocTelefono(doc.getDocTelefono());
+            this.getDocente().setDocTipo(doc.getDocTipo());
+
+            this.setW_depa_naci(doc.getDocNacimiento().toString().substring(0, 2) + "0000");
+            this.setW_prov_naci(doc.getDocNacimiento().toString().substring(0, 4) + "00");
+            this.setW_depa_resi(doc.getDocResidencia().toString().substring(0, 2) + "0000");
+            this.setW_prov_resi(doc.getDocResidencia().toString().substring(0, 4) + "00");
+            if (doc.getDocNacimiento().equals("000000")) {
+                this.setW_depa_naci("000000");
+                this.setW_prov_naci("000000");
+            }
+            
+            if (doc.getDocResidencia().equals("000000")) {
+                this.setW_depa_resi("000000");
+                this.setW_prov_resi("000000");
+            }
+
+            this.setOncomplete("javascript:Richfaces.showModalPanel('mpDocente');");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void eliminarDocente(ActionEvent event) {
+        setMensaje("");
+        HSDocenteDAO dao = (HSDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoDocente");
+        String p_id2 = ((UIParameter) event.getComponent().findComponent("p_id2")).getValue().toString();
+        HSHorarioDAO dao_h = (HSHorarioDAO) ServiceFinder.findBean("SpringHibernateDaoHorario");
+
+        if (dao_h.SeleccionarHorarioPorDocente(Integer.parseInt(p_id2), 9) == 0) {
+            dao.eliminarDocente(p_id2.toString());
+            buscarDocente();
+        } else {
+            setMensaje("El Docente tiene un horario asignado, no se puede eliminar");
+        }
+
+    }
+
+    public void guardarDatos(ActionEvent event) {
+        try {
+            this.setOncomplete("");
+            this.setMensaje("");
+            HSDocenteDAO dao = (HSDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoDocente");
+            int p_id = Integer.parseInt(((UIParameter) event.getComponent().findComponent("p_id")).getValue().toString());
+            this.getDocente().setDocActivo("1");
+            this.getDocente().setDocCodigo(this.getDocente().getDocDni());
+            this.getDocente().setDocNombre(this.getDocente().getDocAppaterno() + " " + this.getDocente().getDocApmaterno() + " " + this.getDocente().getDocNombres());
+            // this.getDocente().setDocPassword(this.getDocente().getDocDni());
+            AcDocente doc = new AcDocente();
+            doc.setId(p_id);
+            doc.setDocActivo("1");
+            doc.setDocApmaterno(this.getDocente().getDocApmaterno());
+            doc.setDocAppaterno(this.getDocente().getDocAppaterno());
+            doc.setDocCodigo(this.getDocente().getDocDni());
+            doc.setDocCorreo(this.getDocente().getDocCorreo());
+            doc.setDocDni(this.getDocente().getDocDni());
+            doc.setDocNacimiento(this.getDocente().getDocNacimiento());
+            doc.setDocNombre(this.getDocente().getDocAppaterno() + " " + this.getDocente().getDocApmaterno() + " " + this.getDocente().getDocNombres());
+            doc.setDocNombres(this.getDocente().getDocNombres());
+            //doc.setDocPassword(doc_dni_w);
+            doc.setDocPeriodoInicio(this.getDocente().getDocPeriodoInicio());
+            doc.setDocResidencia(this.getDocente().getDocResidencia());
+            doc.setDocSexo(this.getDocente().getDocSexo());
+            doc.setDocSituacion(this.getDocente().getDocSituacion());
+            doc.setDocTelefono(this.getDocente().getDocTelefono());
+            doc.setDocTipo(this.getDocente().getDocTipo());
+            //String mensaje="";
+            if (p_id > 0) {
+                doc.setDocPassword(this.getDocente().getDocPassword());
+                if (validarCampos(doc)) {
+                    dao.actualizarDocente(doc);
+                    this.setOncomplete("javascript:alert('Registro modificado con exito');Richfaces.hideModalPanel('mpDocente');");
+                }
+
+            } else {
+                doc.setDocPassword(this.getDocente().getDocDni());
+                //HSDocenteDAO daoDoce = (HSDocenteDAO) ServiceFinder.findBean("SpringHibernateDaoDocente");
+                if (dao.buscarDocente(this.getDocente().getDocDni()) == null) {
+                    if (validarCampos(doc)) {
+                        dao.insertarDocente(doc);
+                        this.setOncomplete("javascript:alert('Registro agregado con exito');Richfaces.hideModalPanel('mpDocente');");
+                    }
+                } else {
+                    this.setOncomplete("javascript:alert('El numero de DNI ya existe')");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean validarCampos(AcDocente doc) {
+        if (doc.getDocAppaterno().length() < 3) {
+            oncomplete = "";
+            this.setOncomplete("javascript:alert('Ingrese Apellido Paterno')");
+            return false;
+
+        }
+        if (doc.getDocApmaterno().length() < 3) {
+            oncomplete = "";
+            this.setOncomplete("javascript:alert('Ingrese Apellido Materno')");
+            return false;
+        }
+        if (doc.getDocNombres().length() < 3) {
+            oncomplete = "";
+            this.setOncomplete("javascript:alert('Ingrese Nombres')");
+            return false;
+        }
+        if (doc.getDocCorreo().length() < 10) {
+            oncomplete = "";
+            this.setOncomplete("javascript:alert('Ingrese Correo Electronico')");
+            return false;
+        }
+        if (doc.getDocTelefono().length() < 5) {
+            oncomplete = "";
+            this.setOncomplete("javascript:alert('Ingrese nro telefono o celular')");
+            return false;
+        }
+
+        return true;
+    }
+}

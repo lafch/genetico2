@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="AcTurno"
+		table="ac_turno"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="tur_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="TurCodigo"
+			column="tur_codigo"
+			type="string"
+			not-null="false"
+			length="10"
+		/>
+		<property
+			name="TurNombre"
+			column="tur_nombre"
+			type="string"
+			not-null="false"
+			length="50"
+		/>
+		<property
+			name="TurPeriodo"
+			column="tur_periodo"
+			type="integer"
+			not-null="false"
+			length="10"
+		/>
+		<property
+			name="TurHoraInicio"
+			column="tur_hora_inicio"
+			type="time"
+			not-null="false"
+		/>
+		<property
+			name="TurVigente"
+			column="tur_vigente"
+			type="string"
+			not-null="false"
+			length="10"
+		/>
+		<property
+			name="SemId"
+			column="sem_id"
+			type="integer"
+			not-null="true"
+			length="10"
+		/>
+		<property
+			name="TurTiempoPeriodo"
+			column="tur_tiempo_periodo"
+			type="integer"
+			not-null="false"
+			length="10"
+		/>
+		<property
+			name="TurActivo"
+			column="tur_activo"
+			type="string"
+			not-null="false"
+			length="1"
+		/>
+	
+
+		<set name="AcTurnoDetalles" inverse="true" lazy="false" cascade="all">
+			<key column="tur_id" update="true"/>
+			<one-to-many class="AcTurnoDetalle"/>
+		</set>
+
+
+	</class>	
+</hibernate-mapping>

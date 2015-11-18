@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+	<class
+		name="AcContenidoDetalle"
+		table="ac_contenido_detalle"
+	>
+		<meta attribute="sync-DAO">false</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="condet_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="CondetContenido"
+			column="condet_contenido"
+			type="string"
+			not-null="false"
+		/>
+		<property
+			name="CondetSemana"
+			column="condet_semana"
+			type="string"
+			not-null="false"
+			length="2"
+		/>
+		<many-to-one
+			name="Contem"
+			column="contem_id"
+			class="AcContenidoTematico"
+			not-null="true"
+		>
+		</many-to-one>
+
+
+	</class>	
+</hibernate-mapping>

@@ -1,0 +1,405 @@
+package net.uch.tablaSistema.managedBeans;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.faces.component.UIParameter;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+import net.uch.commonService.ServiceFinder;
+import net.uch.mapping.AcAula;
+import net.uch.mapping.AcLocal;
+import net.uch.mapping.AcPabellon;
+import net.uch.metodo.local.MetodosAca;
+import net.uch.tablaSistema.hibernateSpringDao.HSAulaDAO;
+import net.uch.tablaSistema.hibernateSpringDao.HSLocalDAO;
+import net.uch.tablaSistema.hibernateSpringDao.HSPabellonDAO;
+
+public class bAula{
+
+    public int b_id;
+    public String b_des;
+    public String b_des_i;
+    public String b_des_auxiliar;
+    public int b_cap;
+    public int b_cap_auxiliar;
+    public int b_id_local;
+    public String b_desc_local;
+    public int b_id_pabellon = 0;
+    public String b_desc_pabellon;
+    public int b_id_local_auxiliar;
+    public String b_activo;
+    private List listaAula;
+    private String editable = "false";
+    private String view = "true";
+    private boolean visible = false;
+    private SelectItem[] comboLocales;
+    private SelectItem[] comboPabellones;
+    public int b_id_local_f;
+    public int b_id_pabellon_f;
+    private SelectItem[] comboLocales_f;
+    private SelectItem[] comboPabellones_f;
+    private String oncomplete;
+    private boolean editable2 = false;
+    MetodosAca metodo=new MetodosAca();
+
+    public void Nuevo() {
+        this.setB_des_auxiliar("");
+        this.setB_des_i("");
+        this.setB_cap(0);
+        this.setB_cap_auxiliar(0);
+        this.setB_id_pabellon(0);
+        this.setB_id_local(0);
+        this.setB_id_local_auxiliar(0);
+    }
+
+    public String getEditable() {
+        return editable;
+    }
+
+    public void setEditable(String editable) {
+        this.editable = editable;
+    }
+
+    public String getView() {
+        return view;
+    }
+
+    public void setView(String view) {
+        this.view = view;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    public List getListaAula() {
+        return listaAula;
+    }
+
+    public void setListaAula(List listaAula) {
+        this.listaAula = listaAula;
+    }
+
+    public int getB_id() {
+        return b_id;
+    }
+
+    public void setB_id(int b_id) {
+        this.b_id = b_id;
+    }
+
+    public String getB_des() {
+        return b_des;
+    }
+
+    public void setB_des(String b_des) {
+        this.b_des = b_des;
+    }
+
+    public int getB_cap() {
+        return b_cap;
+    }
+
+    public void setB_cap(int b_cap) {
+        this.b_cap = b_cap;
+    }
+
+    public int getB_id_local() {
+        return b_id_local;
+    }
+
+    public void setB_id_local(int b_id_local) {
+        this.b_id_local = b_id_local;
+    }
+
+    public String getB_activo() {
+        return b_activo;
+    }
+
+    public void setB_activo(String b_activo) {
+        this.b_activo = b_activo;
+    }
+
+    public String getOncomplete() {
+        return oncomplete;
+    }
+
+    public void setOncomplete(String oncomplete) {
+        this.oncomplete = oncomplete;
+    }
+
+    public boolean isEditable2() {
+        return editable2;
+    }
+
+    public void setEditable2(boolean editable2) {
+        this.editable2 = editable2;
+    }
+
+    public String Grabar() {
+        if ((this.getB_des_i().trim()).length() == 0 || this.getB_cap() <= 0 || this.getB_id_pabellon() == 0) {
+            this.setOncomplete("javascript:alert('Ingrese todos los datos Requeridos.')");
+            return "fail";
+        } else {
+            HSAulaDAO dao = (HSAulaDAO) ServiceFinder.findBean("SpringHibernateDaoAula");
+            AcAula aula = new AcAula();
+            aula.setId(this.getB_id());
+            aula.setAulDes(this.getB_des_i());
+            aula.setAulCap(this.getB_cap());
+            AcPabellon pab = new AcPabellon();
+            pab.setId(this.getB_id_pabellon());
+            aula.setPab(pab);
+            aula.setAulActivo("1");
+            dao.insertarAula(aula);
+            this.setOncomplete("javascript:alert('Se creo un Aula correctamente.');Richfaces.hideModalPanel('mp')");
+            return "ok";
+        }
+    }
+
+    public void Seleccionar() throws Exception {
+        listaAula = new ArrayList();
+        HSAulaDAO dao = (HSAulaDAO) ServiceFinder.findBean("SpringHibernateDaoAula");
+        List<AcAula> lista = dao.seleccionarAula(this.getB_des(), this.getB_id_pabellon_f());
+        bAula bA;
+        for (int i = 0; i < lista.size(); i++) {
+            AcAula aula = lista.get(i);
+            bA = new bAula();
+            bA.setB_id(aula.getId().intValue());
+            bA.setB_des(aula.getAulDes());
+            bA.setB_cap(aula.getAulCap().intValue());
+            bA.setB_id_pabellon(aula.getPab().getId().intValue());
+            bA.setB_desc_pabellon(aula.getPab().getPabDescripcion());
+            bA.setB_id_local(aula.getPab().getLoc().getId().intValue());
+            bA.setB_desc_local(aula.getPab().getLoc().getLocDes());
+            listaAula.add(bA);
+        }
+    }
+
+    public String getB_desc_local() {
+        return b_desc_local;
+    }
+
+    public void setB_desc_local(String b_desc_local) {
+        this.b_desc_local = b_desc_local;
+    }
+
+    public String getB_desc_pabellon() {
+        return b_desc_pabellon;
+    }
+
+    public void setB_desc_pabellon(String b_desc_pabellon) {
+        this.b_desc_pabellon = b_desc_pabellon;
+    }
+
+    public String getB_des_auxiliar() {
+        return b_des_auxiliar;
+    }
+
+    public void setB_des_auxiliar(String b_des_auxiliar) {
+        this.b_des_auxiliar = b_des_auxiliar;
+    }
+
+    public int getB_cap_auxiliar() {
+        return b_cap_auxiliar;
+    }
+
+    public void setB_cap_auxiliar(int b_cap_auxiliar) {
+        this.b_cap_auxiliar = b_cap_auxiliar;
+    }
+
+    public int getB_id_local_auxiliar() {
+        return b_id_local_auxiliar;
+    }
+
+    public void setB_id_local_auxiliar(int b_id_local_auxiliar) {
+        this.b_id_local_auxiliar = b_id_local_auxiliar;
+    }
+
+    public void Cancelar(ActionEvent event) {
+        this.setB_des(this.getB_des_auxiliar());
+        this.setB_cap(this.getB_cap_auxiliar());
+        this.setB_id_local(this.getB_id_local_auxiliar());
+        this.setView("true");
+        this.setEditable("false");
+        this.setEditable2(false);
+        this.setVisible(false);
+    }
+
+    public void EditarFila(ActionEvent event) {
+        this.setB_des_auxiliar(this.getB_des());
+        this.setB_cap_auxiliar(this.getB_cap());
+        this.setB_id_local_auxiliar(this.getB_id_local());
+        this.setView("false");
+        this.setEditable("true");
+        this.setEditable2(true);
+        this.setVisible(true);
+    }
+
+    public void Editar(ActionEvent event) {
+        UIParameter id = (UIParameter) event.getComponent().findComponent("id");
+        UIParameter descripcion = (UIParameter) event.getComponent().findComponent("descripcion");
+        UIParameter capacidad = (UIParameter) event.getComponent().findComponent("capacidad");
+        UIParameter pabellon = (UIParameter) event.getComponent().findComponent("pabellon");
+
+        if ((descripcion.getValue().toString().trim()).length() == 0 || Integer.parseInt(capacidad.getValue().toString()) <= 0 || Integer.parseInt(pabellon.getValue().toString()) == 0) {
+            this.setOncomplete("javascript:alert('Ingrese Datos.')");
+        } else {
+            int aulId = Integer.parseInt(id.getValue().toString());
+            AcAula aula = new AcAula();
+            aula.setId(aulId);
+            aula.setAulDes(descripcion.getValue().toString());
+            aula.setAulCap(Integer.parseInt(capacidad.getValue().toString()));
+            aula.setPab(new AcPabellon(Integer.parseInt(pabellon.getValue().toString())));
+            aula.setAulActivo("1");
+
+            HSAulaDAO dao = (HSAulaDAO) ServiceFinder.findBean("SpringHibernateDaoAula");
+            dao.actualizarAula(aula);
+
+            this.setB_desc_pabellon(getDescPabellon());
+            this.setB_desc_local(getDescLocal());
+            this.setView("true");
+            this.setEditable("false");
+            this.setEditable2(false);
+            this.setVisible(false);
+            this.setOncomplete("javascript:alert('Se Actualizaron los datos del Aula correctamente.')");
+        }
+    }
+
+    public void EliminarFila(ActionEvent event) throws Exception {
+        UIParameter delete = (UIParameter) event.getComponent().findComponent("delete");
+        Eliminar(delete.getValue().toString());
+    }
+
+    public void Eliminar(String id) throws Exception {
+        HSAulaDAO dao = (HSAulaDAO) ServiceFinder.findBean("SpringHibernateDaoAula");
+        dao.eliminarAula(id);
+    }
+
+    public String getB_des_i() {
+        return b_des_i;
+    }
+
+    public void setB_des_i(String b_des_i) {
+        this.b_des_i = b_des_i;
+    }
+
+    public SelectItem[] getComboPabellones() throws Exception {
+        comboPabellones=metodo.listarPabellon(this.b_id_local,"Seleccine");
+        return comboPabellones;
+    }
+
+    public String getDescPabellon() {
+        for (int i = 0; i < comboPabellones.length; i++) {
+            SelectItem se = comboPabellones[i];
+            if (Integer.parseInt(se.getValue().toString()) == this.b_id_pabellon) {
+                return se.getLabel();
+            }
+        }
+        return "---";
+    }
+
+    public void setComboPabellones(SelectItem[] comboPabellones) {
+        this.comboPabellones = comboPabellones;
+    }
+
+    public SelectItem[] getComboLocales() throws Exception {
+        
+        /*if (comboLocales == null) {
+            HSLocalDAO dao = (HSLocalDAO) ServiceFinder.findBean("SpringHibernateDaoLocal");
+            List<AcLocal> lista = dao.seleccionarLocal("");
+            comboLocales = new SelectItem[lista.size() + 1];
+            comboLocales[0] = new SelectItem(0, "[Seleccione]");
+            for (int i = 0; i < comboLocales.length - 1; i++) {
+                comboLocales[i + 1] = new SelectItem(lista.get(i).getId(), lista.get(i).getLocDes());
+            }
+        }*/
+        comboLocales=metodo.listarSedes("Seleccione");
+        return comboLocales;
+    }
+
+    public String getDescLocal() {
+        for (int i = 0; i < comboLocales.length; i++) {
+            SelectItem se = comboLocales[i];
+            if (Integer.parseInt(se.getValue().toString()) == this.b_id_local) {
+                return se.getLabel();
+            }
+        }
+        return "---";
+    }
+
+    public void setComboLocales(SelectItem[] comboLocales) {
+        this.comboLocales = comboLocales;
+    }
+
+    public void Enviar1(ActionEvent event) throws Exception {
+        if (Grabar().equalsIgnoreCase("ok")) {
+            Seleccionar();
+        }
+    }
+
+    public int getB_id_pabellon() {
+        return b_id_pabellon;
+    }
+
+    public void setB_id_pabellon(int b_id_pabellon) {
+        this.b_id_pabellon = b_id_pabellon;
+    }
+
+    public int getB_id_local_f() {
+        return b_id_local_f;
+    }
+
+    public void setB_id_local_f(int b_id_local_f) {
+        this.b_id_local_f = b_id_local_f;
+    }
+
+    public int getB_id_pabellon_f() {
+        return b_id_pabellon_f;
+    }
+
+    public void setB_id_pabellon_f(int b_id_pabellon_f) {
+        this.b_id_pabellon_f = b_id_pabellon_f;
+    }
+
+    public SelectItem[] getComboLocales_f() throws Exception {
+       /* if (comboLocales_f == null) {
+            HSLocalDAO dao = (HSLocalDAO) ServiceFinder.findBean("SpringHibernateDaoLocal");
+            List<AcLocal> lista = dao.seleccionarLocal("");
+            comboLocales_f = new SelectItem[lista.size() + 1];
+            comboLocales_f[0] = new SelectItem(0, "TODOS");
+            for (int i = 0; i < comboLocales_f.length - 1; i++) {
+                comboLocales_f[i + 1] = new SelectItem(lista.get(i).getId(), lista.get(i).getLocDes());
+            }
+        }*/
+        comboLocales_f=metodo.listarSedes("Todos");
+        return comboLocales_f;
+    }
+
+    public void setComboLocales_f(SelectItem[] comboLocales_f) {
+        this.comboLocales_f = comboLocales_f;
+    }
+
+    public SelectItem[] getComboPabellones_f() throws Exception {
+        /*if (this.b_id_local_f == 0) {
+            comboPabellones_f = new SelectItem[1];
+            comboPabellones_f[0] = new SelectItem(0, "[Seleccione]");
+        } else {
+            HSPabellonDAO dao = (HSPabellonDAO) ServiceFinder.findBean("SpringHibernateDaoPabellon");
+            List<AcPabellon> lista = dao.seleccionarPabellon("", this.b_id_local_f);
+            comboPabellones_f = new SelectItem[lista.size()];
+            for (int i = 0; i < comboPabellones_f.length; i++) {
+                comboPabellones_f[i] = new SelectItem(lista.get(i).getId(), lista.get(i).getPabNombre());
+            }
+        }*/
+        comboPabellones_f=metodo.listarPabellon(this.b_id_local_f,"Seleccione");
+        return comboPabellones_f;
+    }
+
+    public void setComboPabellones_f(SelectItem[] comboPabellones_f) {
+        this.comboPabellones_f = comboPabellones_f;
+    }
+}

@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="net.uch.mapping">
+    <class
+        name="AdAlumnoTarifa"
+        table="ad_alumno_tarifa"
+        >
+        <meta attribute="sync-DAO">false</meta>
+        <id
+            name="Id"
+            type="integer"
+            column="alutar_id"
+            >
+            <generator class="native"/>
+        </id>
+
+        <property
+            name="AlutarMonto"
+            column="alutar_monto"
+            type="java.lang.Float"
+            not-null="false"
+            length="12"
+            />
+            
+            <property
+            name="AlutarMontoCopy"
+            column="alutar_monto_copy"
+            type="java.lang.Float"
+            not-null="false"
+            length="12"
+            />
+            
+        <property
+            name="AlutarFechaPago"
+            column="alutar_fecha_pago"
+            type="date"
+            not-null="false"
+            />
+        <property
+            name="AlutarFechaProrroga"
+            column="alutar_fecha_prorroga"
+            type="date"
+            not-null="false"
+            />
+        <property
+            name="AlutarEstado"
+            column="alutar_estado"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="AlutarActivo"
+            column="alutar_activo"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="AlutarMatricula"
+            column="alutar_matricula"
+            type="string"
+            not-null="false"
+            length="1"
+            />
+        <property
+            name="MatId"
+            column="mat_id"
+            type="java.lang.Integer"
+            not-null="false"
+            />    
+        <many-to-one
+            name="Alu"
+            column="alu_id"
+            class="AcAlumno"
+            not-null="true"
+            fetch="join" lazy="false"
+            >
+        </many-to-one>
+        <many-to-one
+            name="Conpag"
+            column="conpag_id"
+            class="AdConceptoPago"
+            not-null="true"
+            fetch="join"
+            lazy="false"
+            >
+        </many-to-one>
+        <many-to-one
+            name="Estpagdet"
+            column="estpagdet_id"
+            class="AdEstructuraPagosDetalle"
+            not-null="false"
+            fetch="join"
+            lazy="false"
+            >
+        </many-to-one>
+
+
+    </class>
+</hibernate-mapping>
